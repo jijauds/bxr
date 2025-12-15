@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """MediaPipe solution drawing utils."""
-
+import checker
 import dataclasses
 import math
 from typing import List, Mapping, Optional, Tuple, Union
+import checker
 
 import cv2
 import matplotlib.pyplot as plt
@@ -171,8 +172,15 @@ def draw_landmarks(
                                                    image_cols, image_rows)
     if landmark_px:
       idx_to_coordinates[idx] = landmark_px
+
+    mapping = {"l_hand":15, "r_hand":16, "l_elbow":13, "r_elbow":14, "l_knee":25, "r_knee":26, "l_shoulder":11, "r_shoulder":12, "l_hip":23, "r_hip":24}
   angled_lms = [13,14,15,16,25,26,11,12,23,24]
+    correct, errors = checker.is_stance_correct(angle_list[mapping["l_hand"]], angle_list[mapping["r_hand"]], angle_list[mapping["l_elbow"]], angle_list[mapping["r_elbow"]], angle_list[mapping["l_knee"]], angle_list["r_knee"], angle_list[mapping["r_hip"]])
   is_red = []
+  for i in errors:
+    if errors[i] != "":
+      is_red.append(mapping[i])
+  
   for i in angled_lms:
       if angle_list[i] > 90:
           is_red.append(i)
