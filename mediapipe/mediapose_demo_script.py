@@ -25,15 +25,23 @@ def put_angle(frame, angle, point, name, color=(255,0,255)):
                 (int(point[0]), int(point[1]) - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
-input_video = "../test videos/SLOW 2.mp4"  
-output_video = "leg hip.mp4"
+input_video = "AUDS 3.mp4"  
+output_video = "auds.mp4"
 output_csv   = "VID20251013031338.csv"
 
 cap = cv2.VideoCapture(input_video)
+if not cap.isOpened():
+    raise RuntimeError("Failed to open input video")
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 fps = cap.get(cv2.CAP_PROP_FPS)
+if fps == 0:
+    fps = 30
 w, h = int(cap.get(3)), int(cap.get(4))
+if w == 0 or h == 0:
+    raise RuntimeError("Invalid video dimensions")
 outv = cv2.VideoWriter(output_video, fourcc, fps, (w,h))
+if not outv.isOpened():
+    raise RuntimeError("VideoWriter failed to open")
 
 csv_file = open(output_csv, "w", newline="")
 csv_writer = csv.writer(csv_file)
@@ -69,7 +77,7 @@ while True:
         triplets = {
             "L_Hand": (11,15,12),
             "R_Hand": (12,16,11),
-            "L_Elbow":  (11, 13, 15),
+            "L_Elbow":  (12, 13, 15),
             "R_Elbow":  (12, 14, 16),
             "L_Knee":   (23, 25, 27),
             "R_Knee":   (24, 26, 28),
@@ -81,7 +89,7 @@ while True:
         lm = result.pose_landmarks.landmark
         coords = {i: (lm[i].x * w, lm[i].y * h, lm[i].visibility) for i in range(len(lm))}
         angles = {b:angle_between(coords[a][:2], coords[b][:2], coords[c][:2]) for (a,b,c) in triplets.values()}
-        mp_drawing.draw_landmarks(frame, result.pose_landmarks, connects, DrawingSpec(color=(0,255,0)), DrawingSpec(color=(0,255,0)),angles)
+        mp_drawing.draw_landmarks(frame, result.pose_landmarks, connects, DrawingSpec(color=(0,255,0)), DrawingSpec(color=(0,255,0), thickness = 4),angles)
         #print(mp_pose.POSE_CONNECTIONS)
 
         other_points = {
@@ -93,7 +101,6 @@ while True:
         for i, (name, (a, b, c)) in enumerate(triplets.items()):
             if coords[a][2] > 0.3 and coords[b][2] > 0.3 and coords[c][2] > 0.3:
                 ang = angles[b]
-                print(ang)
                 put_angle(frame, ang, coords[b][:2], name)
                 angles_row[i+1] = round(ang, 2)
         for i, (name, point) in enumerate(other_points.items()):

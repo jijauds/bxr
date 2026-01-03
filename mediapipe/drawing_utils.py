@@ -175,15 +175,17 @@ def draw_landmarks(
 
     mapping = {"l_hand":15, "r_hand":16, "l_elbow":13, "r_elbow":14, "l_knee":25, "r_knee":26, "l_shoulder":11, "r_shoulder":12, "l_hip":23, "r_hip":24}
   angled_lms = [13,14,15,16,25,26,11,12,23,24]
-    correct, errors = checker.is_stance_correct(angle_list[mapping["l_hand"]], angle_list[mapping["r_hand"]], angle_list[mapping["l_elbow"]], angle_list[mapping["r_elbow"]], angle_list[mapping["l_knee"]], angle_list["r_knee"], angle_list[mapping["r_hip"]])
+  correct, errors = checker.is_stance_correct(angle_list[mapping["l_hand"]], angle_list[mapping["r_hand"]], angle_list[mapping["l_elbow"]], angle_list[mapping["r_elbow"]], angle_list[mapping["l_knee"]], angle_list[mapping["r_knee"]], angle_list[mapping["r_hip"]], angle_list[mapping["l_shoulder"]], angle_list[mapping["r_shoulder"]])
+  print(angle_list[mapping["r_elbow"]])
+  print(errors["r_elbow"])
+
   is_red = []
   for i in errors:
     if errors[i] != "":
-      is_red.append(mapping[i])
-  
-  for i in angled_lms:
-      if angle_list[i] > 90:
-          is_red.append(i)
+      if i in mapping:
+        is_red.append(mapping[i])
+      else:
+        continue
   if connections:
     num_landmarks = len(landmark_list.landmark)
     # Draws the connections if the start and end landmarks are both visible.
@@ -223,7 +225,17 @@ def draw_landmarks(
       else:
           cv2.circle(image, landmark_px, drawing_spec.circle_radius,
              GREEN_COLOR, drawing_spec.thickness)
-
+  font = cv2.FONT_HERSHEY_SIMPLEX
+  y = 250
+  font_scale = 1
+  font_color = (0, 255, 0) # Green color
+  thickness = 2
+  line_type = cv2.LINE_AA
+  for i in errors:
+      if errors[i] != "":
+          bottom_left_corner_of_text = (10, y) # (X-coordinate, Y-coordinate)
+          cv2.putText(image, errors[i], bottom_left_corner_of_text, font, font_scale, font_color, thickness, line_type)
+          y += 30
 
 def draw_axis(image: np.ndarray,
               rotation: np.ndarray,
