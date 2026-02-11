@@ -25,9 +25,9 @@ def put_angle(frame, angle, point, name, color=(255,0,255)):
                 (int(point[0]), int(point[1]) - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
-input_video = "AUDS 3.mp4"  
-output_video = "auds.mp4"
-output_csv   = "VID20251013031338.csv"
+input_video = "document_6073624840818923477.mp4"  
+output_video = "sideview_1.mp4"
+output_csv   = "sideview_1.csv"
 
 cap = cv2.VideoCapture(input_video)
 if not cap.isOpened():
@@ -77,7 +77,7 @@ while True:
         triplets = {
             "L_Hand": (11,15,12),
             "R_Hand": (12,16,11),
-            "L_Elbow":  (12, 13, 15),
+            "L_Elbow":  (11, 13, 15),
             "R_Elbow":  (12, 14, 16),
             "L_Knee":   (23, 25, 27),
             "R_Knee":   (24, 26, 28),

@@ -1,25 +1,25 @@
 def stance_right_elbow(angle):
-    if angle < 45:
+    if angle < 70:
         return True
     return False
 
 def stance_right_hand(angle):
-    if angle < 40 and angle > 25:
+    if angle < 105 and angle > 75:
         return True
     return False
 
 def stance_left_elbow(angle):
-    if angle < 30:
+    if angle < 60:
         return True
     return False
 
 def stance_left_hand(angle):
-    if angle < 40:
+    if angle < 15:
         return True
     return False
 
 def stance_r_hip(angle):
-    if angle < 100 and angle > 80:
+    if angle < 120 and angle > 80:
         return True
     return False
 
@@ -29,17 +29,17 @@ def stance_left_knee(angle):
     return False
 
 def stance_right_knee(angle):
-    if angle < 150 and angle > 130:
+    if angle < 180 and angle > 160:
         return True
     return False
 
 def stance_l_shoulder(angle):
-    if angle < 15:
+    if angle < 35 and angle > 20:
         return True
     return False
 
 def stance_r_shoulder(angle):
-    if angle < 25:
+    if angle < 35 and angle > 20:
         return True
     return False
 
@@ -76,11 +76,11 @@ def is_stance_correct(l_hand, r_hand, l_elbow, r_elbow, l_knee, r_knee, r_hip, l
     return is_correct, errors
 
 def straight_right_elbow(angle):
-    if angle > 160 and angle < 185:
+    if angle > 165 and angle < 185:
         return True
     return False
 def straight_right_hand(angle):
-    if angle < 12:
+    if angle < 10:
         return True
     return False
 def straight_left_elbow(angle):
@@ -88,11 +88,15 @@ def straight_left_elbow(angle):
         return True
     return False
 def straight_r_hip(angle):
-    if angle < 110 and angle > 90:
+    if angle < 110 and angle > 80:
         return True
     return False
 def straight_left_knee(angle):
-    if angle < 180 and angle > 160:
+    if angle < 160 and angle > 155:
+        return True
+    return False
+def straight_right_knee(angle):
+    if angle < 150 and angle > 125:
         return True
     return False
 def is_straight_correct(r_hand, l_elbow, r_elbow, l_knee, r_hip):

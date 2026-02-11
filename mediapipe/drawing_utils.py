@@ -231,11 +231,14 @@ def draw_landmarks(
   font_color = (0, 255, 0) # Green color
   thickness = 2
   line_type = cv2.LINE_AA
+  '''
   for i in errors:
       if errors[i] != "":
           bottom_left_corner_of_text = (10, y) # (X-coordinate, Y-coordinate)
           cv2.putText(image, errors[i], bottom_left_corner_of_text, font, font_scale, font_color, thickness, line_type)
           y += 30
+  
+  '''
 
 def draw_axis(image: np.ndarray,
               rotation: np.ndarray,
