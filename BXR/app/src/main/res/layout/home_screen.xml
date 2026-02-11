@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="232dp"
+        android:layout_height="82dp"
+        android:backgroundTint="@color/accent"
+        android:lineSpacingExtra="60sp"
+        android:text="TRAIN"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
+        tools:layout_editor_absoluteX="89dp"
+        tools:layout_editor_absoluteY="326dp" />
+
+    <Button
+        android:id="@+id/button7"
+        android:layout_width="232dp"
+        android:layout_height="62dp"
+        android:backgroundTint="@color/gray"
+        android:lineSpacingExtra="60sp"
+        android:text="Logs"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
+        tools:layout_editor_absoluteX="89dp"
+        tools:layout_editor_absoluteY="423dp" />
+
+    <Button
+        android:id="@+id/button8"
+        android:layout_width="232dp"
+        android:layout_height="62dp"
+        android:backgroundTint="@color/gray"
+        android:lineSpacingExtra="60sp"
+        android:text="Settings"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
+        tools:layout_editor_absoluteX="89dp"
+        tools:layout_editor_absoluteY="502dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
