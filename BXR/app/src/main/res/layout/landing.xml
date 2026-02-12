@@ -6,20 +6,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context=".MainActivity">
+    tools:context=".ui.CameraActivity">
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="412dp"
         android:layout_height="407dp"
         app:srcCompat="@drawable/logo"
-        tools:layout_editor_absoluteX="-1dp"
-        tools:layout_editor_absoluteY="156dp" />
+        app:layout_constraintBottom_toTopOf="@+id/start_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/start_button"
         android:layout_width="232dp"
         android:layout_height="82dp"
+        android:layout_marginTop="16dp"
         android:backgroundTint="@color/accent"
         android:lineSpacingExtra="60sp"
         android:text="START"
@@ -28,15 +32,20 @@
         android:textSize="48sp"
         android:textStyle="bold"
         android:typeface="monospace"
-        tools:layout_editor_absoluteX="89dp"
-        tools:layout_editor_absoluteY="632dp" />
+        app:layout_constraintBottom_toTopOf="@+id/trouble_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/trouble_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="Having trouble logging in?"
         android:textColor="@color/light_gray"
-        tools:layout_editor_absoluteX="124dp"
-        tools:layout_editor_absoluteY="725dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/start_button" />
 </androidx.constraintlayout.widget.ConstraintLayout>

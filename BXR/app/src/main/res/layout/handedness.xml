@@ -6,12 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context=".MainActivity">
+    tools:context=".ui.CameraActivity">
 
     <Button
         android:id="@+id/button2"
         android:layout_width="232dp"
         android:layout_height="82dp"
+        android:layout_marginBottom="48dp"
         android:backgroundTint="@color/accent"
         android:lineSpacingExtra="48sp"
         android:text="NEXT"
@@ -20,19 +21,22 @@
         android:textSize="34sp"
         android:textStyle="bold"
         android:typeface="monospace"
-        tools:layout_editor_absoluteX="89dp"
-        tools:layout_editor_absoluteY="632dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:text="What should we call you?"
         android:textAlignment="center"
         android:textColor="@color/light_gray"
         android:textSize="24sp"
-        tools:layout_editor_absoluteX="70dp"
-        tools:layout_editor_absoluteY="224dp" />
+        app:layout_constraintBottom_toTopOf="@+id/editTextText"
+        app:layout_constraintEnd_toEndOf="@+id/editTextText"
+        app:layout_constraintStart_toStartOf="@+id/editTextText" />
 
     <EditText
         android:id="@+id/editTextText"
@@ -44,31 +48,36 @@
         android:textAlignment="center"
         android:textColor="@color/light_gray"
         android:textSize="24sp"
-        tools:layout_editor_absoluteX="66dp"
-        tools:layout_editor_absoluteY="353dp" />
+        app:layout_constraintBottom_toTopOf="@+id/radioGroup"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <RadioGroup
+        android:id="@+id/radioGroup"
         android:layout_width="207dp"
-        android:layout_height="97dp"
-        tools:layout_editor_absoluteX="99dp"
-        tools:layout_editor_absoluteY="482dp">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/button2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextText">
 
         <RadioButton
-            android:id="@+id/radioButton"
+            android:id="@+id/left_handed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="RadioButton"
+            android:text="I am left-handed."
             android:textColor="@color/light_gray"
-            android:textSize="16sp"
-            tools:text="I am left-handed." />
+            android:textSize="16sp" />
 
         <RadioButton
-            android:id="@+id/radioButton3"
+            android:id="@+id/right_handed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="RadioButton"
+            android:text="I am right-handed."
             android:textColor="@color/light_gray"
-            android:textSize="16sp"
-            tools:text="I am right-handed." />
+            android:textSize="16sp" />
     </RadioGroup>
 </androidx.constraintlayout.widget.ConstraintLayout>

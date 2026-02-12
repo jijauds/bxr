@@ -1,4 +1,4 @@
-package com.bxr.trainingapp
+package com.bxr.trainingapp.ui
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -23,23 +23,27 @@ import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
+import com.bxr.trainingapp.OverlayView
+import com.bxr.trainingapp.PoseLandmarkerHelper
+import com.bxr.trainingapp.R
 import com.google.mediapipe.tasks.vision.core.RunningMode
-import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-class MainActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListener {
+class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListener {
     private lateinit var poseLandmarkerHelper: PoseLandmarkerHelper
 
-    private var model = PoseLandmarkerHelper.MODEL_POSE_LANDMARKER_FULL
-    private var delegate: Int = PoseLandmarkerHelper.DELEGATE_CPU
+    private var moveName: String? = null
+
+    private var model = PoseLandmarkerHelper.Companion.MODEL_POSE_LANDMARKER_FULL
+    private var delegate: Int = PoseLandmarkerHelper.Companion.DELEGATE_CPU
     private var minPoseDetectionConfidence: Float =
-        PoseLandmarkerHelper.DEFAULT_POSE_DETECTION_CONFIDENCE
+        PoseLandmarkerHelper.Companion.DEFAULT_POSE_DETECTION_CONFIDENCE
     private var minPoseTrackingConfidence: Float =
-        PoseLandmarkerHelper.DEFAULT_POSE_TRACKING_CONFIDENCE
+        PoseLandmarkerHelper.Companion.DEFAULT_POSE_TRACKING_CONFIDENCE
     private var minPosePresenceConfidence: Float =
-        PoseLandmarkerHelper.DEFAULT_POSE_PRESENCE_CONFIDENCE
+        PoseLandmarkerHelper.Companion.DEFAULT_POSE_PRESENCE_CONFIDENCE
 
     private var preview: Preview? = null
     private var imageAnalyzer: ImageAnalysis? = null
@@ -81,6 +85,8 @@ class MainActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListene
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        moveName = intent.getStringExtra("MOVE_NAME")
 
         viewFinder = findViewById(R.id.view_finder)
         overlay = findViewById(R.id.overlay)
