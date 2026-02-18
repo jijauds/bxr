@@ -37,7 +37,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
     private var moveName: String? = null
 
     private var model = PoseLandmarkerHelper.Companion.MODEL_POSE_LANDMARKER_FULL
-    private var delegate: Int = PoseLandmarkerHelper.Companion.DELEGATE_CPU
+    private var delegate: Int = PoseLandmarkerHelper.Companion.DELEGATE_GPU
     private var minPoseDetectionConfidence: Float =
         PoseLandmarkerHelper.Companion.DEFAULT_POSE_DETECTION_CONFIDENCE
     private var minPoseTrackingConfidence: Float =
@@ -49,7 +49,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
     private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
-    private var cameraFacing = CameraSelector.LENS_FACING_BACK
+    private var cameraFacing = CameraSelector.LENS_FACING_FRONT
 
     private lateinit var backgroundExecutor: ExecutorService
 
@@ -90,6 +90,8 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
 
         viewFinder = findViewById(R.id.view_finder)
         overlay = findViewById(R.id.overlay)
+
+        viewFinder.scaleType = PreviewView.ScaleType.FILL_CENTER
 
         backgroundExecutor = Executors.newSingleThreadExecutor()
 
@@ -163,14 +165,15 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
     }
 
     override fun onResults(resultBundle: PoseLandmarkerHelper.ResultBundle) {
-        overlay.setResults(
-            resultBundle.results.first(),
-            resultBundle.inputImageHeight,
-            resultBundle.inputImageWidth,
-            RunningMode.LIVE_STREAM
-        )
-
-        overlay.invalidate()
+        runOnUiThread {
+            overlay.setResults(
+                resultBundle.results.first(),
+                resultBundle.inputImageHeight,
+                resultBundle.inputImageWidth,
+                RunningMode.LIVE_STREAM
+            )
+            overlay.invalidate()
+        }
     }
 
     private fun setUpCamera() {
@@ -230,6 +233,10 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
 
     private fun detectPose(imageProxy: ImageProxy) {
         if(this::poseLandmarkerHelper.isInitialized) {
+            val rotation = imageProxy.imageInfo.rotationDegrees
+            // overlay.rotationDegrees = imageProxy.imageInfo.rotationDegrees
+            overlay.isFrontCamera =
+                cameraFacing == CameraSelector.LENS_FACING_FRONT
             poseLandmarkerHelper.detectLiveStream(
                 imageProxy = imageProxy,
                 isFrontCamera = cameraFacing == CameraSelector.LENS_FACING_FRONT

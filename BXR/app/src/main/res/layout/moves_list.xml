@@ -4,9 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#111111"
-    android:padding="20dp">
+    android:padding="40dp">
 
-    <!-- Back Button -->
     <ImageView
         android:id="@+id/btnBack"
         android:layout_width="26dp"
@@ -16,28 +15,23 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="10dp"/>
 
-    <!-- Move Title -->
     <TextView
         android:id="@+id/tvMoveTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
         android:text="Jab"
-        android:textSize="28sp"
-        android:textStyle="bold"
         android:textColor="#F2F2F2"
-        android:layout_marginTop="60dp"/>
-
-    <!-- Carousel -->
-
-    <!-- Dot Indicator -->
+        android:textSize="28sp"
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerMoves"
-        android:layout_width="272dp"
-        android:layout_height="348dp"
+        android:layout_width="259dp"
+        android:layout_height="417dp"
         android:layout_below="@id/tvMoveTitle"
         android:layout_centerInParent="true"
-        android:layout_marginTop="65dp"
+        android:layout_marginTop="40dp"
         android:clipToPadding="false"
         android:paddingStart="60dp"
         android:paddingEnd="60dp" />
@@ -46,16 +40,18 @@
         android:id="@+id/layoutDots"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_below="@id/recyclerMoves"
+        android:layout_marginTop="40dp"
+        android:orientation="horizontal"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"/>
+        />
 
-    <!-- Train Button -->
     <Button
         android:id="@+id/btnTrain"
         android:layout_width="232dp"
         android:layout_height="82dp"
+        android:layout_below="@id/layoutDots"
+        android:layout_marginTop="40dp"
         android:backgroundTint="@color/accent"
         android:lineSpacingExtra="60sp"
         android:text="TRAIN"
@@ -64,8 +60,20 @@
         android:textSize="36sp"
         android:textStyle="bold"
         android:typeface="monospace"
-        android:layout_below="@id/layoutDots"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"/>
+        />
+
+    <TextView
+        android:id="@+id/tvMoveDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvMoveTitle"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="80dp"
+        android:background="#58000000"
+        android:clipToPadding="false"
+        android:paddingStart="60dp"
+        android:paddingEnd="60dp"
+        android:text="TextView" />
 
 </RelativeLayout>

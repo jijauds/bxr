@@ -5,24 +5,26 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.PagerSnapHelper
 import com.bxr.trainingapp.R
 import com.bxr.trainingapp.adapter.CarouselAdapter
 import com.bxr.trainingapp.model.Move
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.recyclerview.widget.PagerSnapHelper
 
 class TrainActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var tvMoveTitle: TextView
+    private lateinit var tvDescription: TextView
     private lateinit var layoutDots: LinearLayout
 
     private lateinit var moves: List<Move>
     private var currentPosition = 0
+    private var currentMove: Move? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,16 +33,20 @@ class TrainActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerMoves)
         tvMoveTitle = findViewById(R.id.tvMoveTitle)
         layoutDots = findViewById(R.id.layoutDots)
+        tvDescription = findViewById(R.id.tvMoveDescription)
+
+        tvDescription.visibility = View.GONE
 
         findViewById<ImageView>(R.id.btnBack).setOnClickListener {
             finish()
         }
 
         moves = listOf(
-            Move("Jab", R.drawable.move),
-            Move("Cross", R.drawable.move),
-            Move("Hook", R.drawable.move),
-            Move("Uppercut", R.drawable.move)
+            Move("Jab", R.drawable.move, "Jab description"),
+            Move("Cross", R.drawable.move, "Cross description"),
+            Move("Front Hook", R.drawable.move, "Front Hook description"),
+            Move("Front Uppercut", R.drawable.move, "Front Uppercut description"),
+            Move("Rear Uppercut", R.drawable.move, "Rear Uppercut description")
         )
 
         setupRecycler()
@@ -55,11 +61,25 @@ class TrainActivity : AppCompatActivity() {
     }
 
     private fun setupRecycler() {
+
         val layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = CarouselAdapter(moves) {}
+
+        val adapter = CarouselAdapter(moves) { move ->
+
+            if (currentMove == move) {
+                tvDescription.visibility = View.GONE
+                currentMove = null
+            } else {
+                tvDescription.text = move.description
+                tvDescription.visibility = View.VISIBLE
+                currentMove = move
+            }
+        }
+
+        recyclerView.adapter = adapter
 
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(recyclerView)
@@ -72,6 +92,9 @@ class TrainActivity : AppCompatActivity() {
                     if (pos != currentPosition) {
                         currentPosition = pos
                         updateUI(pos)
+
+                        tvDescription.visibility = View.GONE
+                        currentMove = null
                     }
                 }
             }
@@ -103,3 +126,4 @@ class TrainActivity : AppCompatActivity() {
         }
     }
 }
+

@@ -28,91 +28,113 @@ import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import kotlin.math.max
 import kotlin.math.min
 
+
 class OverlayView(context: Context?, attrs: AttributeSet?) :
     View(context, attrs) {
 
+    var rotationDegrees = 0
+    var isFrontCamera = false
     private var results: PoseLandmarkerResult? = null
-    private var pointPaint = Paint()
-    private var linePaint = Paint()
+    private val pointPaint = Paint()
+    private val linePaint = Paint()
 
     private var scaleFactor: Float = 1f
     private var imageWidth: Int = 1
     private var imageHeight: Int = 1
 
-    init {
-        initPaints()
-    }
+    private var offsetX = 0f
+    private var offsetY = 0f
+    private val selected = setOf(0, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28, 29, 30)
+    private val selected_lines = listOf(
+        Pair(12,11),
+        Pair(12,14),
+        Pair(14,16),
+        Pair(11,13),
+        Pair(13,15),
+        Pair(12,24),
+        Pair(11,23),
+        Pair(24,23),
+        Pair(24,26),
+        Pair(23,25),
+        Pair(26,30),
+        Pair(25,29)
+    )
 
-    fun clear() {
-        results = null
-        pointPaint.reset()
-        linePaint.reset()
-        invalidate()
+    init {
         initPaints()
     }
 
     private fun initPaints() {
         linePaint.color =
             ContextCompat.getColor(context!!, R.color.mp_color_primary)
-        linePaint.strokeWidth = LANDMARK_STROKE_WIDTH
+        linePaint.strokeWidth = 12f
         linePaint.style = Paint.Style.STROKE
 
         pointPaint.color = Color.YELLOW
-        pointPaint.strokeWidth = LANDMARK_STROKE_WIDTH
+        pointPaint.strokeWidth = 12f
         pointPaint.style = Paint.Style.FILL
     }
 
-    override fun draw(canvas: Canvas) {
-        super.draw(canvas)
-        results?.let { poseLandmarkerResult ->
-            for(landmark in poseLandmarkerResult.landmarks()) {
-                for(normalizedLandmark in landmark) {
-                    canvas.drawPoint(
-                        normalizedLandmark.x() * imageWidth * scaleFactor,
-                        normalizedLandmark.y() * imageHeight * scaleFactor,
-                        pointPaint
-                    )
-                }
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
 
-                PoseLandmarker.POSE_LANDMARKS.forEach {
-                    canvas.drawLine(
-                        poseLandmarkerResult.landmarks().get(0).get(it!!.start()).x() * imageWidth * scaleFactor,
-                        poseLandmarkerResult.landmarks().get(0).get(it.start()).y() * imageHeight * scaleFactor,
-                        poseLandmarkerResult.landmarks().get(0).get(it.end()).x() * imageWidth * scaleFactor,
-                        poseLandmarkerResult.landmarks().get(0).get(it.end()).y() * imageHeight * scaleFactor,
-                        linePaint)
-                }
-            }
+        // canvas.rotate(rotationDegrees.toFloat(), width / 2f, height / 2f)
+
+        canvas.scale(-1f, 1f, width / 2f, height / 2f)
+
+        val result = results ?: return
+        if (result.landmarks().isEmpty()) return
+
+        val landmarks = result.landmarks()[0]
+
+        selected.forEach { index ->
+            if (index >= landmarks.size) return@forEach
+
+            val landmark = landmarks[index]
+            val x = landmark.x() * imageWidth * scaleFactor + offsetX
+            val y = landmark.y() * imageHeight * scaleFactor + offsetY
+            canvas.drawPoint(x, y, pointPaint)
+        }
+
+        selected_lines.forEach { (startIdx, endIdx) ->
+            if (startIdx >= landmarks.size || endIdx >= landmarks.size) return@forEach
+
+            val start = landmarks[startIdx]
+            val end = landmarks[endIdx]
+
+            val startX = start.x() * imageWidth * scaleFactor + offsetX
+            val startY = start.y() * imageHeight * scaleFactor + offsetY
+            val endX = end.x() * imageWidth * scaleFactor + offsetX
+            val endY = end.y() * imageHeight * scaleFactor + offsetY
+
+            canvas.drawLine(startX, startY, endX, endY, linePaint)
         }
     }
 
     fun setResults(
-        poseLandmarkerResults: PoseLandmarkerResult,
+        result: PoseLandmarkerResult,
         imageHeight: Int,
         imageWidth: Int,
-        runningMode: RunningMode = RunningMode.IMAGE
+        runningMode: RunningMode
     ) {
-        results = poseLandmarkerResults
 
+        if (imageWidth == 0 || imageHeight == 0) return
+
+        results = result
         this.imageHeight = imageHeight
         this.imageWidth = imageWidth
 
-        scaleFactor = when (runningMode) {
-            RunningMode.IMAGE,
-            RunningMode.VIDEO -> {
-                min(width * 1f / imageWidth, height * 1f / imageHeight)
-            }
-            RunningMode.LIVE_STREAM -> {
-                // PreviewView is in FILL_START mode. So we need to scale up the
-                // landmarks to match with the size that the captured images will be
-                // displayed.
-                max(width * 1f / imageWidth, height * 1f / imageHeight)
-            }
-        }
-        invalidate()
-    }
+        val scaleX = width.toFloat() / imageWidth
+        val scaleY = height.toFloat() / imageHeight
 
-    companion object {
-        private const val LANDMARK_STROKE_WIDTH = 12F
+        scaleFactor = max(scaleX, scaleY)
+
+        val scaledWidth = imageWidth * scaleFactor
+        val scaledHeight = imageHeight * scaleFactor
+
+        offsetX = (width - scaledWidth) / 2f
+        offsetY = (height - scaledHeight) / 2f
+
+        invalidate()
     }
 }
