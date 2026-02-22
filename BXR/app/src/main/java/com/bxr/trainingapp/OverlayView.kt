@@ -27,6 +27,8 @@ import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import kotlin.math.max
 import kotlin.math.min
+import com.bxr.trainingapp.data.calculateAngle
+import android.util.Log
 
 
 class OverlayView(context: Context?, attrs: AttributeSet?) :
