@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,12 +15,16 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import com.bxr.trainingapp.R
 import com.bxr.trainingapp.adapter.CarouselAdapter
 import com.bxr.trainingapp.model.Move
+import android.net.Uri
+import android.widget.MediaController
+import androidx.core.net.toUri
 
 class TrainActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var tvMoveTitle: TextView
     private lateinit var tvDescription: TextView
+    private lateinit var tvPreview: VideoView
     private lateinit var layoutDots: LinearLayout
 
     private lateinit var moves: List<Move>
@@ -34,30 +39,37 @@ class TrainActivity : AppCompatActivity() {
         tvMoveTitle = findViewById(R.id.tvMoveTitle)
         layoutDots = findViewById(R.id.layoutDots)
         tvDescription = findViewById(R.id.tvMoveDescription)
+        tvPreview = findViewById(R.id.tvMovePreview)
 
         tvDescription.visibility = View.GONE
+        tvPreview.visibility = View.GONE
 
         findViewById<ImageView>(R.id.btnBack).setOnClickListener {
             finish()
         }
 
-        val guard_desc = "At rest: \nChin tucked downwards\nRelaxed and leveled shoulders\nLead arm slightly bent, hand in front of face\nRear arm bent and close to chin\nHips square with shoulders\nLegs bent"
+        val guard_desc = "\nAt rest: \n\nChin tucked downwards\nRelaxed and leveled shoulders\nLead arm slightly bent, hand in front of face\nRear arm bent and close to chin\nHips square with shoulders\nLegs bent"
 
         moves = listOf(
             Move("Jab", R.drawable.move,
-                "$guard_desc\nAt climax: \nLead arm fully extended\nRear arm at guard\nHips and legs same as guard"
+                "$guard_desc\n\nAt climax: \n\nLead arm fully extended\nRear arm at guard\nHips and legs same as guard",
+                R.raw.jab_preview
             ),
-            Move("Cross", R.drawable.move,
-                "$guard_desc\nAt climax: \nLead arm fully extended\nRear arm at guard\nHips and legs same as guard"
+            Move("Straight", R.drawable.move,
+                "$guard_desc\n\nAt climax: \n\nLead arm fully extended\nRear arm at guard\nHips and legs same as guard",
+                R.raw.straight_preview
             ),
             Move("Front Hook", R.drawable.move,
-                "$guard_desc\nAt climax: \nLead arm fully extended\nRear arm at guard\nHips and legs same as guard"
+                "$guard_desc\n\nAt climax: \n\nLead arm fully extended\nRear arm at guard\nHips and legs same as guard",
+                R.raw.jab_preview
             ),
             Move("Front Uppercut", R.drawable.move,
-                "$guard_desc\nAt climax: \nLead arm fully extended\nRear arm at guard\nHips and legs same as guard"
+                "$guard_desc\n\nAt climax: \n\nLead arm fully extended\nRear arm at guard\nHips and legs same as guard",
+                R.raw.front_uppercut_preview
             ),
             Move("Rear Uppercut", R.drawable.move,
-                "$guard_desc\nAt climax: \nLead arm fully extended\nRear arm at guard\nHips and legs same as guard"
+                "$guard_desc\n\nAt climax: \n\nLead arm fully extended\nRear arm at guard\nHips and legs same as guard",
+                R.raw.rear_uppercut_preview
             )
         )
 
@@ -69,6 +81,27 @@ class TrainActivity : AppCompatActivity() {
             val intent = Intent(this, CameraActivity::class.java)
             intent.putExtra("MOVE_NAME", moves[currentPosition].name)
             startActivity(intent)
+        }
+
+        findViewById<Button>(R.id.btnVid).setOnClickListener {
+
+            val videoUri = Uri.parse(
+                "android.resource://$packageName/${moves[currentPosition].videoRes}"
+            )
+
+            tvPreview.setVideoURI(videoUri)
+
+            val mediaController = MediaController(this)
+            mediaController.setAnchorView(tvPreview)
+            tvPreview.setMediaController(mediaController)
+
+            if( tvPreview.visibility == View.GONE ){
+                tvPreview.visibility = View.VISIBLE
+                tvPreview.requestFocus()
+                tvPreview.start()
+            } else {
+                tvPreview.visibility = View.GONE
+            }
         }
     }
 
@@ -136,6 +169,9 @@ class TrainActivity : AppCompatActivity() {
                 else R.drawable.dot_inactive
             )
         }
+
+        tvPreview.stopPlayback()
+        tvPreview.visibility = View.GONE
     }
 }
 

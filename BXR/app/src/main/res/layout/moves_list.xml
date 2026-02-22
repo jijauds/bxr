@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#111111"
@@ -22,7 +23,7 @@
         android:layout_marginTop="60dp"
         android:text="Jab"
         android:textColor="#F2F2F2"
-        android:textSize="28sp"
+        android:textSize="48sp"
         android:textStyle="bold"
         android:fontFamily="@font/jersey"/>
 
@@ -49,32 +50,59 @@
 
     <Button
         android:id="@+id/btnTrain"
-        android:layout_width="232dp"
-        android:layout_height="82dp"
+        android:layout_width="161dp"
+        android:layout_height="73dp"
         android:layout_below="@id/layoutDots"
-        android:layout_marginTop="40dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="29dp"
         android:backgroundTint="@color/accent"
+        android:fontFamily="@font/jersey"
         android:lineSpacingExtra="60sp"
         android:text="TRAIN"
-        android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="36sp"
         android:textStyle="bold"
-        android:typeface="monospace"
-        android:layout_centerHorizontal="true"
-        />
+        android:typeface="monospace" />
+
+    <Button
+        android:id="@+id/btnVid"
+        android:layout_width="73dp"
+        android:layout_height="73dp"
+        android:layout_below="@id/layoutDots"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="230dp"
+        android:layout_marginTop="29dp"
+        android:backgroundTint="@color/accent"
+        android:fontFamily="@font/jersey"
+        android:lineSpacingExtra="60sp"
+        android:text="▶"
+        android:textColor="@color/white"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:typeface="monospace" />
 
     <TextView
         android:id="@+id/tvMoveDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="191dp"
+        android:layout_height="227dp"
         android:layout_below="@id/tvMoveTitle"
         android:layout_centerInParent="true"
         android:layout_marginTop="80dp"
-        android:background="#58000000"
+        android:background="#BB000000"
         android:clipToPadding="false"
-        android:paddingStart="60dp"
-        android:paddingEnd="60dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
         android:text="TextView" />
+
+    <VideoView
+        android:id="@+id/tvMovePreview"
+        android:layout_width="259dp"
+        android:layout_height="417dp"
+        android:layout_below="@id/tvMoveTitle"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="87dp"
+        android:background="#58000000" />
+
 
 </RelativeLayout>
