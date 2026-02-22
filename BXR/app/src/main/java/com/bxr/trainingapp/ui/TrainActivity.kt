@@ -41,12 +41,24 @@ class TrainActivity : AppCompatActivity() {
             finish()
         }
 
+        val guard_desc = "At rest: \nChin tucked downwards\nRelaxed and leveled shoulders\nLead arm slightly bent, hand in front of face\nRear arm bent and close to chin\nHips square with shoulders\nLegs bent"
+
         moves = listOf(
-            Move("Jab", R.drawable.move, "Jab description"),
-            Move("Cross", R.drawable.move, "Cross description"),
-            Move("Front Hook", R.drawable.move, "Front Hook description"),
-            Move("Front Uppercut", R.drawable.move, "Front Uppercut description"),
-            Move("Rear Uppercut", R.drawable.move, "Rear Uppercut description")
+            Move("Jab", R.drawable.move,
+                "$guard_desc\nAt climax: \nLead arm fully extended\nRear arm at guard\nHips and legs same as guard"
+            ),
+            Move("Cross", R.drawable.move,
+                "$guard_desc\nAt climax: \nLead arm fully extended\nRear arm at guard\nHips and legs same as guard"
+            ),
+            Move("Front Hook", R.drawable.move,
+                "$guard_desc\nAt climax: \nLead arm fully extended\nRear arm at guard\nHips and legs same as guard"
+            ),
+            Move("Front Uppercut", R.drawable.move,
+                "$guard_desc\nAt climax: \nLead arm fully extended\nRear arm at guard\nHips and legs same as guard"
+            ),
+            Move("Rear Uppercut", R.drawable.move,
+                "$guard_desc\nAt climax: \nLead arm fully extended\nRear arm at guard\nHips and legs same as guard"
+            )
         )
 
         setupRecycler()

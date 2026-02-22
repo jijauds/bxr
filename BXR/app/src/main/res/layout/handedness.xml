@@ -21,6 +21,7 @@
         android:textSize="34sp"
         android:textStyle="bold"
         android:typeface="monospace"
+        android:fontFamily="@font/jersey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

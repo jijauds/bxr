@@ -23,7 +23,8 @@
         android:text="Jab"
         android:textColor="#F2F2F2"
         android:textSize="28sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:fontFamily="@font/jersey"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerMoves"
