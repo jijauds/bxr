@@ -1,5 +1,6 @@
 package com.bxr.trainingapp.data
 
+import android.util.Log
 import kotlin.text.set
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 
@@ -33,9 +34,8 @@ class Angles {
         "L_Hip" to 0.0,
         "R_Hip" to 0.0
     ))
-    private var results: PoseLandmarkerResult? = null
 
-    public fun getAngles(): AngleType? {
+    fun getAngles(results: PoseLandmarkerResult): AngleType? {
         val result = results ?: return null
         if (result.landmarks().isEmpty()) return null
 
@@ -57,3 +57,4 @@ class Angles {
         return angleList
     }
 }
+
