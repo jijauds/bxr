@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import android.content.res.Configuration
 import android.os.Build
 import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.Preview
@@ -63,6 +64,8 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
 
     private lateinit var viewFinder: PreviewView
     private lateinit var overlay: OverlayView
+    private lateinit var tvRepNumber: TextView
+    private lateinit var tvErrorMessage: TextView
 
     private val activityResultLauncher =
         registerForActivityResult(
@@ -94,10 +97,14 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
             insets
         }
 
+        // to do other moobs
         moveName = intent.getStringExtra("MOVE_NAME")
 
         viewFinder = findViewById(R.id.view_finder)
         overlay = findViewById(R.id.overlay)
+        tvRepNumber = findViewById(R.id.repCounter)
+        tvErrorMessage = findViewById(R.id.errorText)
+
 
         viewFinder.scaleType = PreviewView.ScaleType.FILL_CENTER
 
@@ -134,6 +141,10 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         if (newAngles == null) return
         angles = newAngles
         currentSession.formState = trackJab(angles!!, currentSession.formState)
+        runOnUiThread {
+            tvRepNumber.text = (currentSession.formState.reps.first).toString()
+            tvErrorMessage.text = (currentSession.formState.errors.last()).toString()
+        }
         Log.d("JABSTATE", currentSession.formState.state.toString())
         Log.d("ANGLES", angles.toString())
     }

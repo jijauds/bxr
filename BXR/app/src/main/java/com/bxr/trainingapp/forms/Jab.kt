@@ -29,6 +29,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
         FormStates.notStarted -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
             Log.d("GUARDERRORS", checkGuard.errors.toString())
+            tracker.addErrors(checkGuard.errors)
             val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
                 tracker.state = FormStates.inProgress
@@ -38,6 +39,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
         FormStates.inProgress -> {
             val checkJab = checkAngle(angles, jabAngles, THRESHOLD)
             Log.d("JABERRORS", checkJab.errors.toString())
+            tracker.addErrors(checkJab.errors)
             val atClimax = checkJab.errors.isEmpty()
             if (atClimax) {
                 tracker.state = FormStates.completed
@@ -47,6 +49,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
         FormStates.completed -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
             Log.d("GUARDERRORS", checkGuard.errors.toString())
+            tracker.addErrors(checkGuard.errors)
             val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
                 tracker.state = FormStates.notStarted
