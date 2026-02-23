@@ -26,7 +26,14 @@ import androidx.core.content.ContextCompat
 import com.bxr.trainingapp.OverlayView
 import com.bxr.trainingapp.PoseLandmarkerHelper
 import com.bxr.trainingapp.R
+import com.bxr.trainingapp.data.AngleType
+import com.bxr.trainingapp.data.Angles
+import com.bxr.trainingapp.forms.trackJab
+import com.bxr.trainingapp.sessions.FormTracker
+import com.bxr.trainingapp.sessions.Handedness
+import com.bxr.trainingapp.sessions.SessionTracker
 import com.google.mediapipe.tasks.vision.core.RunningMode
+import java.time.Instant
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -34,6 +41,7 @@ import java.util.concurrent.TimeUnit
 class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListener {
     private lateinit var poseLandmarkerHelper: PoseLandmarkerHelper
 
+    private var angles: AngleType? = null
     private var moveName: String? = null
 
     private var model = PoseLandmarkerHelper.Companion.MODEL_POSE_LANDMARKER_FULL
@@ -115,6 +123,19 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         }
     }
 
+    private var currentSession = SessionTracker(
+        startTime = Instant.now(),
+        endTime = Instant.now(),
+        formState = FormTracker(),
+        handedness = Handedness.right
+    )
+
+    private fun updateState(newAngles: AngleType?){
+        if (newAngles == null) return
+        angles = newAngles
+        currentSession.formState = trackJab(angles!!, currentSession.formState)
+    }
+
     private fun requestPermissions(){
         activityResultLauncher.launch(REQUIRED_PERMISSIONS)
     }
@@ -165,16 +186,20 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
     }
 
     override fun onResults(resultBundle: PoseLandmarkerHelper.ResultBundle) {
+        val resultList = resultBundle.results.first()
+        val computedAngles = Angles().getAngles(resultList)
+        updateState(computedAngles)
         runOnUiThread {
             overlay.setResults(
-                resultBundle.results.first(),
+                resultList,
                 resultBundle.inputImageHeight,
                 resultBundle.inputImageWidth,
-                RunningMode.LIVE_STREAM
+                RunningMode.LIVE_STREAM,
             )
             overlay.invalidate()
         }
     }
+
 
     private fun setUpCamera() {
         val cameraProvideFuture =

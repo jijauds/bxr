@@ -29,6 +29,8 @@ import kotlin.math.max
 import kotlin.math.min
 import com.bxr.trainingapp.data.calculateAngle
 import android.util.Log
+import com.bxr.trainingapp.data.AngleType
+import com.bxr.trainingapp.data.Angles
 
 
 class OverlayView(context: Context?, attrs: AttributeSet?) :
@@ -84,6 +86,7 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
 
         canvas.scale(-1f, 1f, width / 2f, height / 2f)
 
+
         val result = results ?: return
         if (result.landmarks().isEmpty()) return
 
@@ -117,7 +120,7 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
         result: PoseLandmarkerResult,
         imageHeight: Int,
         imageWidth: Int,
-        runningMode: RunningMode
+        runningMode: RunningMode,
     ) {
 
         if (imageWidth == 0 || imageHeight == 0) return

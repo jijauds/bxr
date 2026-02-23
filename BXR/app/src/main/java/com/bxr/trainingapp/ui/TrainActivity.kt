@@ -13,7 +13,13 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.bxr.trainingapp.R
 import com.bxr.trainingapp.adapter.CarouselAdapter
+import com.bxr.trainingapp.data.AngleType
+import com.bxr.trainingapp.forms.trackJab
 import com.bxr.trainingapp.model.Move
+import com.bxr.trainingapp.sessions.FormTracker
+import com.bxr.trainingapp.sessions.Handedness
+import com.bxr.trainingapp.sessions.SessionTracker
+import java.time.Instant
 
 class TrainActivity : AppCompatActivity() {
 
@@ -25,6 +31,7 @@ class TrainActivity : AppCompatActivity() {
     private lateinit var moves: List<Move>
     private var currentPosition = 0
     private var currentMove: Move? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +66,7 @@ class TrainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
 
     private fun setupRecycler() {
 
