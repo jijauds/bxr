@@ -1,12 +1,13 @@
 package com.bxr.trainingapp.forms
 
+import android.util.Log
 import com.bxr.trainingapp.data.AngleType
 import com.bxr.trainingapp.sessions.FormStates
 import com.bxr.trainingapp.sessions.FormTracker
 
 private val jabAngles = mapOf(
     "L_Hand" to 5.0,
-    "R_Hand" to 170.0,
+    //"R_Hand" to 170.0,
     "L_Elbow" to 165.0,
     "R_Elbow" to 35.0,
     "L_Knee" to 170.0,
@@ -17,30 +18,36 @@ private val jabAngles = mapOf(
     "R_Hip" to 111.0
 )
 
-private const val THRESHOLD = 20
+private const val THRESHOLD = 20.0
 
 fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
 
     val angles = angleType.angles
-    val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
-    val atGuard = checkGuard.errors.isEmpty()
-    val checkJab = checkAngle(angles, jabAngles, THRESHOLD)
-    val atClimax = checkJab.errors.isEmpty()
+    Log.d("REPS", tracker.reps.toString())
 
     when (tracker.state) {
         FormStates.notStarted -> {
+            val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
+            Log.d("GUARDERRORS", checkGuard.errors.toString())
+            val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
                 tracker.state = FormStates.inProgress
             }
         }
 
         FormStates.inProgress -> {
+            val checkJab = checkAngle(angles, jabAngles, THRESHOLD)
+            Log.d("JABERRORS", checkJab.errors.toString())
+            val atClimax = checkJab.errors.isEmpty()
             if (atClimax) {
                 tracker.state = FormStates.completed
             }
         }
 
         FormStates.completed -> {
+            val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
+            Log.d("GUARDERRORS", checkGuard.errors.toString())
+            val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
                 tracker.state = FormStates.notStarted
                 tracker.addReps(Triple(1, 0, 0))

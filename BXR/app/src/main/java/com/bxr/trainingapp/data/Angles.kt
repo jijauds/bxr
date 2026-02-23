@@ -11,7 +11,7 @@ data class AngleType (
 class Angles {
     private val triplets = mapOf(
         "L_Hand" to Triple(11,15,12),
-        "R_Hand" to Triple(12,16,11),
+        //"R_Hand" to Triple(12,16,11),
         "L_Elbow" to Triple(11,13,15),
         "R_Elbow" to Triple(12,14,16),
         "L_Knee" to Triple(23,25,27),
@@ -24,7 +24,7 @@ class Angles {
 
     private val angleList = AngleType(mutableMapOf(
         "L_Hand" to 0.0,
-        "R_Hand" to 0.0,
+        //"R_Hand" to 0.0,
         "L_Elbow" to 0.0,
         "R_Elbow" to 0.0,
         "L_Knee" to 0.0,

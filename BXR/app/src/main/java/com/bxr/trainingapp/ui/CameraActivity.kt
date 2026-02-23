@@ -134,6 +134,8 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         if (newAngles == null) return
         angles = newAngles
         currentSession.formState = trackJab(angles!!, currentSession.formState)
+        Log.d("JABSTATE", currentSession.formState.state.toString())
+        Log.d("ANGLES", angles.toString())
     }
 
     private fun requestPermissions(){
