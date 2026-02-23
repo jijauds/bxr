@@ -29,6 +29,7 @@ import kotlin.math.max
 import kotlin.math.min
 import com.bxr.trainingapp.data.calculateAngle
 import android.util.Log
+import com.bxr.trainingapp.data.Angles
 
 
 class OverlayView(context: Context?, attrs: AttributeSet?) :
@@ -61,6 +62,8 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
         Pair(26,30),
         Pair(25,29)
     )
+    private val angleCalc = Angles()
+    private var currentAngles: AngleType? = null
 
     init {
         initPaints()
@@ -86,6 +89,8 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
 
         val result = results ?: return
         if (result.landmarks().isEmpty()) return
+
+        angleCalc
 
         val landmarks = result.landmarks()[0]
 

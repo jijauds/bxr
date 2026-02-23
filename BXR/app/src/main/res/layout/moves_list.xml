@@ -85,15 +85,16 @@
     <TextView
         android:id="@+id/tvMoveDescription"
         android:layout_width="191dp"
-        android:layout_height="227dp"
+        android:layout_height="370dp"
         android:layout_below="@id/tvMoveTitle"
         android:layout_centerInParent="true"
         android:layout_marginTop="80dp"
-        android:background="#BB000000"
+        android:background="@drawable/rounded_corner_view"
         android:clipToPadding="false"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        android:text="TextView" />
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:text="TextView"
+        android:textSize="16sp" />
 
     <VideoView
         android:id="@+id/tvMovePreview"
@@ -101,8 +102,7 @@
         android:layout_height="417dp"
         android:layout_below="@id/tvMoveTitle"
         android:layout_centerInParent="true"
-        android:layout_marginTop="87dp"
-        android:background="#58000000" />
+        android:layout_marginTop="87dp"/>
 
 
 </RelativeLayout>

@@ -48,7 +48,7 @@ class TrainActivity : AppCompatActivity() {
             finish()
         }
 
-        val guard_desc = "\nAt rest: \n\nChin tucked downwards\nRelaxed and leveled shoulders\nLead arm slightly bent, hand in front of face\nRear arm bent and close to chin\nHips square with shoulders\nLegs bent"
+        val guard_desc = "\nGuarding: \n\nChin tucked downwards\nRelaxed and leveled shoulders\nLead arm slightly bent, hand in front of face\nRear arm bent and close to chin\nHips square with shoulders\nLegs bent"
 
         moves = listOf(
             Move("Jab", R.drawable.move,
