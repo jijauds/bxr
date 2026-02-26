@@ -6,6 +6,7 @@ class FormTracker {
     var reps: Triple<Int, Int, Int> = Triple(0, 0, 0)
 
     var errors: MutableList<String> = mutableListOf()
+    var keypoints: Map<String, Boolean> = mapOf()
 
     fun addReps(newReps: Triple<Int, Int, Int>) {
         this.reps = Triple(this.reps.first + newReps.first, this.reps.second + newReps.second, this.reps.third + newReps.third)
@@ -13,5 +14,9 @@ class FormTracker {
 
     fun addErrors(newErrors: List<String>) {
         this.errors.addAll(newErrors)
+    }
+
+    fun changeKeypoints(newKeypoints: Map<String, Boolean>){
+        this.keypoints = newKeypoints
     }
 }

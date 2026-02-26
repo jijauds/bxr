@@ -6,4 +6,5 @@
     <color name="light_gray">#ccc5b9</color>
     <color name="accent">#eb5e28</color>
     <color name="mp_color_primary">#FF00FF</color>
+    <color name="mp_color_wrong">#FF0000</color>
 </resources>

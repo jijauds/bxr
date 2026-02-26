@@ -19,6 +19,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.se.omapi.Session
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -31,6 +32,7 @@ import com.bxr.trainingapp.data.calculateAngle
 import android.util.Log
 import com.bxr.trainingapp.data.Angles
 import com.bxr.trainingapp.data.AngleType
+import com.bxr.trainingapp.sessions.SessionTracker
 
 
 class OverlayView(context: Context?, attrs: AttributeSet?) :
@@ -39,8 +41,10 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     var rotationDegrees = 0
     var isFrontCamera = false
     private var results: PoseLandmarkerResult? = null
+    private var keypointErrors : Map<String, Boolean> = mapOf()
     private val pointPaint = Paint()
-    private val linePaint = Paint()
+    private val linePaintCorrect = Paint()
+    private val linePaintWrong = Paint()
 
     private var scaleFactor: Float = 1f
     private var imageWidth: Int = 1
@@ -64,15 +68,33 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
         Pair(25,29)
     )
 
+    private val keypoint_name_pairing = mapOf<Int, String>(
+        15 to "L_Hand" ,
+        //"R_Hand" to Triple(12,16,11),
+        13 to "L_Elbow" ,
+        14 to "R_Elbow" ,
+        25 to "L_Knee" ,
+        26 to "R_Knee" ,
+        11 to "L_Shoulder" ,
+        12 to "R_Shoulder" ,
+        23 to "L_Hip" ,
+        24 to "R_Hip" ,
+    )
+
     init {
         initPaints()
     }
 
     private fun initPaints() {
-        linePaint.color =
+        linePaintCorrect.color =
             ContextCompat.getColor(context!!, R.color.mp_color_primary)
-        linePaint.strokeWidth = 12f
-        linePaint.style = Paint.Style.STROKE
+        linePaintCorrect.strokeWidth = 12f
+        linePaintCorrect.style = Paint.Style.STROKE
+
+        linePaintWrong.color =
+            ContextCompat.getColor(context!!, R.color.mp_color_wrong)
+        linePaintWrong.strokeWidth = 12f
+        linePaintWrong.style = Paint.Style.STROKE
 
         pointPaint.color = Color.YELLOW
         pointPaint.strokeWidth = 12f
@@ -112,7 +134,12 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
             val endX = end.x() * imageWidth * scaleFactor + offsetX
             val endY = end.y() * imageHeight * scaleFactor + offsetY
 
-            canvas.drawLine(startX, startY, endX, endY, linePaint)
+            if (keypointErrors[keypoint_name_pairing[startIdx]] == true || keypointErrors[keypoint_name_pairing[endIdx]] == true){
+                canvas.drawLine(startX, startY, endX, endY, linePaintCorrect)
+            }
+            else {
+                canvas.drawLine(startX, startY, endX, endY, linePaintWrong)
+            }
         }
     }
 
@@ -120,10 +147,12 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
         result: PoseLandmarkerResult,
         imageHeight: Int,
         imageWidth: Int,
-        runningMode: RunningMode
+        runningMode: RunningMode,
+        keypoint_error: Map<String, Boolean>
     ) {
 
         if (imageWidth == 0 || imageHeight == 0) return
+        keypointErrors = keypoint_error
 
         results = result
         this.imageHeight = imageHeight

@@ -140,7 +140,14 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
     private fun updateState(newAngles: AngleType?){
         if (newAngles == null) return
         angles = newAngles
-        currentSession.formState = trackJab(angles!!, currentSession.formState)
+        when (moveName){
+            null -> return
+            "Jab" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
+            "Straight" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
+            "Front Hook" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
+            "Front Uppercut" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
+            "Rear Uppercut" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
+        }
         runOnUiThread {
             tvRepNumber.text = (currentSession.formState.reps.first).toString()
             tvErrorMessage.text = (currentSession.formState.errors.last()).toString()
@@ -208,6 +215,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
                 resultBundle.inputImageHeight,
                 resultBundle.inputImageWidth,
                 RunningMode.LIVE_STREAM,
+                currentSession.formState.keypoints
             )
             overlay.invalidate()
         }
