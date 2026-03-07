@@ -149,7 +149,10 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
             "Rear Uppercut" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
         }
         runOnUiThread {
-            tvRepNumber.text = (currentSession.formState.reps.first).toString()
+            tvRepNumber.text = buildString {
+                append("Rep #")
+                append((currentSession.formState.reps.first).toString())
+            }
             tvErrorMessage.text = (currentSession.formState.currentErrors).toString()
         }
         currentSession.formState.currentErrors.clear()
