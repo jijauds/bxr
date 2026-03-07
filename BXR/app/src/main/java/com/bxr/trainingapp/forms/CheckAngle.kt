@@ -12,14 +12,21 @@ fun checkAngle(angles: Map<String, Coords>, correctangles: Map<String, Double>, 
     val errors = mutableListOf<String>()
     val keypoints = mutableMapOf<String, Boolean>()
     for ((name, angle) in angles) {
-        if (name == "R_HAND") {
-            if (angle.x in angles["R_SHOULDER"]!!.x..angles["L_SHOULDER"]!!.x && angle.y in angles["R_SHOULDER"]!!.y - 20 ..angles["R_SHOULDER"]!!.y + 20){
-                keypoints[name] = true
+        Log.d("ANGLECHECKER", "$name: $angle")
+        if (name == "R_Hand") {
+            if (angles["R_Shoulder"]?.x != null && angles["L_Shoulder"]?.x != null) {
+                if (angle.x in angles["R_Shoulder"]!!.x..angles["L_Shoulder"]!!.x && angle.y in angles["R_Shoulder"]!!.y - 20..angles["R_Shoulder"]!!.y + 20) {
+                    keypoints[name] = true
+                } else {
+                    keypoints[name] = false
+                    errors.add("$name is wrong")
+                }
+                continue
             } else {
                 keypoints[name] = false
                 errors.add("$name is wrong")
+                continue
             }
-            continue
         }
         if ((angle.angle < correctangles[name]!! - threshhold || angle.angle > correctangles[name]!! + threshhold)) {
             errors.add("$name is wrong")
@@ -28,10 +35,11 @@ fun checkAngle(angles: Map<String, Coords>, correctangles: Map<String, Double>, 
             keypoints[name] = true
         }
     }
-    if (angles["L_KNEE"]?.x != null && angles["R_KNEE"]?.x != null){
-        if (angles["L_KNEE"]!!.x < angles["R_KNEE"]!!.x) {
+    if (angles["L_Knee"]?.x != null && angles["R_Knee"]?.x != null){
+        if (angles["L_Knee"]!!.x < angles["R_Knee"]!!.x) {
             errors.add("Wrong foot forward")
-            keypoints["L_KNEE"] = false
+            keypoints["L_Knee"] = false
+            keypoints["R_Knee"] = false
         }
     }
     return AngleResults(keypoints, errors)
