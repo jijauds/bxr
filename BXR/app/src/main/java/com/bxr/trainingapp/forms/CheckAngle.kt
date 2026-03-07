@@ -19,6 +19,10 @@ fun checkAngle(angles: Map<String, Coords>, correctangles: Map<String, Double>, 
             keypoints[name] = true
         }
     }
+    if (angles["L_KNEE"]!!.x < angles["R_KNEE"]!!.x) {
+        errors.add("")
+        keypoints["L_KNEE"] = false
+    }
     return AngleResults(keypoints, errors)
 }
 
