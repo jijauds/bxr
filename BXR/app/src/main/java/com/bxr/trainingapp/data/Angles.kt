@@ -38,7 +38,7 @@ class Angles {
         "L_Shoulder" to Coords(0.0f , 0.0f , 0.0),
         "R_Shoulder" to Coords(0.0f , 0.0f , 0.0),
         "L_Hip" to Coords(0.0f , 0.0f , 0.0),
-        "R_Hip" to Coords(0.0f , 0.0f , 0.0)
+        "R_Hip" to Coords(0.0f , 0.0f , 0.0),
     ))
 
     fun getAngles(results: PoseLandmarkerResult): AngleType? {

@@ -12,6 +12,15 @@ fun checkAngle(angles: Map<String, Coords>, correctangles: Map<String, Double>, 
     val errors = mutableListOf<String>()
     val keypoints = mutableMapOf<String, Boolean>()
     for ((name, angle) in angles) {
+        if (name == "R_HAND") {
+            if (angle.x in angles["R_SHOULDER"]!!.x..angles["L_SHOULDER"]!!.x && angle.y in angles["R_SHOULDER"]!!.y - 20 ..angles["R_SHOULDER"]!!.y + 20){
+                keypoints[name] = true
+            } else {
+                keypoints[name] = false
+                errors.add("$name is wrong")
+            }
+            continue
+        }
         if ((angle.angle < correctangles[name]!! - threshhold || angle.angle > correctangles[name]!! + threshhold)) {
             errors.add("$name is wrong")
             keypoints[name] = false
@@ -19,9 +28,9 @@ fun checkAngle(angles: Map<String, Coords>, correctangles: Map<String, Double>, 
             keypoints[name] = true
         }
     }
-    if (angles["L_KNEE"]?.x != null && angles["R_KNEE"]?.x != null) {
+    if (angles["L_KNEE"]?.x != null && angles["R_KNEE"]?.x != null){
         if (angles["L_KNEE"]!!.x < angles["R_KNEE"]!!.x) {
-            errors.add("Wrong Foot Forward")
+            errors.add("Wrong foot forward")
             keypoints["L_KNEE"] = false
         }
     }
