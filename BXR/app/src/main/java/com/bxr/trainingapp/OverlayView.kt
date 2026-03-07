@@ -80,6 +80,8 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
         23 to "L_Hip" ,
         24 to "R_Hip" ,
     )
+    private val angleCalc = Angles()
+    // private var currentAngles: AngleType? = null
 
     init {
         initPaints()

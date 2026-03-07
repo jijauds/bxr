@@ -9,3 +9,4 @@ data class SessionTracker (
     var formState : FormTracker,
     var handedness : Handedness
 )
+

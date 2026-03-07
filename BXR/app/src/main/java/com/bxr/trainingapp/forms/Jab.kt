@@ -30,10 +30,10 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
     when (tracker.state) {
         FormStates.notStarted -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
-            return tracker
             Log.d("GUARDERRORS", checkGuard.errors.toString())
             tracker.addKeyPoseErrors(checkGuard.errors)
             tracker.changeKeypoints(checkGuard.keypoints)
+            tracker.currentErrors = checkGuard.errors
             val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
                 tracker.errorCounter.startingPosition++

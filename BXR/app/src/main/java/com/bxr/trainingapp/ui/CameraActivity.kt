@@ -1,6 +1,7 @@
 package com.bxr.trainingapp.ui
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -10,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import android.content.res.Configuration
 import android.os.Build
 import android.util.Log
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -67,6 +69,11 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
     private lateinit var tvRepNumber: TextView
     private lateinit var tvErrorMessage: TextView
 
+    private var lastErrorUpdateTime = 0L
+    private val errorUpdateInterval = 2000L
+    private var displayedErrors: List<String> = emptyList()
+    private val errorFrameCounts = mutableMapOf<String, Int>()
+
     private val activityResultLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
@@ -105,7 +112,6 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         tvRepNumber = findViewById(R.id.repCounter)
         tvErrorMessage = findViewById(R.id.errorText)
 
-
         viewFinder.scaleType = PreviewView.ScaleType.FILL_CENTER
 
         backgroundExecutor = Executors.newSingleThreadExecutor()
@@ -137,6 +143,31 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         handedness = Handedness.right
     )
 
+    private fun getStableErrors(errors: List<String>): List<String> {
+        val stable = mutableListOf<String>()
+
+        for (error in errors) {
+            val count = (errorFrameCounts[error] ?: 0) + 1
+            errorFrameCounts[error] = count
+
+            if (count >= 3) {
+                stable.add(error)
+            }
+        }
+
+        val currentSet = errors.toSet()
+        val iterate = errorFrameCounts.keys.iterator()
+        while (iterate.hasNext()) {
+            val key = iterate.next()
+            if (!currentSet.contains(key)) {
+                iterate.remove()
+            }
+        }
+
+        return stable
+    }
+
+
     private fun updateState(newAngles: AngleType?){
         if (newAngles == null) return
         angles = newAngles
@@ -148,16 +179,42 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
             "Front Uppercut" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
             "Rear Uppercut" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
         }
+        val now = System.currentTimeMillis()
+
+        if (currentSession.formState.currentErrors.isNotEmpty()) {
+            val stableErrors = getStableErrors(
+                currentSession.formState.currentErrors.filterNotNull()
+            )
+
+            if (stableErrors.isNotEmpty()) {
+                displayedErrors = stableErrors
+            }
+        }
+
         runOnUiThread {
             tvRepNumber.text = buildString {
                 append("Rep #")
-                append((currentSession.formState.reps.first).toString())
+                append(currentSession.formState.reps.first)
             }
-            tvErrorMessage.text = (currentSession.formState.currentErrors).toString()
+
+            if (now - lastErrorUpdateTime > errorUpdateInterval) {
+                tvErrorMessage.text =
+                    if (displayedErrors.isNotEmpty())
+                        displayedErrors.joinToString("\n")
+                    else ""
+                lastErrorUpdateTime = now
+            }
         }
+        currentSession.formState.keyPoseErrors.clear()
         currentSession.formState.currentErrors.clear()
-        Log.d("JABSTATE", currentSession.formState.state.toString())
-        Log.d("ANGLES", angles.toString())
+        // Log.d("JABSTATE", currentSession.formState.state.toString())
+        // Log.d("ANGLES", angles.toString())
+
+        findViewById<Button>(R.id.btnEndSession).setOnClickListener {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private fun requestPermissions(){
