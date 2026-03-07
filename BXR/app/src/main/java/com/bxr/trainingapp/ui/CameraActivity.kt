@@ -150,8 +150,9 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         }
         runOnUiThread {
             tvRepNumber.text = (currentSession.formState.reps.first).toString()
-            tvErrorMessage.text = (currentSession.formState.errors.last()).toString()
+            tvErrorMessage.text = (currentSession.formState.currentErrors).toString()
         }
+        currentSession.formState.currentErrors.clear()
         Log.d("JABSTATE", currentSession.formState.state.toString())
         Log.d("ANGLES", angles.toString())
     }

@@ -5,13 +5,19 @@ import kotlin.text.set
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 
 data class AngleType (
-    var angles: MutableMap<String, Double>
+    var angles: MutableMap<String, Coords>
+)
+
+data class Coords (
+    var x: Float,
+    var y: Float,
+    var angle: Double
 )
 
 class Angles {
     private val triplets = mapOf(
-        "L_Hand" to Triple(11,15,12),
-        //"R_Hand" to Triple(12,16,11),
+        "L_Hand" to Triple(12,11,15),
+        "R_Hand" to Triple(11,12,16),
         "L_Elbow" to Triple(11,13,15),
         "R_Elbow" to Triple(12,14,16),
         "L_Knee" to Triple(23,25,27),
@@ -23,16 +29,16 @@ class Angles {
     )
 
     private val angleList = AngleType(mutableMapOf(
-        "L_Hand" to 0.0,
-        //"R_Hand" to 0.0,
-        "L_Elbow" to 0.0,
-        "R_Elbow" to 0.0,
-        "L_Knee" to 0.0,
-        "R_Knee" to 0.0,
-        "L_Shoulder" to 0.0,
-        "R_Shoulder" to 0.0,
-        "L_Hip" to 0.0,
-        "R_Hip" to 0.0
+        "L_Hand" to Coords(0.0f ,0.0f , 0.0),
+        "R_Hand" to Coords(0.0f ,0.0f , 0.0),
+        "L_Elbow" to Coords(0.0f , 0.0f , 0.0),
+        "R_Elbow" to Coords(0.0f , 0.0f , 0.0),
+        "L_Knee" to Coords(0.0f , 0.0f , 0.0),
+        "R_Knee" to Coords(0.0f , 0.0f , 0.0),
+        "L_Shoulder" to Coords(0.0f , 0.0f , 0.0),
+        "R_Shoulder" to Coords(0.0f , 0.0f , 0.0),
+        "L_Hip" to Coords(0.0f , 0.0f , 0.0),
+        "R_Hip" to Coords(0.0f , 0.0f , 0.0)
     ))
 
     fun getAngles(results: PoseLandmarkerResult): AngleType? {
@@ -47,8 +53,15 @@ class Angles {
             val landmarkA = landmarks[pointA]
             val landmarkB = landmarks[pointB]
             val landmarkC = landmarks[pointC]
+            if ("Hand" !in name) {
+                angleList.angles[name]!!.x = landmarkB.x()
+                angleList.angles[name]!!.y = landmarkB.y()
+            } else {
+                angleList.angles[name]!!.x = landmarkC.x()
+                angleList.angles[name]!!.y = landmarkC.y()
+            }
 
-            angleList.angles[name] = calculateAngle(
+            angleList.angles[name]!!.angle = calculateAngle(
                 Pair(landmarkA.x(), landmarkA.y()),
                 Pair(landmarkB.x(), landmarkB.y()),
                 Pair(landmarkC.x(), landmarkC.y())
