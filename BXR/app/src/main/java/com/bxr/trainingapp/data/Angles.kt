@@ -39,7 +39,6 @@ class Angles {
         "R_Shoulder" to Coords(0.0f , 0.0f , 0.0),
         "L_Hip" to Coords(0.0f , 0.0f , 0.0),
         "R_Hip" to Coords(0.0f , 0.0f , 0.0),
-        "Head" to Coords(0.0f , 0.0f , 0.0)
     ))
 
     fun getAngles(results: PoseLandmarkerResult): AngleType? {
@@ -68,8 +67,6 @@ class Angles {
                 Pair(landmarkC.x(), landmarkC.y())
             )
         }
-        angleList.angles["Head"]!!.x = landmarks[0].x()
-        angleList.angles["Head"]!!.y = landmarks[0].y()
         return angleList
     }
 }
