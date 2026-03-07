@@ -2,7 +2,7 @@ package com.bxr.trainingapp.forms
 
 public val stanceAngles = mapOf(
     "L_Hand" to 180.0,
-    "R_Hand" to 180.0,
+    //"R_Hand" to 180.0,
     "L_Elbow" to 50.0,
     "R_Elbow" to 55.0,
     "L_Knee" to 170.0,
