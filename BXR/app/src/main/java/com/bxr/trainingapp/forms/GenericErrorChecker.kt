@@ -31,4 +31,20 @@ class GenericErrorChecker {
             return false
         }
     }
+
+    fun leanBackCheck(angles: Map<String, Coords>): Boolean {
+        if (angles["L_Shoulder"]!!.y > angles["R_Shoulder"]!!.y+threshold) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    fun leanForwardCheck(angles: Map<String, Coords>): Boolean {
+        if (angles["L_Shoulder"]!!.y < angles["R_Shoulder"]!!.y-threshold) {
+            return true
+        } else {
+            return false
+        }
+    }
 }
