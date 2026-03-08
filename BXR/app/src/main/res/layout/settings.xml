@@ -9,13 +9,13 @@
     tools:context=".ui.CameraActivity">
 
     <Button
-        android:id="@+id/btnHandedness"
+        android:id="@+id/btnSave"
         android:layout_width="232dp"
         android:layout_height="82dp"
         android:layout_marginBottom="48dp"
         android:backgroundTint="@color/accent"
         android:lineSpacingExtra="48sp"
-        android:text="NEXT"
+        android:text="SAVE"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="34sp"
@@ -25,6 +25,22 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnClearData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CLEAR ALL LOGS"
+        android:textColor="#FF4444"
+        android:textSize="18sp"
+        android:background="@android:color/transparent"
+        android:fontFamily="@font/jersey"
+
+        app:layout_constraintBottom_toTopOf="@id/btnSave"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp"/>:w
+
 
     <TextView
         android:id="@+id/textView2"
@@ -60,7 +76,7 @@
         android:layout_width="207dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnHandedness"
+        app:layout_constraintBottom_toTopOf="@+id/btnSave"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextText">

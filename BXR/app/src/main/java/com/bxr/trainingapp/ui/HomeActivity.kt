@@ -15,6 +15,7 @@ class HomeActivity : AppCompatActivity() {
 
         val tvUsername = findViewById<TextView>(R.id.tv_username)
         val btnTrain = findViewById<Button>(R.id.train_button)
+        val btnLogs = findViewById<Button>(R.id.logs_button)
         val btnSettings = findViewById<Button>(R.id.settings_button)
 
 
@@ -29,8 +30,13 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        btnLogs.setOnClickListener {
+            val intent = Intent(this, LogsActivity::class.java)
+            startActivity(intent)
+        }
+
         btnSettings.setOnClickListener {
-            val intent = Intent(this, HandednessActivity::class.java)
+            val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
     }
