@@ -276,6 +276,8 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
                 lastErrorUpdateTime = now
             }
         }
+        currentSession.formState.keyPoseErrors.clear()
+        currentSession.formState.currentErrors.clear()
         Log.d("JABSTATE", currentSession.formState.state.toString())
         // Log.d("ANGLES", angles.toString())
 

@@ -25,9 +25,6 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
 
     val angles = angleType.angles
 
-    tracker.currentErrors.clear()
-    tracker.keyPoseErrors.clear()
-
     // Log.d("REPS", tracker.reps.toString())
     val errorFrameCheck = 2
 
@@ -53,7 +50,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
         FormStates.inProgress -> {
             val checkJab = checkAngle(angles, jabAngles, THRESHOLD)
 
-            tracker.currentErrors.addAll(checkJab.errors)
+            // tracker.currentErrors.addAll(checkJab.errors)
             tracker.addKeyPoseErrors(checkJab.errors)
             tracker.changeKeypoints(checkJab.keypoints)
 
@@ -125,7 +122,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
         FormStates.completed -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
             Log.d("GUARDERRORS", checkGuard.errors.toString())
-            tracker.currentErrors.addAll(checkGuard.errors)
+            // tracker.currentErrors.addAll(checkGuard.errors)
             tracker.addKeyPoseErrors(checkGuard.errors)
             tracker.changeKeypoints(checkGuard.keypoints)
             //Check if hands are wrong
