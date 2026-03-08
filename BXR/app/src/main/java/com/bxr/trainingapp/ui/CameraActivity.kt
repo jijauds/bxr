@@ -47,17 +47,17 @@ import java.util.concurrent.TimeUnit
 class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListener {
     private lateinit var poseLandmarkerHelper: PoseLandmarkerHelper
 
-    private var angles: AngleType? = null
+    // private var angles: AngleType? = null
     private var moveName: String? = null
 
-    private var model = PoseLandmarkerHelper.Companion.MODEL_POSE_LANDMARKER_FULL
-    private var delegate: Int = PoseLandmarkerHelper.Companion.DELEGATE_GPU
+    private var model = PoseLandmarkerHelper.MODEL_POSE_LANDMARKER_FULL
+    private var delegate: Int = PoseLandmarkerHelper.DELEGATE_GPU
     private var minPoseDetectionConfidence: Float =
-        PoseLandmarkerHelper.Companion.DEFAULT_POSE_DETECTION_CONFIDENCE
+        PoseLandmarkerHelper.DEFAULT_POSE_DETECTION_CONFIDENCE
     private var minPoseTrackingConfidence: Float =
-        PoseLandmarkerHelper.Companion.DEFAULT_POSE_TRACKING_CONFIDENCE
+        PoseLandmarkerHelper.DEFAULT_POSE_TRACKING_CONFIDENCE
     private var minPosePresenceConfidence: Float =
-        PoseLandmarkerHelper.Companion.DEFAULT_POSE_PRESENCE_CONFIDENCE
+        PoseLandmarkerHelper.DEFAULT_POSE_PRESENCE_CONFIDENCE
 
     private var preview: Preview? = null
     private var imageAnalyzer: ImageAnalysis? = null
@@ -77,8 +77,10 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
     private var lastErrorUpdateTime = 0L
     private val errorUpdateInterval = 800L
     private var displayedErrors: List<String> = emptyList()
-    private val errorFrameCounts = mutableMapOf<String, Int>()
-    private var lastRep = 0
+
+    private val errorCounts = mutableMapOf<String, Int>()
+    private val ERRORSHOWTHRESHOLD = 2
+    private val ERRORHIDETHRESHOLD = -5
     private var lastState: FormStates? = null
 
     private val activityResultLauncher =
@@ -143,6 +145,12 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         } else {
             requestPermissions()
         }
+
+        findViewById<Button>(R.id.btnEndSession).setOnClickListener {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private var currentSession = SessionTracker(
@@ -152,28 +160,34 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         handedness = Handedness.right
     )
 
-    private fun getStableErrors(errors: List<String>): List<String> {
-        val stable = mutableListOf<String>()
+    private fun getStableErrors(currentErrors: List<String>): List<String> {
 
-        for (error in errors) {
-            val count = (errorFrameCounts[error] ?: 0) + 1
-            errorFrameCounts[error] = count
+        val activeErrors = mutableListOf<String>()
 
-            if (count >= 3) {
-                stable.add(error)
+        // update counters
+        for (error in currentErrors) {
+            val count = errorCounts.getOrDefault(error, 0)
+            errorCounts[error] = count + 1
+        }
+
+        // decrease counters for missing errors
+        for (error in errorCounts.keys.toList()) {
+            if (!currentErrors.contains(error)) {
+                errorCounts[error] = errorCounts[error]!! - 1
             }
         }
 
-        val currentSet = errors.toSet()
-        val iterate = errorFrameCounts.keys.iterator()
-        while (iterate.hasNext()) {
-            val key = iterate.next()
-            if (!currentSet.contains(key)) {
-                iterate.remove()
+        // decide which errors to display
+        for ((error, count) in errorCounts) {
+            if (count >= ERRORSHOWTHRESHOLD) {
+                activeErrors.add(error)
             }
         }
 
-        return stable
+        // cleanup old errors
+        errorCounts.entries.removeIf { it.value <= ERRORHIDETHRESHOLD }
+
+        return activeErrors
     }
 
     private fun showReady(text: String) {
@@ -184,7 +198,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
 
         readyFlag.animate()
             .alpha(0f)
-            .setDuration(2000)
+            .setDuration(800)
             .withEndAction {
                 readyFlag.visibility = View.GONE
             }
@@ -223,20 +237,16 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
 
     private fun updateState(newAngles: AngleType?){
 
-        val previousState = currentSession.formState.state
-
-        if (newAngles == null) return
-        angles = newAngles
+        val angles = newAngles ?: return
         when (moveName){
             null -> return
-            "Jab" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
-            "Straight" -> currentSession.formState = trackStraight(angles!!, currentSession.formState)
-            "Front Hook" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
-            "Front Uppercut" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
-            "Rear Uppercut" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
+            "Jab" -> currentSession.formState = trackJab(angles, currentSession.formState)
+            "Straight" -> currentSession.formState = trackStraight(angles, currentSession.formState)
+            "Front Hook" -> currentSession.formState = trackJab(angles, currentSession.formState)
+            "Front Uppercut" -> currentSession.formState = trackJab(angles, currentSession.formState)
+            "Rear Uppercut" -> currentSession.formState = trackJab(angles, currentSession.formState)
         }
         val now = System.currentTimeMillis()
-        val currentRep = currentSession.formState.reps.first
         val newState = currentSession.formState.state
 
         if (newState != lastState) {
@@ -247,15 +257,10 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
 
         lastState = newState
 
-        if (currentSession.formState.currentErrors.isNotEmpty()) {
-            val stableErrors = getStableErrors(
-                currentSession.formState.currentErrors.filterNotNull()
-            )
-
-            if (stableErrors.isNotEmpty()) {
-                displayedErrors = stableErrors
-            }
-        }
+        val stableErrors = getStableErrors(
+            currentSession.formState.currentErrors.filterNotNull()
+        )
+        displayedErrors = stableErrors
 
         runOnUiThread {
             tvRepNumber.text = buildString {
@@ -271,15 +276,9 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
                 lastErrorUpdateTime = now
             }
         }
-        currentSession.formState.keyPoseErrors.clear()
-        currentSession.formState.currentErrors.clear()
         Log.d("JABSTATE", currentSession.formState.state.toString())
         // Log.d("ANGLES", angles.toString())
 
-        findViewById<Button>(R.id.btnEndSession).setOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
-        }
 
     }
 
