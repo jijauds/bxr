@@ -6,23 +6,23 @@ import com.bxr.trainingapp.sessions.FormStates
 import com.bxr.trainingapp.sessions.FormTracker
 import com.bxr.trainingapp.sessions.Reps
 
-private val jabAngles = mapOf(
+private val leadHookAngles = mapOf(
     "L_Hand" to 170.0,
     //"R_Hand" to 170.0,
-    "L_Elbow" to 165.0,
+    //"L_Elbow" to 165.0,
     "R_Elbow" to 35.0,
-    "L_Knee" to 170.0,
-    "R_Knee" to 170.0,
-    "L_Shoulder" to 90.0,
-    "R_Shoulder" to 5.0,
-    "L_Hip" to 100.0,
-    "R_Hip" to 111.0
+    "L_Knee" to 172.0,
+    "R_Knee" to 175.0,
+    //"L_Shoulder" to 90.0,
+    "R_Shoulder" to 8.0,
+    "L_Hip" to 106.0,
+    "R_Hip" to 115.0
 )
 
 private const val THRESHOLD = 25.0
 private val checkError = GenericErrorChecker()
 
-fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
+fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
     val angles = angleType.angles
 
     // Log.d("REPS", tracker.reps.toString())
@@ -31,7 +31,6 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
     when (tracker.state) {
         FormStates.notStarted -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
-            Log.d("GUARDERRORS", checkGuard.errors.toString())
             tracker.addKeyPoseErrors(checkGuard.errors)
             tracker.changeKeypoints(checkGuard.keypoints)
             tracker.currentErrors = checkGuard.errors
@@ -47,30 +46,21 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
         }
 
         FormStates.inProgress -> {
-            val checkJab = checkAngle(angles, jabAngles, THRESHOLD)
-            if (angles["L_Hand"] != null){
-                tracker.errorCounter.handX = angles["L_Hand"]!!.x
+            val checkLeadHook = checkLeadHook(angles, leadHookAngles, THRESHOLD)
+            // For Lead Hook, check elbow
+            if (angles["L_Elbow"] != null){
+                tracker.errorCounter.handX = angles["L_Elbow"]!!.y
             }
 
             // tracker.currentErrors.addAll(checkJab.errors)
-            tracker.addKeyPoseErrors(checkJab.errors)
-            tracker.changeKeypoints(checkJab.keypoints)
+            tracker.addKeyPoseErrors(checkLeadHook.errors)
+            tracker.changeKeypoints(checkLeadHook.keypoints)
 
             //Check if hands are wrong
-            //Check rear hand placement
-            if (checkError.guardHandCheck(angles)) {
-                tracker.errorCounter.guardHandGoesDown++
-                if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
-                    tracker.wasWrong = true
-                    tracker.errorCounter.guardHandGoesDown = 0
-                    tracker.errorsWithDuplicates.add("Guard hand goes down")
-                    tracker.currentErrors.add("Guard hand goes down")
-                }
-            } else {
-                tracker.errorCounter.guardHandGoesDown = 0
-            }
+            //Check lead hand placement -- OCCLUDED
+
             //Check punch if straight
-            if (checkError.punchStraightCheck(angles, "Jab")) {
+            if (checkError.punchStraightCheck(angles, "Lead Hook")) {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
                     tracker.wasWrong = true
@@ -108,12 +98,13 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             }
 
             // Check if punch was stretched out
-            if (angles["L_Elbow"]!!.angle in 155.0..180.0) {
-                tracker.errorCounter.punchNotFull = false
-                tracker.errorCounter.punchNotFullCounter = 0
+            if (angles["L_Hand"]?.x != null && angles["L_Elbow"]?.x != null && angles["L_Elbow"]?.x != null) {
+                if (angles["L_Hand"]!!.x in angles["L_Elbow"]!!.x-0.05..angles["L_Elbow"]!!.x+0.05 && angles["L_Hand"]!!.y in angles["L_Elbow"]!!.y-0.05..angles["L_Elbow"]!!.y+0.05 ) {
+                    tracker.errorCounter.punchNotFull = false
+                    tracker.errorCounter.punchNotFullCounter = 0
+                }
             }
-            Log.d("JABERRORS", tracker.currentErrors.toString())
-            if (angles["L_Hand"]!!.x < tracker.errorCounter.handX) {
+            if (angles["L_Elbow"]!!.y > tracker.errorCounter.handX) {
                 tracker.errorCounter.punchNotFullCounter++
                 if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
                     if (tracker.errorCounter.punchNotFull) {
@@ -124,7 +115,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.punchNotFull = true
                 }
             }
-            val atClimax = checkJab.errors.isEmpty()
+            val atClimax = checkLeadHook.errors.isEmpty()
             if (atClimax) {
                 tracker.state = FormStates.completed
             }
@@ -137,20 +128,10 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             tracker.addKeyPoseErrors(checkGuard.errors)
             tracker.changeKeypoints(checkGuard.keypoints)
             //Check if hands are wrong
-            //Check rear hand placement
-            if (checkError.guardHandCheck(angles)) {
-                tracker.errorCounter.guardHandGoesDown++
-                if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
-                    tracker.wasWrong = true
-                    tracker.errorCounter.guardHandGoesDown = 0
-                    tracker.errorsWithDuplicates.add("Guard hand goes down")
-                    tracker.currentErrors.add("Guard hand goes down")
-                }
-            } else {
-                tracker.errorCounter.guardHandGoesDown = 0
-            }
+            //Check lead hand placement -- OCCLUDED
+
             //Check punch if straight
-            if (checkError.punchStraightCheck(angles, "Jab")) {
+            if (checkError.punchStraightCheck(angles, "Lead Hook")) {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
                     tracker.wasWrong = true

@@ -16,6 +16,7 @@ class FormTracker {
     var errorCounter = ErrorTypes()
     var wasWrong = false
     var keypoints: Map<String, Boolean> = mapOf()
+    var errorsWithDuplicates: MutableList<String> = mutableListOf()
 
     fun addReps(newReps: Reps) {
         this.reps.total += newReps.total
