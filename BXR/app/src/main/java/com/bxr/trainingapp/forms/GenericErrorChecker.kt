@@ -5,7 +5,7 @@ import com.bxr.trainingapp.sessions.FormTracker
 import kotlin.collections.set
 
 class GenericErrorChecker {
-    private val threshold = 0.1;
+    private val threshhold = 0.1;
     private val errorCheckValues = mapOf(
         //"guardHandGoesDown" to 180.0,
         "punchNotStraight" to 180.0,
@@ -21,7 +21,7 @@ class GenericErrorChecker {
         val hand = angles["R_Hand"] ?: return false
         val shoulder = angles["R_Shoulder"] ?: return false
 
-        return hand.y > (shoulder.y + threshold)
+        return hand.y > (shoulder.y + threshhold)
     }
 
     fun punchStraightCheck(angles: Map<String, Coords>, punchType: String): Boolean {
@@ -38,6 +38,12 @@ class GenericErrorChecker {
 
                 return hand.y !in (shoulder.y - 0.05)..(shoulder.y + 0.05)
             }
+            "Lead Hook" -> {
+                val hand = angles["L_Hand"] ?: return false
+                val shoulder = angles["L_Shoulder"] ?: return false
+
+                return hand.y !in (shoulder.y - 0.05)..(shoulder.y + 0.05)
+            }
         }
         return false
     }
@@ -46,13 +52,13 @@ class GenericErrorChecker {
         val leftshoulder = angles["L_Shoulder"] ?: return false
         val rightshoulder = angles["L_Shoulder"] ?: return false
 
-        return leftshoulder.y < (rightshoulder.y + threshold)
+        return leftshoulder.y < (rightshoulder.y + threshhold)
     }
 
     fun leanBackCheck(angles: Map<String, Coords>): Boolean {
         val leftshoulder = angles["L_Shoulder"] ?: return false
         val rightshoulder = angles["L_Hip"] ?: return false
 
-        return leftshoulder.y > (rightshoulder.y + threshold)
+        return leftshoulder.y > (rightshoulder.y + threshhold)
     }
 }
