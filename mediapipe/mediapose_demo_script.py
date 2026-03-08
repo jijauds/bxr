@@ -92,8 +92,16 @@ while True:
             "R_Hip":    (23, 24, 26),
         }
         lm = result.pose_landmarks.landmark
+        print(len(lm))
         coords = {i: (lm[i].x * w, lm[i].y * h, lm[i].visibility) for i in range(len(lm))}
-        angles = {b:angle_between(coords[a][:2], coords[b][:2], coords[c][:2]) for (a,b,c) in triplets.values()}
+        angles = {}
+        for i,(name, (a,b,c)) in enumerate(triplets.items()):
+            if name not in ("L_Hand", "R_Hand"):
+                angles[b] =  angle_between(coords[a][:2], coords[b][:2], coords[c][:2])
+            else:
+                angles[c] = angle_between(coords[a][:2], coords[b][:2], coords[c][:2])
+        print(angles)
+        #angles = {b:angle_between(coords[a][:2], coords[b][:2], coords[c][:2]) for (a,b,c) in triplets.values() if }
         mp_drawing.draw_landmarks(frame, result.pose_landmarks, connects, DrawingSpec(color=(0,255,0)), DrawingSpec(color=(0,255,0), thickness = 4),angles)
         #print(mp_pose.POSE_CONNECTIONS)
 
@@ -105,11 +113,13 @@ while True:
 
         for i, (name, (a, b, c)) in enumerate(triplets.items()):
             if coords[a][2] > 0.3 and coords[b][2] > 0.3 and coords[c][2] > 0.3:
-                ang = angles[b]
-                put_angle(frame, ang, 15*i, f"{name}: {a},{b},{c}")
                 if "Hand" not in name:
+                    ang = angles[b]
+                    put_angle(frame, ang, 15*i, f"{name}: {a},{b},{c}")
                     put_keypoint(frame, coords[b], b, f"{name}")
                 else:
+                    ang = angles[c]
+                    put_angle(frame, ang, 15*i, f"{name}: {a},{b},{c}")
                     put_keypoint(frame, coords[c], c, f"{name}")
                 angles_row[i+1] = round(ang, 2)
         for i, (name, point) in enumerate(other_points.items()):
