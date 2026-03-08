@@ -31,6 +31,7 @@ import com.bxr.trainingapp.PoseLandmarkerHelper
 import com.bxr.trainingapp.R
 import com.bxr.trainingapp.data.AngleType
 import com.bxr.trainingapp.data.Angles
+import com.bxr.trainingapp.data.JsonWriter
 import com.bxr.trainingapp.forms.trackJab
 import com.bxr.trainingapp.forms.trackStraight
 import com.bxr.trainingapp.sessions.FormTracker
@@ -212,6 +213,8 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         // Log.d("ANGLES", angles.toString())
 
         findViewById<Button>(R.id.btnEndSession).setOnClickListener {
+            currentSession.endTime = Instant.now()
+            JsonWriter(this.applicationContext).createJSONObject(currentSession, moveName!!)
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
         }

@@ -48,6 +48,9 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
 
         FormStates.inProgress -> {
             val checkJab = checkAngle(angles, jabAngles, THRESHOLD)
+            if (angles["L_Hand"] != null){
+                tracker.errorCounter.handX = angles["L_Hand"]!!.x
+            }
 
             tracker.addKeyPoseErrors(checkJab.errors)
             tracker.changeKeypoints(checkJab.keypoints)
