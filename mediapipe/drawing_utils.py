@@ -173,7 +173,7 @@ def draw_landmarks(
     if landmark_px:
       idx_to_coordinates[idx] = landmark_px
 
-    mapping = {"l_hand":11, "r_hand":12, "l_elbow":13, "r_elbow":14, "l_knee":25, "r_knee":26, "l_shoulder":11, "r_shoulder":12, "l_hip":23, "r_hip":24}
+    mapping = {"l_hand":15, "r_hand":16, "l_elbow":13, "r_elbow":14, "l_knee":25, "r_knee":26, "l_shoulder":11, "r_shoulder":12, "l_hip":23, "r_hip":24}
   angled_lms = [13,14,15,16,25,26,11,12,23,24]
   correct, errors = checker.is_stance_correct(angle_list[mapping["l_hand"]], angle_list[mapping["r_hand"]], angle_list[mapping["l_elbow"]], angle_list[mapping["r_elbow"]], angle_list[mapping["l_knee"]], angle_list[mapping["r_knee"]], angle_list[mapping["r_hip"]], angle_list[mapping["l_shoulder"]], angle_list[mapping["r_shoulder"]])
   print(angle_list[mapping["r_elbow"]])

@@ -6,23 +6,23 @@ import com.bxr.trainingapp.sessions.FormStates
 import com.bxr.trainingapp.sessions.FormTracker
 import com.bxr.trainingapp.sessions.Reps
 
-private val straightAngles = mapOf(
-    //"L_Hand" to 170.0, Occluded
-    //"R_Hand" to 170.0,
-    //"L_Elbow" to 165.0,
-    "R_Elbow" to 165.0,
-    "L_Knee" to 160.0,
-    "R_Knee" to 135.0,
-    //"L_Shoulder" to 90.0,
-    "R_Shoulder" to 105.0,
-    "L_Hip" to 60.0,
-    "R_Hip" to 85.0
+private val leadUpperCutAngles = mapOf(
+    "L_Hand" to 140.0,
+    "R_Hand" to 55.0,
+    "L_Elbow" to 60.0,
+    "R_Elbow" to 35.0,
+    "L_Knee" to 172.0,
+    "R_Knee" to 175.0,
+    "L_Shoulder" to 63.0,
+    "R_Shoulder" to 11.0,
+    "L_Hip" to 122.0,
+    "R_Hip" to 101.0
 )
 
 private const val THRESHOLD = 25.0
 private val checkError = GenericErrorChecker()
 
-fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
+fun trackLeadUpperCut(angleType: AngleType, tracker: FormTracker): FormTracker {
     val angles = angleType.angles
 
     // Log.d("REPS", tracker.reps.toString())
@@ -31,6 +31,7 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
     when (tracker.state) {
         FormStates.notStarted -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
+            Log.d("GUARDERRORS", checkGuard.errors.toString())
             tracker.addKeyPoseErrors(checkGuard.errors)
             tracker.changeKeypoints(checkGuard.keypoints)
             tracker.currentErrors = checkGuard.errors
@@ -46,20 +47,30 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
         }
 
         FormStates.inProgress -> {
-            val checkStraight = checkStraight(angles, straightAngles, 0.05)
-            if (angles["R_Hand"] != null){
-                tracker.errorCounter.handX = angles["R_Hand"]!!.x
+            val checkLeadUpperCut = checkLeadUpperCutAngle(angles, leadUpperCutAngles, THRESHOLD)
+            if (angles["L_Hand"] != null){
+                tracker.errorCounter.handX = angles["L_Hand"]!!.x
             }
 
-            // tracker.currentErrors.addAll(checkJab.errors)
-            tracker.addKeyPoseErrors(checkStraight.errors)
-            tracker.changeKeypoints(checkStraight.keypoints)
+            // tracker.currentErrors.addAll(checkLeadUpperCut.errors)
+            tracker.addKeyPoseErrors(checkLeadUpperCut.errors)
+            tracker.changeKeypoints(checkLeadUpperCut.keypoints)
 
             //Check if hands are wrong
-            //Check lead hand placement -- OCCLUDED
-
+            //Check rear hand placement
+            if (checkError.leadUpperCutGuardCheck(angles)) {
+                tracker.errorCounter.guardHandGoesDown++
+                if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
+                    tracker.wasWrong = true
+                    tracker.errorCounter.guardHandGoesDown = 0
+                    tracker.errorsWithDuplicates.add("Guard hand goes down")
+                    tracker.currentErrors.add("Guard hand goes down")
+                }
+            } else {
+                tracker.errorCounter.guardHandGoesDown = 0
+            }
             //Check punch if straight
-            if (checkError.punchStraightCheck(angles, "Straight")) {
+            if (checkError.punchStraightCheck(angles, "Lead Upper Cut")) {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
                     tracker.wasWrong = true
@@ -72,18 +83,7 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             }
 
             //Check if leaning
-            //Check if leaning forward
-            if (checkError.leanForwardCheck(angles)) {
-                tracker.errorCounter.leaningForward++
-                if (tracker.errorCounter.leaningForward > errorFrameCheck) {
-                    tracker.wasWrong = true
-                    tracker.errorCounter.leaningForward = 0
-                    tracker.errorsWithDuplicates.add("Leaning forward")
-                    tracker.currentErrors.add("Leaning forward")
-                }
-            } else {
-                tracker.errorCounter.leaningForward = 0
-            }
+            //Check if leaning backward
             if (checkError.leanBackCheck(angles)) {
                 tracker.errorCounter.leaningBackwards++
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
@@ -97,11 +97,11 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             }
 
             // Check if punch was stretched out
-            if (angles["R_Elbow"]!!.angle in 155.0..180.0) {
+            if (angles["L_Hand"]!!.y < angles["L_Shoulder"]!!.y+0.05) {
                 tracker.errorCounter.punchNotFull = false
                 tracker.errorCounter.punchNotFullCounter = 0
             }
-            if (angles["R_Hand"]!!.x < tracker.errorCounter.handX) {
+            if (angles["L_Hand"]!!.x < tracker.errorCounter.handX) {
                 tracker.errorCounter.punchNotFullCounter++
                 if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
                     if (tracker.errorCounter.punchNotFull) {
@@ -112,7 +112,7 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.punchNotFull = true
                 }
             }
-            val atClimax = checkStraight.errors.isEmpty()
+            val atClimax = checkLeadUpperCut.errors.isEmpty()
             if (atClimax) {
                 tracker.state = FormStates.completed
             }
@@ -125,10 +125,20 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             tracker.addKeyPoseErrors(checkGuard.errors)
             tracker.changeKeypoints(checkGuard.keypoints)
             //Check if hands are wrong
-            //Check lead hand placement -- OCCLUDED
-
+            //Check rear hand placement
+            if (checkError.leadUpperCutGuardCheck(angles)) {
+                tracker.errorCounter.guardHandGoesDown++
+                if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
+                    tracker.wasWrong = true
+                    tracker.errorCounter.guardHandGoesDown = 0
+                    tracker.errorsWithDuplicates.add("Guard hand goes down")
+                    tracker.currentErrors.add("Guard hand goes down")
+                }
+            } else {
+                tracker.errorCounter.guardHandGoesDown = 0
+            }
             //Check punch if straight
-            if (checkError.punchStraightCheck(angles, "Straight")) {
+            if (checkError.punchStraightCheck(angles, "Lead Upper Cut")) {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
                     tracker.wasWrong = true
@@ -141,18 +151,7 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             }
 
             //Check if leaning
-            //Check if leaning forward
-            if (checkError.leanForwardCheck(angles)) {
-                tracker.errorCounter.leaningForward++
-                if (tracker.errorCounter.leaningForward > errorFrameCheck) {
-                    tracker.wasWrong = true
-                    tracker.errorCounter.leaningForward = 0
-                    tracker.errorsWithDuplicates.add("Leaning forward")
-                    tracker.currentErrors.add("Leaning forward")
-                }
-            } else {
-                tracker.errorCounter.leaningForward = 0
-            }
+            //Check if leaning backward
 
             if (checkError.leanBackCheck(angles)) {
                 tracker.errorCounter.leaningBackwards++

@@ -12,6 +12,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -35,6 +36,8 @@ import com.bxr.trainingapp.data.Angles
 import com.bxr.trainingapp.data.JsonWriter
 import com.bxr.trainingapp.forms.trackJab
 import com.bxr.trainingapp.forms.trackLeadHook
+import com.bxr.trainingapp.forms.trackLeadUpperCut
+import com.bxr.trainingapp.forms.trackRearUpperCut
 import com.bxr.trainingapp.forms.trackStraight
 import com.bxr.trainingapp.sessions.FormStates
 import com.bxr.trainingapp.sessions.FormTracker
@@ -110,6 +113,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -218,8 +222,8 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
             "Jab" -> currentSession.formState = trackJab(angles, currentSession.formState)
             "Straight" -> currentSession.formState = trackStraight(angles, currentSession.formState)
             "Front Hook" -> currentSession.formState = trackLeadHook(angles, currentSession.formState)
-            "Front Uppercut" -> currentSession.formState = trackJab(angles, currentSession.formState)
-            "Rear Uppercut" -> currentSession.formState = trackJab(angles, currentSession.formState)
+            "Front Uppercut" -> currentSession.formState = trackLeadUpperCut(angles, currentSession.formState)
+            "Rear Uppercut" -> currentSession.formState = trackRearUpperCut(angles, currentSession.formState)
         }
         val newState = currentSession.formState.state
 
