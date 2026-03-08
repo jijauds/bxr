@@ -47,6 +47,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation("com.google.code.gson:gson:2.13.2")
     implementation("com.google.mediapipe:tasks-vision:0.10.32")
     implementation("androidx.camera:camera-core:1.5.3")
     implementation("androidx.camera:camera-camera2:1.5.3")

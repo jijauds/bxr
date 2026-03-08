@@ -4,6 +4,7 @@ import android.util.Log
 import com.bxr.trainingapp.data.AngleType
 import com.bxr.trainingapp.sessions.FormStates
 import com.bxr.trainingapp.sessions.FormTracker
+import com.bxr.trainingapp.sessions.Reps
 
 private val jabAngles = mapOf(
     "L_Hand" to 170.0,
@@ -49,6 +50,9 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
 
         FormStates.inProgress -> {
             val checkJab = checkAngle(angles, jabAngles, THRESHOLD)
+            if (angles["L_Hand"] != null){
+                tracker.errorCounter.handX = angles["L_Hand"]!!.x
+            }
 
             // tracker.currentErrors.addAll(checkJab.errors)
             tracker.addKeyPoseErrors(checkJab.errors)
@@ -59,6 +63,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.guardHandCheck(angles)) {
                 tracker.errorCounter.guardHandGoesDown++
                 if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
+                    tracker.wasWrong = true
+                    tracker.errorCounter.guardHandGoesDown = 0
                     tracker.errors.add("Guard hand goes down")
                     tracker.currentErrors.add("Guard hand goes down")
                 }
@@ -69,6 +75,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.punchStraightCheck(angles)) {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
+                    tracker.wasWrong = true
+                    tracker.errorCounter.punchNotStraight = 0
                     tracker.errors.add("Punch not straight")
                     tracker.currentErrors.add("Punch not straight")
                 }
@@ -81,6 +89,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.leanForwardCheck(angles)) {
                 tracker.errorCounter.leaningForward++
                 if (tracker.errorCounter.leaningForward > errorFrameCheck) {
+                    tracker.wasWrong = true
+                    tracker.errorCounter.leaningForward = 0
                     tracker.errors.add("Leaning forward")
                     tracker.currentErrors.add("Leaning forward")
                 }
@@ -90,6 +100,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.leanBackCheck(angles)) {
                 tracker.errorCounter.leaningBackwards++
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
+                    tracker.wasWrong = true
+                    tracker.errorCounter.leaningBackwards = 0
                     tracker.errors.add("Leaning backwards")
                     tracker.currentErrors.add("Leaning backwards")
                 }
@@ -107,6 +119,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.punchNotFullCounter++
                 if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
                     if (tracker.errorCounter.punchNotFull) {
+                        tracker.wasWrong = true
                         tracker.errors.add("Punch not full")
                         tracker.currentErrors.add("Punch not full")
                     }
@@ -130,6 +143,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.guardHandCheck(angles)) {
                 tracker.errorCounter.guardHandGoesDown++
                 if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
+                    tracker.wasWrong = true
+                    tracker.errorCounter.guardHandGoesDown = 0
                     tracker.errors.add("Guard hand goes down")
                     tracker.currentErrors.add("Guard hand goes down")
                 }
@@ -140,6 +155,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.punchStraightCheck(angles)) {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
+                    tracker.wasWrong = true
+                    tracker.errorCounter.punchNotStraight = 0
                     tracker.errors.add("Punch not straight")
                     tracker.currentErrors.add("Punch not straight")
                 }
@@ -152,6 +169,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.leanForwardCheck(angles)) {
                 tracker.errorCounter.leaningForward++
                 if (tracker.errorCounter.leaningForward > errorFrameCheck) {
+                    tracker.wasWrong = true
+                    tracker.errorCounter.leaningForward = 0
                     tracker.errors.add("Leaning forward")
                     tracker.currentErrors.add("Leaning forward")
                 }
@@ -161,6 +180,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.leanBackCheck(angles)) {
                 tracker.errorCounter.leaningBackwards++
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
+                    tracker.wasWrong = true
+                    tracker.errorCounter.leaningBackwards = 0
                     tracker.errors.add("Leaning backwards")
                     tracker.currentErrors.add("Leaning backwards")
                 }
@@ -170,7 +191,14 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
                 tracker.state = FormStates.notStarted
-                tracker.addReps(Triple(1, 0, 0))
+                val repCount = Reps(1,0, 0)
+                if(tracker.wasWrong) {
+                    repCount.wrong++
+                } else {
+                    repCount.correct++
+                }
+                tracker.wasWrong = false
+                tracker.addReps(repCount)
             }
         }
     }

@@ -9,6 +9,6 @@ public val stanceAngles = mapOf(
     "R_Knee" to 170.0,
     "L_Shoulder" to 25.0,
     "R_Shoulder" to 25.0,
-    "L_Hip" to 95.0,
-    "R_Hip" to 95.0
+    "L_Hip" to 100.0,
+    "R_Hip" to 110.0
 )
