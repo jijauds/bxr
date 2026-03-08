@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.util.Log
 import com.bxr.trainingapp.sessions.Handedness
+import com.bxr.trainingapp.sessions.Reps
 import com.bxr.trainingapp.sessions.SessionTracker
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -14,7 +15,7 @@ data class JSONOutput (
     var duration : Int,
     var handedness: Handedness,
     var errors : MutableList<String>,
-    var reps : Triple<Int, Int, Int>,
+    var reps : Reps,
     var punchType: String,
 )
 class JsonWriter (context: Context) {
