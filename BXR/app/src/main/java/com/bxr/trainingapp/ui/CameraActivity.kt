@@ -75,6 +75,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
     private lateinit var viewFinder: PreviewView
     private lateinit var overlay: OverlayView
     private lateinit var tvRepNumber: TextView
+    private lateinit var tvPercentWrong: TextView
     private lateinit var tvErrorMessage: TextView
     private lateinit var repFlashOverlay: View
     private lateinit var readyFlag: TextView
@@ -86,6 +87,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
     private val ERROR_HIDE_DELAY = 900L
 
     private var displayedErrors: List<String> = emptyList()
+    private var score : Int = 0
 
     private var lastState: FormStates? = null
 
@@ -126,6 +128,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         viewFinder = findViewById(R.id.view_finder)
         overlay = findViewById(R.id.overlay)
         tvRepNumber = findViewById(R.id.repCounter)
+        tvPercentWrong = findViewById(R.id.bestScore)
         tvErrorMessage = findViewById(R.id.errorText)
         repFlashOverlay = findViewById(R.id.repFlashOverlay)
         readyFlag = findViewById(R.id.readyFlag)
@@ -267,10 +270,20 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
 
         displayedErrors = visibleErrors
 
+        if (currentSession.formState.reps.total > 0) {
+            score = ((currentSession.formState.reps.correct.toDouble()/currentSession.formState.reps.total.toDouble()) * 100).toInt()
+        }
+
         runOnUiThread {
             tvRepNumber.text = buildString {
                 append("Rep #")
                 append(currentSession.formState.reps.total)
+            }
+
+            tvPercentWrong.text = buildString{
+                append("Score: ")
+                append(score)
+                append("%")
             }
 
             val newText = displayedErrors.joinToString("\n")
