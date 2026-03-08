@@ -31,8 +31,8 @@ import com.bxr.trainingapp.PoseLandmarkerHelper
 import com.bxr.trainingapp.R
 import com.bxr.trainingapp.data.AngleType
 import com.bxr.trainingapp.data.Angles
+import com.bxr.trainingapp.data.JsonWriter
 import com.bxr.trainingapp.forms.trackJab
-import com.bxr.trainingapp.forms.trackStraight
 import com.bxr.trainingapp.sessions.FormTracker
 import com.bxr.trainingapp.sessions.Handedness
 import com.bxr.trainingapp.sessions.SessionTracker
@@ -175,7 +175,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         when (moveName){
             null -> return
             "Jab" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
-            "Straight" -> currentSession.formState = trackStraight(angles!!, currentSession.formState)
+            "Straight" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
             "Front Hook" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
             "Front Uppercut" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
             "Rear Uppercut" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
@@ -195,7 +195,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         runOnUiThread {
             tvRepNumber.text = buildString {
                 append("Rep #")
-                append(currentSession.formState.reps.first)
+                append(currentSession.formState.reps.total)
             }
 
             if (now - lastErrorUpdateTime > errorUpdateInterval) {
@@ -212,6 +212,8 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         // Log.d("ANGLES", angles.toString())
 
         findViewById<Button>(R.id.btnEndSession).setOnClickListener {
+            currentSession.endTime = Instant.now()
+            JsonWriter(this.applicationContext).createJSONObject(currentSession, moveName!!)
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
         }
