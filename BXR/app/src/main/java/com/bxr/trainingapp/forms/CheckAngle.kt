@@ -145,3 +145,27 @@ fun checkLeadUpperCutAngle(angles: Map<String, Coords>, correctangles: Map<Strin
 
     return AngleResults(keypoints, errors)
 }
+
+fun checkRearUpperCut(angles: Map<String, Coords>, correctangles: Map<String, Double>, threshhold: Double): AngleResults{
+    val errors = mutableListOf<String>()
+    val keypoints = mutableMapOf<String, Boolean>()
+
+    for ((name, angle) in correctangles) {
+        if ((angles[name]!!.angle < angle - threshhold || angles[name]!!.angle > angle + threshhold)) {
+            keypoints[name] = false
+            errors.add(getError(name, errorMessages))
+        } else {
+            keypoints[name] = true
+        }
+    }
+    // Check if hips pivoted
+    if (angles["L_Hip"]!!.x - angles["R_Hip"]!!.x !in -threshhold..threshhold) {
+        keypoints["L_Hip"] = false
+        keypoints["R_Hip"] = false
+        errors.add("Twist your hips more")
+    } else {
+        keypoints["L_Hip"] = true
+        keypoints["R_Hip"] = true
+    }
+    return AngleResults(keypoints, errors)
+}

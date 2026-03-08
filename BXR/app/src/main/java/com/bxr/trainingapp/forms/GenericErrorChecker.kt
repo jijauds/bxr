@@ -68,7 +68,13 @@ class GenericErrorChecker {
                 val hand = angles["L_Hand"] ?: return false
                 val shoulder = angles["L_Shoulder"] ?: return false
 
-                return hand.y !in (shoulder.y - 0.03)..(shoulder.y + 0.05)
+                return hand.y < shoulder.y + 0.05
+            }
+            "Rear Upper Cut" -> {
+                val hand = angles["R_Hand"] ?: return false
+                val shoulder = angles["R_Shoulder"] ?: return false
+
+                return hand.y < shoulder.y + 0.05
             }
         }
         return false
