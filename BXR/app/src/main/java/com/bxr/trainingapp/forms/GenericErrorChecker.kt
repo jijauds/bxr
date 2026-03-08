@@ -28,20 +28,20 @@ class GenericErrorChecker {
         val hand = angles["L_Hand"] ?: return false
         val shoulder = angles["L_Shoulder"] ?: return false
 
-        return hand.y !in (shoulder.y - 0.15)..(shoulder.y + 0.15)
+        return hand.y !in (shoulder.y - 0.05)..(shoulder.y + 0.05)
     }
 
     fun leanForwardCheck(angles: Map<String, Coords>): Boolean {
-        val shoulder = angles["L_Shoulder"] ?: return false
-        val hip = angles["L_Hip"] ?: return false
+        val leftshoulder = angles["L_Shoulder"] ?: return false
+        val rightshoulder = angles["L_Shoulder"] ?: return false
 
-        return shoulder.x < (hip.x - threshold)
+        return leftshoulder.y < (rightshoulder.y + threshold)
     }
 
     fun leanBackCheck(angles: Map<String, Coords>): Boolean {
-        val shoulder = angles["L_Shoulder"] ?: return false
-        val hip = angles["L_Hip"] ?: return false
+        val leftshoulder = angles["L_Shoulder"] ?: return false
+        val rightshoulder = angles["L_Hip"] ?: return false
 
-        return shoulder.x > (hip.x + threshold)
+        return leftshoulder.y > (rightshoulder.y + threshold)
     }
 }
