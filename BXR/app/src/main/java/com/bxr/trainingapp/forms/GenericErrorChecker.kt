@@ -1,22 +1,12 @@
 package com.bxr.trainingapp.forms
 
+import android.util.Log
 import com.bxr.trainingapp.data.Coords
 import com.bxr.trainingapp.sessions.FormTracker
 import kotlin.collections.set
 
 class GenericErrorChecker {
     private val threshhold = 0.1;
-    private val errorCheckValues = mapOf(
-        //"guardHandGoesDown" to 180.0,
-        "punchNotStraight" to 180.0,
-        //"leaningForward" to 0,
-        //"leaningBackwards" to 0,
-        //"punchNotFull" to 0,
-        //"elbowsFlaring" to 0,
-        //"wrongFootForward" to 0,
-        //"feetNotPivoting" to 0,
-        //"startingPosition" to 0
-    )
 
     fun torsoCenterX(angles: Map<String, Coords>): Double? {
 
@@ -68,25 +58,26 @@ class GenericErrorChecker {
                 val hand = angles["L_Hand"] ?: return false
                 val shoulder = angles["L_Shoulder"] ?: return false
 
-                return hand.y < shoulder.y + 0.05
+                return hand.y < shoulder.y - 0.03
             }
             "Rear Upper Cut" -> {
                 val hand = angles["R_Hand"] ?: return false
                 val shoulder = angles["R_Shoulder"] ?: return false
 
-                return hand.y < shoulder.y + 0.05
+                return hand.y < shoulder.y - 0.03
             }
         }
         return false
     }
 
-    fun leanForwardCheck(angles: Map<String, Coords>, threshold: Double = 0.03): Boolean {
+    fun leanForwardCheck(angles: Map<String, Coords>, threshold: Double = 0.07): Boolean {
         val diff = torsoCenterX(angles) ?: return false
-        return diff < -threshold
+        Log.d("DIFF", diff.toString())
+        return diff > threshold
     }
 
-    fun leanBackCheck(angles: Map<String, Coords>, threshold: Double = 0.03): Boolean {
+    fun leanBackCheck(angles: Map<String, Coords>, threshold: Double = 0.07): Boolean {
         val diff = torsoCenterX(angles) ?: return false
-        return diff > threshold
+        return diff < -threshold
     }
 }
