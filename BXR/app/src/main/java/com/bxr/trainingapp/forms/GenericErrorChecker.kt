@@ -5,7 +5,7 @@ import com.bxr.trainingapp.sessions.FormTracker
 import kotlin.collections.set
 
 class GenericErrorChecker {
-    private val threshold = 20.0;
+    private val threshold = 0.1;
     private val errorCheckValues = mapOf(
         //"guardHandGoesDown" to 180.0,
         "punchNotStraight" to 180.0,
@@ -18,37 +18,30 @@ class GenericErrorChecker {
         //"startingPosition" to 0
     )
     fun guardHandCheck(angles: Map<String, Coords>): Boolean {
-        if (angles["R_Shoulder"]?.y != null && angles["L_Shoulder"]?.y != null && angles["R_Hand"]?.y != null) {
-            if (angles["R_Hand"]!!.y !in angles["R_Shoulder"]!!.y - 20..angles["R_Shoulder"]!!.y + 20) {
-                return true
-            }
-        } else {
-            return false
-        }
-        return false
+        val hand = angles["R_Hand"] ?: return false
+        val shoulder = angles["R_Shoulder"] ?: return false
+
+        return hand.y > (shoulder.y + threshold)
     }
 
     fun punchStraightCheck(angles: Map<String, Coords>): Boolean {
-        if (angles["L_Hand"]!!.angle !in errorCheckValues["punchNotStraight"]!! - threshold..errorCheckValues["punchNotStraight"]!! + threshold) {
-            return true
-        } else {
-            return false
-        }
-    }
+        val hand = angles["L_Hand"] ?: return false
+        val shoulder = angles["L_Shoulder"] ?: return false
 
-    fun leanBackCheck(angles: Map<String, Coords>): Boolean {
-        if (angles["L_Shoulder"]!!.y > angles["R_Shoulder"]!!.y+threshold) {
-            return true
-        } else {
-            return false
-        }
+        return hand.y !in (shoulder.y - 0.15)..(shoulder.y + 0.15)
     }
 
     fun leanForwardCheck(angles: Map<String, Coords>): Boolean {
-        if (angles["L_Shoulder"]!!.y < angles["R_Shoulder"]!!.y-threshold) {
-            return true
-        } else {
-            return false
-        }
+        val shoulder = angles["L_Shoulder"] ?: return false
+        val hip = angles["L_Hip"] ?: return false
+
+        return shoulder.x < (hip.x - threshold)
+    }
+
+    fun leanBackCheck(angles: Map<String, Coords>): Boolean {
+        val shoulder = angles["L_Shoulder"] ?: return false
+        val hip = angles["L_Hip"] ?: return false
+
+        return shoulder.x > (hip.x + threshold)
     }
 }

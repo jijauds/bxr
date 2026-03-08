@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import android.content.res.Configuration
 import android.os.Build
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -33,6 +34,7 @@ import com.bxr.trainingapp.data.AngleType
 import com.bxr.trainingapp.data.Angles
 import com.bxr.trainingapp.data.JsonWriter
 import com.bxr.trainingapp.forms.trackJab
+import com.bxr.trainingapp.sessions.FormStates
 import com.bxr.trainingapp.sessions.FormTracker
 import com.bxr.trainingapp.sessions.Handedness
 import com.bxr.trainingapp.sessions.SessionTracker
@@ -45,17 +47,17 @@ import java.util.concurrent.TimeUnit
 class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListener {
     private lateinit var poseLandmarkerHelper: PoseLandmarkerHelper
 
-    private var angles: AngleType? = null
+    // private var angles: AngleType? = null
     private var moveName: String? = null
 
-    private var model = PoseLandmarkerHelper.Companion.MODEL_POSE_LANDMARKER_FULL
-    private var delegate: Int = PoseLandmarkerHelper.Companion.DELEGATE_GPU
+    private var model = PoseLandmarkerHelper.MODEL_POSE_LANDMARKER_FULL
+    private var delegate: Int = PoseLandmarkerHelper.DELEGATE_GPU
     private var minPoseDetectionConfidence: Float =
-        PoseLandmarkerHelper.Companion.DEFAULT_POSE_DETECTION_CONFIDENCE
+        PoseLandmarkerHelper.DEFAULT_POSE_DETECTION_CONFIDENCE
     private var minPoseTrackingConfidence: Float =
-        PoseLandmarkerHelper.Companion.DEFAULT_POSE_TRACKING_CONFIDENCE
+        PoseLandmarkerHelper.DEFAULT_POSE_TRACKING_CONFIDENCE
     private var minPosePresenceConfidence: Float =
-        PoseLandmarkerHelper.Companion.DEFAULT_POSE_PRESENCE_CONFIDENCE
+        PoseLandmarkerHelper.DEFAULT_POSE_PRESENCE_CONFIDENCE
 
     private var preview: Preview? = null
     private var imageAnalyzer: ImageAnalysis? = null
@@ -69,11 +71,17 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
     private lateinit var overlay: OverlayView
     private lateinit var tvRepNumber: TextView
     private lateinit var tvErrorMessage: TextView
+    private lateinit var repFlashOverlay: View
+    private lateinit var readyFlag: TextView
 
     private var lastErrorUpdateTime = 0L
-    private val errorUpdateInterval = 2000L
+    private val errorUpdateInterval = 800L
     private var displayedErrors: List<String> = emptyList()
-    private val errorFrameCounts = mutableMapOf<String, Int>()
+
+    private val errorCounts = mutableMapOf<String, Int>()
+    private val ERRORSHOWTHRESHOLD = 2
+    private val ERRORHIDETHRESHOLD = -5
+    private var lastState: FormStates? = null
 
     private val activityResultLauncher =
         registerForActivityResult(
@@ -112,6 +120,8 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         overlay = findViewById(R.id.overlay)
         tvRepNumber = findViewById(R.id.repCounter)
         tvErrorMessage = findViewById(R.id.errorText)
+        repFlashOverlay = findViewById(R.id.repFlashOverlay)
+        readyFlag = findViewById(R.id.readyFlag)
 
         viewFinder.scaleType = PreviewView.ScaleType.FILL_CENTER
 
@@ -135,6 +145,12 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         } else {
             requestPermissions()
         }
+
+        findViewById<Button>(R.id.btnEndSession).setOnClickListener {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private var currentSession = SessionTracker(
@@ -144,34 +160,84 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         handedness = Handedness.right
     )
 
-    private fun getStableErrors(errors: List<String>): List<String> {
-        val stable = mutableListOf<String>()
+    private fun getStableErrors(currentErrors: List<String>): List<String> {
 
-        for (error in errors) {
-            val count = (errorFrameCounts[error] ?: 0) + 1
-            errorFrameCounts[error] = count
+        val activeErrors = mutableListOf<String>()
 
-            if (count >= 3) {
-                stable.add(error)
+        // update counters
+        for (error in currentErrors) {
+            val count = errorCounts.getOrDefault(error, 0)
+            errorCounts[error] = count + 1
+        }
+
+        // decrease counters for missing errors
+        for (error in errorCounts.keys.toList()) {
+            if (!currentErrors.contains(error)) {
+                errorCounts[error] = errorCounts[error]!! - 1
             }
         }
 
-        val currentSet = errors.toSet()
-        val iterate = errorFrameCounts.keys.iterator()
-        while (iterate.hasNext()) {
-            val key = iterate.next()
-            if (!currentSet.contains(key)) {
-                iterate.remove()
+        // decide which errors to display
+        for ((error, count) in errorCounts) {
+            if (count >= ERRORSHOWTHRESHOLD) {
+                activeErrors.add(error)
             }
         }
 
-        return stable
+        // cleanup old errors
+        errorCounts.entries.removeIf { it.value <= ERRORHIDETHRESHOLD }
+
+        return activeErrors
+    }
+
+    private fun showReady(text: String) {
+
+        readyFlag.text = text
+        readyFlag.alpha = 1f
+        readyFlag.visibility = View.VISIBLE
+
+        readyFlag.animate()
+            .alpha(0f)
+            .setDuration(800)
+            .withEndAction {
+                readyFlag.visibility = View.GONE
+            }
+            .start()
+    }
+
+    private fun handleStateChange(state: FormStates) {
+
+        when (state) {
+
+            FormStates.notStarted -> {
+                showReady("READY")
+            }
+
+            FormStates.inProgress -> {
+                showReady("GO")
+            }
+
+            FormStates.completed -> {
+                showReady("+1")
+                flashGreen()
+            }
+        }
+    }
+
+    private fun flashGreen() {
+
+        repFlashOverlay.alpha = 0.6f
+
+        repFlashOverlay.animate()
+            .alpha(0f)
+            .setDuration(250)
+            .start()
     }
 
 
     private fun updateState(newAngles: AngleType?){
-        if (newAngles == null) return
-        angles = newAngles
+
+        val angles = newAngles ?: return
         when (moveName){
             null -> return
             "Jab" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
@@ -181,16 +247,20 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
             "Rear Uppercut" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
         }
         val now = System.currentTimeMillis()
+        val newState = currentSession.formState.state
 
-        if (currentSession.formState.currentErrors.isNotEmpty()) {
-            val stableErrors = getStableErrors(
-                currentSession.formState.currentErrors.filterNotNull()
-            )
-
-            if (stableErrors.isNotEmpty()) {
-                displayedErrors = stableErrors
+        if (newState != lastState) {
+            runOnUiThread {
+                handleStateChange(newState)
             }
         }
+
+        lastState = newState
+
+        val stableErrors = getStableErrors(
+            currentSession.formState.currentErrors.filterNotNull()
+        )
+        displayedErrors = stableErrors
 
         runOnUiThread {
             tvRepNumber.text = buildString {
@@ -208,7 +278,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         }
         currentSession.formState.keyPoseErrors.clear()
         currentSession.formState.currentErrors.clear()
-        // Log.d("JABSTATE", currentSession.formState.state.toString())
+        Log.d("JABSTATE", currentSession.formState.state.toString())
         // Log.d("ANGLES", angles.toString())
 
         findViewById<Button>(R.id.btnEndSession).setOnClickListener {
