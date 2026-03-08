@@ -17,6 +17,19 @@ class GenericErrorChecker {
         //"feetNotPivoting" to 0,
         //"startingPosition" to 0
     )
+
+    fun torsoCenterX(angles: Map<String, Coords>): Double? {
+
+        val lShoulder = angles["L_Shoulder"] ?: return null
+        val rShoulder = angles["R_Shoulder"] ?: return null
+        val lHip = angles["L_Hip"] ?: return null
+        val rHip = angles["R_Hip"] ?: return null
+
+        val shoulderCenter = (lShoulder.x + rShoulder.x) / 2
+        val hipCenter = (lHip.x + rHip.x) / 2
+
+        return (shoulderCenter - hipCenter).toDouble()
+    }
     fun guardHandCheck(angles: Map<String, Coords>): Boolean {
         val hand = angles["R_Hand"] ?: return false
         val shoulder = angles["R_Shoulder"] ?: return false
@@ -31,17 +44,13 @@ class GenericErrorChecker {
         return hand.y !in (shoulder.y - 0.05)..(shoulder.y + 0.05)
     }
 
-    fun leanForwardCheck(angles: Map<String, Coords>): Boolean {
-        val leftshoulder = angles["L_Shoulder"] ?: return false
-        val rightshoulder = angles["L_Shoulder"] ?: return false
-
-        return leftshoulder.y < (rightshoulder.y + threshold)
+    fun leanForwardCheck(angles: Map<String, Coords>, threshold: Double = 0.03): Boolean {
+        val diff = torsoCenterX(angles) ?: return false
+        return diff < -threshold
     }
 
-    fun leanBackCheck(angles: Map<String, Coords>): Boolean {
-        val leftshoulder = angles["L_Shoulder"] ?: return false
-        val rightshoulder = angles["L_Hip"] ?: return false
-
-        return leftshoulder.y > (rightshoulder.y + threshold)
+    fun leanBackCheck(angles: Map<String, Coords>, threshold: Double = 0.03): Boolean {
+        val diff = torsoCenterX(angles) ?: return false
+        return diff > threshold
     }
 }
