@@ -7,6 +7,6 @@ data class SessionTracker (
     var startTime : Instant,
     var endTime : Instant,
     var formState : FormTracker,
-    var handedness : Handedness
+    var handedness : Handedness,
 )
 

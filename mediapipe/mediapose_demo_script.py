@@ -22,6 +22,11 @@ def angle_between(a, b, c):
 
 def put_angle(frame, angle, point, name, color=(255,0,255)):
     cv2.putText(frame, f"{name}:{int(angle)}",
+                (int(500), int(20) + point),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+
+def put_keypoint(frame, point, poi, name, color=(255,0,255)):
+    cv2.putText(frame, f"{name}:{poi}",
                 (int(point[0]), int(point[1]) - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
@@ -101,7 +106,11 @@ while True:
         for i, (name, (a, b, c)) in enumerate(triplets.items()):
             if coords[a][2] > 0.3 and coords[b][2] > 0.3 and coords[c][2] > 0.3:
                 ang = angles[b]
-                put_angle(frame, ang, coords[b][:2], f"{name}: {a},{b},{c}")
+                put_angle(frame, ang, 15*i, f"{name}: {a},{b},{c}")
+                if "Hand" not in name:
+                    put_keypoint(frame, coords[b], b, f"{name}")
+                else:
+                    put_keypoint(frame, coords[c], c, f"{name}")
                 angles_row[i+1] = round(ang, 2)
         for i, (name, point) in enumerate(other_points.items()):
             if coords[point][2] > 0.3:
