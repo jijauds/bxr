@@ -7,7 +7,7 @@ import com.bxr.trainingapp.sessions.FormTracker
 
 private val jabAngles = mapOf(
     "L_Hand" to 170.0,
-    "R_Hand" to 170.0,
+    //"R_Hand" to 170.0,
     "L_Elbow" to 165.0,
     "R_Elbow" to 35.0,
     "L_Knee" to 170.0,
@@ -48,7 +48,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
 
         FormStates.inProgress -> {
             val checkJab = checkAngle(angles, jabAngles, THRESHOLD)
-            Log.d("JABERRORS", checkJab.errors.toString())
+
             tracker.addKeyPoseErrors(checkJab.errors)
             tracker.changeKeypoints(checkJab.keypoints)
 
@@ -58,8 +58,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.guardHandGoesDown++
                 if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
                     tracker.errorCounter.guardHandGoesDown = 0
-                    tracker.errors += "Guard hand goes down"
-                    tracker.currentErrors += "Guard hand goes down"
+                    tracker.errors.add("Guard hand goes down")
+                    tracker.currentErrors.add("Guard hand goes down")
                 }
             }
             //Check punch if straight
@@ -67,8 +67,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
                     tracker.errorCounter.punchNotStraight = 0
-                    tracker.errors += "Punch not straight"
-                    tracker.currentErrors += "Punch not straight"
+                    tracker.errors.add("Punch not straight")
+                    tracker.currentErrors.add("Punch not straight")
                 }
             }
 
@@ -78,16 +78,16 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.leaningForward++
                 if (tracker.errorCounter.leaningForward > errorFrameCheck) {
                     tracker.errorCounter.leaningForward = 0
-                    tracker.errors += "Leaning forward"
-                    tracker.currentErrors += "Leaning forward"
+                    tracker.errors.add("Leaning forward")
+                    tracker.currentErrors.add("Leaning forward")
                 }
             }
             if (checkError.leanBackCheck(angles)) {
                 tracker.errorCounter.leaningBackwards++
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
                     tracker.errorCounter.leaningBackwards = 0
-                    tracker.errors += "Leaning backwards"
-                    tracker.currentErrors += "Leaning backwards"
+                    tracker.errors.add("Leaning backwards")
+                    tracker.currentErrors.add("Leaning backwards")
                 }
             }
 
@@ -95,14 +95,14 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (angles["L_Elbow"]!!.angle in 160.0..200.0) {
                 tracker.errorCounter.punchNotFull = false
             }
-
+            Log.d("JABERRORS", tracker.currentErrors.toString())
             if (angles["L_Hand"]!!.x < tracker.errorCounter.handX) {
                 tracker.errorCounter.punchNotFullCounter++
                 if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
                     tracker.errorCounter.punchNotFullCounter = 0
                     if (tracker.errorCounter.punchNotFull) {
-                        tracker.errors += "Punch not full"
-                        tracker.currentErrors += "Punch not full"
+                        tracker.errors.add("Punch not full")
+                        tracker.currentErrors.add("Punch not full")
                     }
                     tracker.errorCounter.punchNotFull = true
                 }
@@ -124,8 +124,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.guardHandGoesDown++
                 if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
                     tracker.errorCounter.guardHandGoesDown = 0
-                    tracker.errors += "Guard hand goes down"
-                    tracker.currentErrors += "Guard hand goes down"
+                    tracker.errors.add("Guard hand goes down")
+                    tracker.currentErrors.add("Guard hand goes down")
                 }
             }
             //Check punch if straight
@@ -133,8 +133,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
                     tracker.errorCounter.punchNotStraight = 0
-                    tracker.errors += "Punch not straight"
-                    tracker.currentErrors += "Punch not straight"
+                    tracker.errors.add("Punch not straight")
+                    tracker.currentErrors.add("Punch not straight")
                 }
             }
 
@@ -144,16 +144,16 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.leaningForward++
                 if (tracker.errorCounter.leaningForward > errorFrameCheck) {
                     tracker.errorCounter.leaningForward = 0
-                    tracker.errors += "Leaning forward"
-                    tracker.currentErrors += "Leaning forward"
+                    tracker.errors.add("Leaning forward")
+                    tracker.currentErrors.add("Leaning forward")
                 }
             }
             if (checkError.leanBackCheck(angles)) {
                 tracker.errorCounter.leaningBackwards++
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
                     tracker.errorCounter.leaningBackwards = 0
-                    tracker.errors += "Leaning backwards"
-                    tracker.currentErrors += "Leaning backwards"
+                    tracker.errors.add("Leaning backwards")
+                    tracker.currentErrors.add("Leaning backwards")
                 }
             }
             val atGuard = checkGuard.errors.isEmpty()

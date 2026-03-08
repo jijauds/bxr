@@ -2,11 +2,12 @@ package com.bxr.trainingapp.forms
 
 import com.bxr.trainingapp.data.Coords
 import com.bxr.trainingapp.sessions.FormTracker
+import kotlin.collections.set
 
 class GenericErrorChecker {
     private val threshold = 20.0;
     private val errorCheckValues = mapOf(
-        "guardHandGoesDown" to 180.0,
+        //"guardHandGoesDown" to 180.0,
         "punchNotStraight" to 180.0,
         //"leaningForward" to 0,
         //"leaningBackwards" to 0,
@@ -17,11 +18,14 @@ class GenericErrorChecker {
         //"startingPosition" to 0
     )
     fun guardHandCheck(angles: Map<String, Coords>): Boolean {
-        if (angles["R_Hand"]!!.angle !in errorCheckValues["guardHandGoesDown"]!! - threshold..errorCheckValues["guardHandGoesDown"]!! + threshold) {
-            return true
+        if (angles["R_Shoulder"]?.y != null && angles["L_Shoulder"]?.y != null && angles["R_Hand"]?.y != null) {
+            if (angles["R_Hand"]!!.y !in angles["R_Shoulder"]!!.y - 20..angles["R_Shoulder"]!!.y + 20) {
+                return true
+            }
         } else {
             return false
         }
+        return false
     }
 
     fun punchStraightCheck(angles: Map<String, Coords>): Boolean {
