@@ -24,11 +24,22 @@ class GenericErrorChecker {
         return hand.y > (shoulder.y + threshold)
     }
 
-    fun punchStraightCheck(angles: Map<String, Coords>): Boolean {
-        val hand = angles["L_Hand"] ?: return false
-        val shoulder = angles["L_Shoulder"] ?: return false
+    fun punchStraightCheck(angles: Map<String, Coords>, punchType: String): Boolean {
+        when (punchType) {
+            "Jab" -> {
+                val hand = angles["L_Hand"] ?: return false
+                val shoulder = angles["L_Shoulder"] ?: return false
 
-        return hand.y !in (shoulder.y - 0.05)..(shoulder.y + 0.05)
+                return hand.y !in (shoulder.y - 0.05)..(shoulder.y + 0.05)
+            }
+            "Straight" -> {
+                val hand = angles["R_Hand"] ?: return false
+                val shoulder = angles["R_Shoulder"] ?: return false
+
+                return hand.y !in (shoulder.y - 0.05)..(shoulder.y + 0.05)
+            }
+        }
+        return false
     }
 
     fun leanForwardCheck(angles: Map<String, Coords>): Boolean {

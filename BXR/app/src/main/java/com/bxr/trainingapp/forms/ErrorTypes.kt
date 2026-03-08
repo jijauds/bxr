@@ -12,6 +12,7 @@ data class ErrorTypes (
     var feetNotPivoting: Int = 0,
     var startingPosition: Int = 0,
     var handX: Float = 0f,
+    var didNotPivotHip: Int = 0
 ) {
     fun reset() {
         guardHandGoesDown = 0
@@ -25,5 +26,6 @@ data class ErrorTypes (
         feetNotPivoting = 0
         startingPosition = 0
         handX = 0f
+        didNotPivotHip = 0
     }
 }
