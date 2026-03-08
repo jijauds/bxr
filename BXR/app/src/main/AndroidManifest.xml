@@ -21,6 +21,9 @@
         <activity android:name=".ui.HandednessActivity" />
         <activity android:name=".ui.HomeActivity" />
         <activity android:name=".ui.TrainActivity" />
+        <activity android:name=".ui.LogsActivity" />
+        <activity android:name=".ui.LogListActivity" />
+        <activity android:name=".ui.SettingsActivity" />
         <activity
             android:name=".ui.LandingActivity"
             android:exported="true">

@@ -56,4 +56,8 @@ class JsonWriter (context: Context) {
         Log.d("JSON", file.readText())
         Log.d("DIRECTORY", file.toString())
     }
+
+    public fun clearData(){
+        file.writeText("[]")
+    }
 }

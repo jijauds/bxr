@@ -46,7 +46,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.google.code.gson:gson:2.13.2")
     implementation("com.google.mediapipe:tasks-vision:0.10.32")
     implementation("androidx.camera:camera-core:1.5.3")
