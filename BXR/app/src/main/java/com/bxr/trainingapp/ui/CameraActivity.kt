@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import android.content.res.Configuration
 import android.os.Build
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -33,6 +34,7 @@ import com.bxr.trainingapp.data.AngleType
 import com.bxr.trainingapp.data.Angles
 import com.bxr.trainingapp.forms.trackJab
 import com.bxr.trainingapp.forms.trackStraight
+import com.bxr.trainingapp.sessions.FormStates
 import com.bxr.trainingapp.sessions.FormTracker
 import com.bxr.trainingapp.sessions.Handedness
 import com.bxr.trainingapp.sessions.SessionTracker
@@ -69,11 +71,15 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
     private lateinit var overlay: OverlayView
     private lateinit var tvRepNumber: TextView
     private lateinit var tvErrorMessage: TextView
+    private lateinit var repFlashOverlay: View
+    private lateinit var readyFlag: TextView
 
     private var lastErrorUpdateTime = 0L
-    private val errorUpdateInterval = 2000L
+    private val errorUpdateInterval = 800L
     private var displayedErrors: List<String> = emptyList()
     private val errorFrameCounts = mutableMapOf<String, Int>()
+    private var lastRep = 0
+    private var lastState: FormStates? = null
 
     private val activityResultLauncher =
         registerForActivityResult(
@@ -112,6 +118,8 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         overlay = findViewById(R.id.overlay)
         tvRepNumber = findViewById(R.id.repCounter)
         tvErrorMessage = findViewById(R.id.errorText)
+        repFlashOverlay = findViewById(R.id.repFlashOverlay)
+        readyFlag = findViewById(R.id.readyFlag)
 
         viewFinder.scaleType = PreviewView.ScaleType.FILL_CENTER
 
@@ -168,8 +176,55 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         return stable
     }
 
+    private fun showReady(text: String) {
+
+        readyFlag.text = text
+        readyFlag.alpha = 1f
+        readyFlag.visibility = View.VISIBLE
+
+        readyFlag.animate()
+            .alpha(0f)
+            .setDuration(2000)
+            .withEndAction {
+                readyFlag.visibility = View.GONE
+            }
+            .start()
+    }
+
+    private fun handleStateChange(state: FormStates) {
+
+        when (state) {
+
+            FormStates.notStarted -> {
+                showReady("READY")
+            }
+
+            FormStates.inProgress -> {
+                showReady("GO")
+            }
+
+            FormStates.completed -> {
+                showReady("+1")
+                flashGreen()
+            }
+        }
+    }
+
+    private fun flashGreen() {
+
+        repFlashOverlay.alpha = 0.6f
+
+        repFlashOverlay.animate()
+            .alpha(0f)
+            .setDuration(250)
+            .start()
+    }
+
 
     private fun updateState(newAngles: AngleType?){
+
+        val previousState = currentSession.formState.state
+
         if (newAngles == null) return
         angles = newAngles
         when (moveName){
@@ -181,6 +236,16 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
             "Rear Uppercut" -> currentSession.formState = trackJab(angles!!, currentSession.formState)
         }
         val now = System.currentTimeMillis()
+        val currentRep = currentSession.formState.reps.first
+        val newState = currentSession.formState.state
+
+        if (newState != lastState) {
+            runOnUiThread {
+                handleStateChange(newState)
+            }
+        }
+
+        lastState = newState
 
         if (currentSession.formState.currentErrors.isNotEmpty()) {
             val stableErrors = getStableErrors(
@@ -208,7 +273,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         }
         currentSession.formState.keyPoseErrors.clear()
         currentSession.formState.currentErrors.clear()
-        // Log.d("JABSTATE", currentSession.formState.state.toString())
+        Log.d("JABSTATE", currentSession.formState.state.toString())
         // Log.d("ANGLES", angles.toString())
 
         findViewById<Button>(R.id.btnEndSession).setOnClickListener {

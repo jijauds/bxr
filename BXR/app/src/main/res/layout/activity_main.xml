@@ -10,18 +10,42 @@
     <androidx.camera.view.PreviewView
         android:id="@+id/view_finder"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" >
+
+
+    </androidx.camera.view.PreviewView>
+
 
     <com.bxr.trainingapp.OverlayView
         android:id="@+id/overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <TextView
+        android:id="@+id/readyFlag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/jersey"
+        android:paddingTop="550dp"
+        android:text="Not Started"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="60sp"
+        android:typeface="normal" />
+
+    <View
+        android:id="@+id/repFlashOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#4CAF50"
+        android:alpha="0"
+        android:clickable="false"/>
+
     <com.google.android.material.card.MaterialCardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        app:cardBackgroundColor="#CC222222"
+        app:cardBackgroundColor="@color/gray"
         app:cardCornerRadius="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -49,13 +73,14 @@
                 android:textColor="@color/white"
                 android:textSize="14sp" />
         </LinearLayout>
+
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        app:cardBackgroundColor="#CC222222"
+        app:cardBackgroundColor="@color/gray"
         app:cardCornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -72,7 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="FEEDBACK"
-                android:textColor="#FF5722"
+                android:textColor="@color/accent"
                 android:textStyle="bold" />
 
             <TextView
@@ -90,11 +115,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:backgroundTint="#FF5722"
+                android:backgroundTint="@color/accent"
                 android:text="END SESSION"
                 android:textColor="@color/white"
                 app:cornerRadius="8dp" />
         </LinearLayout>
+
     </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

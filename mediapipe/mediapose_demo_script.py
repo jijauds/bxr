@@ -75,8 +75,8 @@ while True:
 
     if result.pose_landmarks:
         triplets = {
-            "L_Hand": (11,15,12),
-            "R_Hand": (12,16,11),
+            "L_Hand": (12, 11, 15),
+            "R_Hand": (11, 12, 16),
             "L_Elbow":  (11, 13, 15),
             "R_Elbow":  (12, 14, 16),
             "L_Knee":   (23, 25, 27),
@@ -101,12 +101,12 @@ while True:
         for i, (name, (a, b, c)) in enumerate(triplets.items()):
             if coords[a][2] > 0.3 and coords[b][2] > 0.3 and coords[c][2] > 0.3:
                 ang = angles[b]
-                put_angle(frame, ang, coords[b][:2], name)
+                put_angle(frame, ang, coords[b][:2], f"{name}: {a},{b},{c}")
                 angles_row[i+1] = round(ang, 2)
         for i, (name, point) in enumerate(other_points.items()):
             if coords[point][2] > 0.3:
                 color = (255,0,255)
-                cv2.putText(frame, f"{name}",
+                cv2.putText(frame, f"{point}",
                     (int(coords[point][0]), int(coords[point][1]) - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
