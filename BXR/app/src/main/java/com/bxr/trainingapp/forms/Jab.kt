@@ -115,7 +115,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.punchNotFullCounter = 0
             }
             Log.d("JABERRORS", tracker.currentErrors.toString())
-            if (angles["L_Elbow"]!!.angle < 150.0) {
+            if (angles["L_Hand"]!!.x < tracker.errorCounter.handX) {
                 tracker.errorCounter.punchNotFullCounter++
                 if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
                     if (tracker.errorCounter.punchNotFull) {
