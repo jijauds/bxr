@@ -24,6 +24,7 @@
         <activity android:name=".ui.LogsActivity" />
         <activity android:name=".ui.LogListActivity" />
         <activity android:name=".ui.SettingsActivity" />
+        <activity android:name=".ui.PostCameraActivity" />
         <activity
             android:name=".ui.LandingActivity"
             android:exported="true">

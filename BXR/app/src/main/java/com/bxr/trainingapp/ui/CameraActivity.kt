@@ -156,12 +156,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
             requestPermissions()
         }
 
-        findViewById<Button>(R.id.btnEndSession).setOnClickListener {
-            currentSession.endTime = Instant.now()
-            JsonWriter(this.applicationContext).createJSONObject(currentSession, moveName!!)
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
-        }
+
 
     }
 
@@ -296,6 +291,15 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         currentSession.formState.currentErrors.clear()
         Log.d("JABSTATE", currentSession.formState.state.toString())
         // Log.d("ANGLES", angles.toString())
+
+        findViewById<Button>(R.id.btnEndSession).setOnClickListener {
+            currentSession.endTime = Instant.now()
+            JsonWriter(this.applicationContext).createJSONObject(currentSession, moveName!!)
+            val intent = Intent(this, PostCameraActivity::class.java)
+            intent.putExtra("PUNCH_NAME", moveName)
+            intent.putExtra("SCORE", score)
+            startActivity(intent)
+        }
 
     }
 
