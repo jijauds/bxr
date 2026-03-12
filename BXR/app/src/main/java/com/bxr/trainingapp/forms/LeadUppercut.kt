@@ -8,7 +8,7 @@ import com.bxr.trainingapp.sessions.Reps
 
 private val leadUpperCutAngles = mapOf(
     "L_Hand" to 140.0,
-    "R_Hand" to 55.0,
+    //"R_Hand" to 55.0,
     "L_Elbow" to 60.0,
     "R_Elbow" to 35.0,
     "L_Knee" to 172.0,
@@ -19,7 +19,7 @@ private val leadUpperCutAngles = mapOf(
     "R_Hip" to 101.0
 )
 
-private const val THRESHOLD = 25.0
+private const val THRESHOLD = 20.0
 private val checkError = GenericErrorChecker()
 
 fun trackLeadUpperCut(angleType: AngleType, tracker: FormTracker): FormTracker {

@@ -240,8 +240,10 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
                 val isCorrect = !currentSession.formState.wasWrong
 
 
+                Log.d("HIWTF","HASDA")
                 currentSession.formState.endRep()
                 showRepFeedback(isCorrect)
+                Log.d("HELLO", "ASDASDASDA")
 
                 currentSession.formState.wasWrong = false
             }
@@ -301,10 +303,13 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
             }
         }
 
+        Log.d("HELLO", "Before looking at current errors: "+newState.toString())
+
         lastState = newState
         val now = System.currentTimeMillis()
 
         for (error in currentSession.formState.currentErrors) {
+            Log.d("HELLO", "In loop")
 
             if (!errorFirstSeen.containsKey(error)) {
                 errorFirstSeen[error] = now
@@ -312,6 +317,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
 
             errorLastSeen[error] = now
         }
+        Log.d("HELLO", "After looking at current errors: " + newState.toString())
 
         val visibleErrors = mutableListOf<String>()
 
@@ -332,6 +338,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
                 errorLastSeen.remove(error)
             }
         }
+        Log.d("HELLO", "After errors: " + newState.toString())
 
         displayedErrors = visibleErrors
 

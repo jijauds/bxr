@@ -18,7 +18,7 @@ private val jabAngles = mapOf(
     "R_Hip" to 111.0
 )
 
-private const val THRESHOLD = 25.0
+private const val THRESHOLD = 20.0
 private val checkError = GenericErrorChecker()
 
 fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {

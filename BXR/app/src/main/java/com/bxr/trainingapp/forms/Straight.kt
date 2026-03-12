@@ -39,14 +39,14 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.startingPosition++
                 if (tracker.errorCounter.startingPosition > errorFrameCheck) {
                     tracker.errorCounter.startingPosition = 0
-                    tracker.errorCounter.handX = angles["R_Hand"]!!.x
+                    angles["R_Hand"]?.let { tracker.errorCounter.handX = it.x }
                     tracker.state = FormStates.inProgress
                 }
             }
         }
 
         FormStates.inProgress -> {
-            val checkStraight = checkStraight(angles, straightAngles, 0.05)
+            val checkStraight = checkStraight(angles, straightAngles,THRESHOLD)
 
             // tracker.currentErrors.addAll(checkJab.errors)
             tracker.addKeyPoseErrors(checkStraight.errors)
@@ -117,19 +117,27 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
             Log.d("GUARDERRORS", checkGuard.errors.toString())
             //tracker.currentErrors.addAll(checkGuard.errors)
+            Log.d("STRAIGHTSHIT", "checkguard")
 
             checkGuard.errors.forEach { error ->
                 if (!tracker.currentErrors.contains(error)) {
                     tracker.currentErrors.add(error)
                 }
             }
+            Log.d("STRAIGHTSHIT", "after add")
+
 
             if (angles["R_Hand"] != null){
-                tracker.errorCounter.handX = angles["R_hand"]!!.x
+                Log.d("STRAIGHTSHIT", "in condi")
+
+                tracker.errorCounter.handX = angles["R_Hand"]!!.x
             }
+            Log.d("STRAIGHTSHIT", "after R_HAND")
+
 
             tracker.addKeyPoseErrors(checkGuard.errors)
             tracker.changeKeypoints(checkGuard.keypoints)
+            Log.d("STRAIGHTSHIT", "after checkguard")
 
             //Check punch if straight
             if (checkError.punchStraightCheck(angles, "Straight")) {
@@ -166,12 +174,14 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             } else {
                 tracker.errorCounter.leaningBackwards = 0
             }
+            Log.d("STRAIGHTSHIT", "after errors")
             val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
                 tracker.state = FormStates.notStarted
                 tracker.errorCounter.reset()
                 tracker.wasWrong = false
             }
+            Log.d("STRAIGHTSHIT", "after everything")
         }
     }
 

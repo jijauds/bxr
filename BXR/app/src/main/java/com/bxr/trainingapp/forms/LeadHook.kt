@@ -54,7 +54,17 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
             tracker.changeKeypoints(checkLeadHook.keypoints)
 
             //Check if hands are wrong
-            //Check lead hand placement -- OCCLUDED
+            //Check rear hand placement
+            if (checkError.guardHandCheck(angles)) {
+                tracker.errorCounter.guardHandGoesDown++
+                if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
+                    tracker.addErrors(listOf("Guard hand goes down"))
+                    tracker.errorCounter.guardHandGoesDown = 0
+                    tracker.currentErrors.add("Guard hand goes down")
+                }
+            } else {
+                tracker.errorCounter.guardHandGoesDown = 0
+            }
 
             //Check punch if straight
             if (checkError.punchStraightCheck(angles, "Lead Hook")) {

@@ -7,14 +7,14 @@ import com.bxr.trainingapp.sessions.Reps
 
 private val rearUpperCutAngles = mapOf(
     //"L_Hand" to 170.0, Occluded
-    "R_Hand" to 147.0,
+    //"R_Hand" to 147.0,
     //"L_Elbow" to 165.0,
     "R_Elbow" to 75.0,
     "L_Knee" to 160.0,
     "R_Knee" to 145.0,
     //"L_Shoulder" to 90.0,
     "R_Shoulder" to 67.0,
-    "L_Hip" to 50.0,
+    //"L_Hip" to 50.0,
     "R_Hip" to 83.0
 )
 
@@ -45,7 +45,7 @@ fun trackRearUpperCut(angleType: AngleType, tracker: FormTracker): FormTracker {
         }
 
         FormStates.inProgress -> {
-            val checkRearUpperCut = checkRearUpperCut(angles, rearUpperCutAngles, 0.05)
+            val checkRearUpperCut = checkRearUpperCut(angles, rearUpperCutAngles,THRESHOLD)
             if (angles["R_Hand"] != null){
                 tracker.errorCounter.handX = angles["R_Hand"]!!.x
             }
