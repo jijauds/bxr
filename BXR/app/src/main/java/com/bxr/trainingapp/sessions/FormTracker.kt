@@ -41,14 +41,9 @@ class FormTracker {
         if (newErrors.isEmpty()) return
         wasWrong = true
 
-        val repErrors = currentRep?.errors
-
         for (error in newErrors) {
-            if (repErrors != null && !repErrors.contains(error)) {
-                repErrors.add(error)
-            }
-            if (!currentErrors.contains(error)) {
-                currentErrors.add(error)
+            if (!errors.contains(error)) {
+                errors.add(error)
             }
         }
     }
@@ -62,19 +57,20 @@ class FormTracker {
         currentRep = RepResult(repNumber)
     }
 
-    fun endRep(isCorrect: Boolean) {
+    fun endRep() {
         currentRep?.let {
-            it.isCorrect = isCorrect
+            it.isCorrect = !wasWrong
 
             it.errors.clear()
-            it.errors.addAll(currentErrors.distinct())
+            it.errors.addAll(errors.distinct())
 
             repResults.add(it)
             reps.total++
-            if (isCorrect) reps.correct++
+            if (!wasWrong) reps.correct++
             else reps.wrong++
         }
         currentRep = null
+        errors.clear()
         currentErrors.clear()
     }
 }

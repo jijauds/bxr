@@ -33,13 +33,13 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
             tracker.addKeyPoseErrors(checkGuard.errors)
             tracker.changeKeypoints(checkGuard.keypoints)
-            tracker.currentErrors = checkGuard.errors
+            tracker.currentErrors = checkGuard.errors.toMutableList()
             val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
                 tracker.errorCounter.startingPosition++
                 if (tracker.errorCounter.startingPosition > errorFrameCheck) {
                     tracker.errorCounter.startingPosition = 0
-                    tracker.errorCounter.handX = angles["L_Hand"]!!.x
+                    tracker.errorCounter.handX = angles["R_Hand"]!!.x
                     tracker.state = FormStates.inProgress
                 }
             }
@@ -47,9 +47,6 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
 
         FormStates.inProgress -> {
             val checkStraight = checkStraight(angles, straightAngles, 0.05)
-            if (angles["R_Hand"] != null){
-                tracker.errorCounter.handX = angles["R_Hand"]!!.x
-            }
 
             // tracker.currentErrors.addAll(checkJab.errors)
             tracker.addKeyPoseErrors(checkStraight.errors)
@@ -62,9 +59,8 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.punchStraightCheck(angles, "Straight")) {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
-                    tracker.wasWrong = true
                     tracker.errorCounter.punchNotStraight = 0
-                    tracker.errorsWithDuplicates.add("Punch not straight")
+                    tracker.addErrors(listOf("Punch not straight"))
                     tracker.currentErrors.add("Punch not straight")
                 }
             } else {
@@ -76,9 +72,7 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.leanForwardCheck(angles)) {
                 tracker.errorCounter.leaningForward++
                 if (tracker.errorCounter.leaningForward > errorFrameCheck) {
-                    tracker.wasWrong = true
-                    tracker.errorCounter.leaningForward = 0
-                    tracker.errorsWithDuplicates.add("Leaning forward")
+                    tracker.addErrors(listOf("Leaning forward"))
                     tracker.currentErrors.add("Leaning forward")
                 }
             } else {
@@ -87,9 +81,8 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.leanBackCheck(angles)) {
                 tracker.errorCounter.leaningBackwards++
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
-                    tracker.wasWrong = true
                     tracker.errorCounter.leaningBackwards = 0
-                    tracker.errorsWithDuplicates.add("Leaning backwards")
+                    tracker.addErrors(listOf("Leaning backwards"))
                     tracker.currentErrors.add("Leaning backwards")
                 }
             } else {
@@ -97,20 +90,22 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             }
 
             // Check if punch was stretched out
-            if (angles["R_Elbow"]!!.angle in 155.0..180.0) {
-                tracker.errorCounter.punchNotFull = false
-                tracker.errorCounter.punchNotFullCounter = 0
+            if (angles["R_Elbow"]!!.angle !in 165.0..180.0) {
+                tracker.errorCounter.punchNotFull = true
             }
-            if (angles["R_Hand"]!!.x < tracker.errorCounter.handX) {
+            if (angles["R_Hand"]!!.x < tracker.errorCounter.handX-0.01) {
                 tracker.errorCounter.punchNotFullCounter++
                 if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
                     if (tracker.errorCounter.punchNotFull) {
-                        tracker.wasWrong = true
-                        tracker.errorsWithDuplicates.add("Punch not full")
+                        tracker.addErrors(listOf("Punch not full"))
                         tracker.currentErrors.add("Punch not full")
+                        tracker.errorCounter.punchNotFull = true
                     }
                     tracker.errorCounter.punchNotFull = true
                 }
+            }
+            if (angles["R_Hand"] != null){
+                tracker.errorCounter.handX = angles["R_Hand"]!!.x
             }
             val atClimax = checkStraight.errors.isEmpty()
             if (atClimax) {
@@ -121,19 +116,27 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
         FormStates.completed -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
             Log.d("GUARDERRORS", checkGuard.errors.toString())
-            tracker.currentErrors.addAll(checkGuard.errors)
+            //tracker.currentErrors.addAll(checkGuard.errors)
+
+            checkGuard.errors.forEach { error ->
+                if (!tracker.currentErrors.contains(error)) {
+                    tracker.currentErrors.add(error)
+                }
+            }
+
+            if (angles["R_Hand"] != null){
+                tracker.errorCounter.handX = angles["R_hand"]!!.x
+            }
+
             tracker.addKeyPoseErrors(checkGuard.errors)
             tracker.changeKeypoints(checkGuard.keypoints)
-            //Check if hands are wrong
-            //Check lead hand placement -- OCCLUDED
 
             //Check punch if straight
             if (checkError.punchStraightCheck(angles, "Straight")) {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
-                    tracker.wasWrong = true
                     tracker.errorCounter.punchNotStraight = 0
-                    tracker.errorsWithDuplicates.add("Punch not straight")
+                    tracker.addErrors(listOf("Punch not straight"))
                     tracker.currentErrors.add("Punch not straight")
                 }
             } else {
@@ -145,9 +148,8 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.leanForwardCheck(angles)) {
                 tracker.errorCounter.leaningForward++
                 if (tracker.errorCounter.leaningForward > errorFrameCheck) {
-                    tracker.wasWrong = true
                     tracker.errorCounter.leaningForward = 0
-                    tracker.errorsWithDuplicates.add("Leaning forward")
+                    tracker.addErrors(listOf("Leaning forward"))
                     tracker.currentErrors.add("Leaning forward")
                 }
             } else {
@@ -157,9 +159,8 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.leanBackCheck(angles)) {
                 tracker.errorCounter.leaningBackwards++
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
-                    tracker.wasWrong = true
                     tracker.errorCounter.leaningBackwards = 0
-                    tracker.errorsWithDuplicates.add("Leaning backwards")
+                    tracker.addErrors(listOf("Leaning backwards"))
                     tracker.currentErrors.add("Leaning backwards")
                 }
             } else {
@@ -167,18 +168,9 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             }
             val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
-                tracker.addErrors(tracker.errorsWithDuplicates.toSet().toList())
-                tracker.errorsWithDuplicates = mutableListOf()
                 tracker.state = FormStates.notStarted
                 tracker.errorCounter.reset()
-                val repCount = Reps(1,0, 0)
-                if(tracker.wasWrong) {
-                    repCount.wrong++
-                } else {
-                    repCount.correct++
-                }
                 tracker.wasWrong = false
-                tracker.addReps(repCount)
             }
         }
     }

@@ -240,7 +240,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
                 val isCorrect = !currentSession.formState.wasWrong
 
 
-                currentSession.formState.endRep(isCorrect)
+                currentSession.formState.endRep()
                 showRepFeedback(isCorrect)
 
                 currentSession.formState.wasWrong = false
@@ -357,6 +357,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         // currentSession.formState.currentErrors.clear()
         Log.d("JABSTATE", currentSession.formState.state.toString())
         // Log.d("ANGLES", angles.toString())
+        currentSession.formState.currentErrors.clear()
 
 
 

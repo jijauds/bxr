@@ -61,9 +61,8 @@ fun trackLeadUpperCut(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.leadUpperCutGuardCheck(angles)) {
                 tracker.errorCounter.guardHandGoesDown++
                 if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
-                    tracker.wasWrong = true
+                    tracker.addErrors(listOf("Guard hand goes down"))
                     tracker.errorCounter.guardHandGoesDown = 0
-                    tracker.errorsWithDuplicates.add("Guard hand goes down")
                     tracker.currentErrors.add("Guard hand goes down")
                 }
             } else {
@@ -73,9 +72,8 @@ fun trackLeadUpperCut(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.punchStraightCheck(angles, "Lead Upper Cut")) {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
-                    tracker.wasWrong = true
                     tracker.errorCounter.punchNotStraight = 0
-                    tracker.errorsWithDuplicates.add("Punch not straight")
+                    tracker.addErrors(listOf("Punch not straight"))
                     tracker.currentErrors.add("Punch not straight")
                 }
             } else {
@@ -87,9 +85,8 @@ fun trackLeadUpperCut(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.leanBackCheck(angles)) {
                 tracker.errorCounter.leaningBackwards++
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
-                    tracker.wasWrong = true
                     tracker.errorCounter.leaningBackwards = 0
-                    tracker.errorsWithDuplicates.add("Leaning backwards")
+                    tracker.addErrors(listOf("Leaning backwards"))
                     tracker.currentErrors.add("Leaning backwards")
                 }
             } else {
@@ -105,9 +102,9 @@ fun trackLeadUpperCut(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.punchNotFullCounter++
                 if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
                     if (tracker.errorCounter.punchNotFull) {
-                        tracker.wasWrong = true
-                        tracker.errorsWithDuplicates.add("Punch not full")
+                        tracker.addErrors(listOf("Punch not full"))
                         tracker.currentErrors.add("Punch not full")
+                        tracker.errorCounter.punchNotFull = true
                     }
                     tracker.errorCounter.punchNotFull = true
                 }
@@ -121,17 +118,16 @@ fun trackLeadUpperCut(angleType: AngleType, tracker: FormTracker): FormTracker {
         FormStates.completed -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
             Log.d("GUARDERRORS", checkGuard.errors.toString())
-            tracker.currentErrors.addAll(checkGuard.errors)
-            tracker.addKeyPoseErrors(checkGuard.errors)
-            tracker.changeKeypoints(checkGuard.keypoints)
+//            tracker.currentErrors.addAll(checkGuard.errors)
+//            tracker.addKeyPoseErrors(checkGuard.errors)
+//            tracker.changeKeypoints(checkGuard.keypoints)
             //Check if hands are wrong
             //Check rear hand placement
             if (checkError.leadUpperCutGuardCheck(angles)) {
                 tracker.errorCounter.guardHandGoesDown++
                 if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
-                    tracker.wasWrong = true
                     tracker.errorCounter.guardHandGoesDown = 0
-                    tracker.errorsWithDuplicates.add("Guard hand goes down")
+                    tracker.addErrors(listOf("Guard hand goes down"))
                     tracker.currentErrors.add("Guard hand goes down")
                 }
             } else {
@@ -141,9 +137,8 @@ fun trackLeadUpperCut(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.punchStraightCheck(angles, "Lead Upper Cut")) {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
-                    tracker.wasWrong = true
                     tracker.errorCounter.punchNotStraight = 0
-                    tracker.errorsWithDuplicates.add("Punch not straight")
+                    tracker.addErrors(listOf("Punch not straight"))
                     tracker.currentErrors.add("Punch not straight")
                 }
             } else {
@@ -156,9 +151,8 @@ fun trackLeadUpperCut(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.leanBackCheck(angles)) {
                 tracker.errorCounter.leaningBackwards++
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
-                    tracker.wasWrong = true
                     tracker.errorCounter.leaningBackwards = 0
-                    tracker.errorsWithDuplicates.add("Leaning backwards")
+                    tracker.addErrors(listOf("Leaning backwards"))
                     tracker.currentErrors.add("Leaning backwards")
                 }
             } else {
@@ -166,18 +160,9 @@ fun trackLeadUpperCut(angleType: AngleType, tracker: FormTracker): FormTracker {
             }
             val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
-                tracker.addErrors(tracker.errorsWithDuplicates.toSet().toList())
-                tracker.errorsWithDuplicates = mutableListOf()
                 tracker.state = FormStates.notStarted
                 tracker.errorCounter.reset()
-                val repCount = Reps(1,0, 0)
-                if(tracker.wasWrong) {
-                    repCount.wrong++
-                } else {
-                    repCount.correct++
-                }
                 tracker.wasWrong = false
-                tracker.addReps(repCount)
             }
         }
     }
