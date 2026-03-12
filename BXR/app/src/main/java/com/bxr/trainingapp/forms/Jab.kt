@@ -4,7 +4,6 @@ import android.util.Log
 import com.bxr.trainingapp.data.AngleType
 import com.bxr.trainingapp.sessions.FormStates
 import com.bxr.trainingapp.sessions.FormTracker
-import com.bxr.trainingapp.sessions.Reps
 
 private val jabAngles = mapOf(
     "L_Hand" to 170.0,
@@ -34,13 +33,13 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             Log.d("GUARDERRORS", checkGuard.errors.toString())
             tracker.addKeyPoseErrors(checkGuard.errors)
             tracker.changeKeypoints(checkGuard.keypoints)
-            tracker.currentErrors = checkGuard.errors
+            tracker.currentErrors = checkGuard.errors.toMutableList()
             val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
                 tracker.errorCounter.startingPosition++
                 if (tracker.errorCounter.startingPosition > errorFrameCheck) {
                     tracker.errorCounter.startingPosition = 0
-                    tracker.errorCounter.handX = angles["L_Hand"]!!.x
+                    angles["L_Hand"]?.let { tracker.errorCounter.handX = it.x }
                     tracker.state = FormStates.inProgress
                 }
             }
@@ -61,10 +60,9 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.guardHandCheck(angles)) {
                 tracker.errorCounter.guardHandGoesDown++
                 if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
+                    tracker.addErrors(listOf("Guard hand goes down"))
                     tracker.wasWrong = true
                     tracker.errorCounter.guardHandGoesDown = 0
-                    tracker.errorsWithDuplicates.add("Guard hand goes down")
-                    tracker.currentErrors.add("Guard hand goes down")
                 }
             } else {
                 tracker.errorCounter.guardHandGoesDown = 0
@@ -75,8 +73,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
                     tracker.wasWrong = true
                     tracker.errorCounter.punchNotStraight = 0
-                    tracker.errorsWithDuplicates.add("Punch not straight")
-                    tracker.currentErrors.add("Punch not straight")
+                    tracker.addErrors(listOf("Punch not straight"))
                 }
             } else {
                 tracker.errorCounter.punchNotStraight = 0
@@ -89,8 +86,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 if (tracker.errorCounter.leaningForward > errorFrameCheck) {
                     tracker.wasWrong = true
                     tracker.errorCounter.leaningForward = 0
-                    tracker.errorsWithDuplicates.add("Leaning forward")
-                    tracker.currentErrors.add("Leaning forward")
+                    tracker.addErrors(listOf("Leaning forward"))
                 }
             } else {
                 tracker.errorCounter.leaningForward = 0
@@ -100,31 +96,41 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
                     tracker.wasWrong = true
                     tracker.errorCounter.leaningBackwards = 0
-                    tracker.errorsWithDuplicates.add("Leaning backwards")
-                    tracker.currentErrors.add("Leaning backwards")
+                    tracker.addErrors(listOf("Leaning backwards"))
                 }
             } else {
                 tracker.errorCounter.leaningBackwards = 0
             }
 
             // Check if punch was stretched out
-            if (angles["L_Elbow"]!!.angle in 155.0..180.0) {
-                tracker.errorCounter.punchNotFull = false
-                tracker.errorCounter.punchNotFullCounter = 0
-            }
-            Log.d("JABERRORS", tracker.currentErrors.toString())
-            if (angles["L_Hand"]!!.x < tracker.errorCounter.handX) {
-                tracker.errorCounter.punchNotFullCounter++
-                if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
-                    if (tracker.errorCounter.punchNotFull) {
-                        tracker.wasWrong = true
-                        tracker.errorsWithDuplicates.add("Punch not full")
-                        tracker.currentErrors.add("Punch not full")
-                    }
-                    tracker.errorCounter.punchNotFull = true
+            angles["L_Elbow"]?.let { elbow ->
+                if (elbow.angle in 155.0..180.0) {
+                    tracker.errorCounter.punchNotFull = false
+                    tracker.errorCounter.punchNotFullCounter = 0
                 }
             }
-            val atClimax = checkJab.errors.isEmpty()
+
+            Log.d("JABERRORS", tracker.currentErrors.toString())
+
+            angles["L_Hand"]?.let { hand ->
+                if (hand.x < tracker.errorCounter.handX) {
+                    tracker.errorCounter.punchNotFullCounter++
+                    if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
+                        if (tracker.errorCounter.punchNotFull) {
+                            tracker.wasWrong = true
+                            tracker.addErrors(listOf("Punch not full"))
+                        }
+                        tracker.errorCounter.punchNotFull = true
+                    }
+                }
+            }
+
+            // val atClimax = checkJab.errors.isEmpty()
+
+            // Transition to completed based on movement climax
+            val elbowAngle = angles["L_Elbow"]?.angle ?: 0.0
+            val atClimax = elbowAngle > 155.0
+
             if (atClimax) {
                 tracker.state = FormStates.completed
             }
@@ -133,9 +139,17 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
         FormStates.completed -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
             Log.d("GUARDERRORS", checkGuard.errors.toString())
-            tracker.currentErrors.addAll(checkGuard.errors)
+
+            // Fixed potential duplicate accumulation in currentErrors
+            checkGuard.errors.forEach { error ->
+                if (!tracker.currentErrors.contains(error)) {
+                    tracker.currentErrors.add(error)
+                }
+            }
+
             tracker.addKeyPoseErrors(checkGuard.errors)
             tracker.changeKeypoints(checkGuard.keypoints)
+
             //Check if hands are wrong
             //Check rear hand placement
             if (checkError.guardHandCheck(angles)) {
@@ -143,8 +157,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
                     tracker.wasWrong = true
                     tracker.errorCounter.guardHandGoesDown = 0
-                    tracker.errorsWithDuplicates.add("Guard hand goes down")
-                    tracker.currentErrors.add("Guard hand goes down")
+                    tracker.addErrors(listOf("Guard hand goes down"))
                 }
             } else {
                 tracker.errorCounter.guardHandGoesDown = 0
@@ -155,8 +168,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
                     tracker.wasWrong = true
                     tracker.errorCounter.punchNotStraight = 0
-                    tracker.errorsWithDuplicates.add("Punch not straight")
-                    tracker.currentErrors.add("Punch not straight")
+                    tracker.addErrors(listOf("Punch not straight"))
                 }
             } else {
                 tracker.errorCounter.punchNotStraight = 0
@@ -169,8 +181,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 if (tracker.errorCounter.leaningForward > errorFrameCheck) {
                     tracker.wasWrong = true
                     tracker.errorCounter.leaningForward = 0
-                    tracker.errorsWithDuplicates.add("Leaning forward")
-                    tracker.currentErrors.add("Leaning forward")
+                    tracker.addErrors(listOf("Leaning forward"))
                 }
             } else {
                 tracker.errorCounter.leaningForward = 0
@@ -181,26 +192,26 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
                     tracker.wasWrong = true
                     tracker.errorCounter.leaningBackwards = 0
-                    tracker.errorsWithDuplicates.add("Leaning backwards")
-                    tracker.currentErrors.add("Leaning backwards")
+                    tracker.addErrors(listOf("Leaning backwards"))
                 }
             } else {
                 tracker.errorCounter.leaningBackwards = 0
             }
+
             val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
                 tracker.addErrors(tracker.errorsWithDuplicates.toSet().toList())
                 tracker.errorsWithDuplicates = mutableListOf()
                 tracker.state = FormStates.notStarted
                 tracker.errorCounter.reset()
-                val repCount = Reps(1,0, 0)
-                if(tracker.wasWrong) {
-                    repCount.wrong++
-                } else {
-                    repCount.correct++
-                }
+//                val repCount = Reps(1,0, 0)
+//                if(tracker.wasWrong) {
+//                    repCount.wrong++
+//                } else {
+//                    repCount.correct++
+//                }
                 tracker.wasWrong = false
-                tracker.addReps(repCount)
+                // tracker.addReps(repCount)
             }
         }
     }

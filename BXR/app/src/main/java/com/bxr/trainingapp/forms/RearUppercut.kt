@@ -1,6 +1,5 @@
 package com.bxr.trainingapp.forms
 
-import android.util.Log
 import com.bxr.trainingapp.data.AngleType
 import com.bxr.trainingapp.sessions.FormStates
 import com.bxr.trainingapp.sessions.FormTracker
