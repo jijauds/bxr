@@ -9,9 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bxr.trainingapp.R
-import com.bxr.trainingapp.ui.LogAdapter
 import com.bxr.trainingapp.data.LogRepository
-import com.bxr.trainingapp.model.SessionLog
 
 class LogListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +31,11 @@ class LogListActivity : AppCompatActivity() {
         val punchType = intent.getStringExtra("PUNCH_TYPE") ?: "Jab"
         findViewById<TextView>(R.id.tvMoveTitle).text = punchType
 
-        val allLogs = LogRepository.loadLogs(this)
+        val allLogs = try {
+            LogRepository.loadLogs(this)
+        } catch (e: Exception) {
+            emptyList()
+        }
 
         val logs = allLogs.filter { it.punchType == punchType }
 

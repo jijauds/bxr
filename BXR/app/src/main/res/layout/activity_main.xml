@@ -4,49 +4,83 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.CameraActivity">
+    android:layout_height="match_parent">
 
     <androidx.camera.view.PreviewView
         android:id="@+id/view_finder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
 
     </androidx.camera.view.PreviewView>
 
+    <LinearLayout
+        android:id="@+id/errorContainer"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="731dp"
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/readyCard" />
 
     <com.bxr.trainingapp.OverlayView
         android:id="@+id/overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/readyFlag"
-        android:layout_width="match_parent"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/readyCard"
+        android:layout_width="220dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/jersey"
-        android:paddingTop="550dp"
-        android:text="Not Started"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="60sp"
-        android:typeface="normal" />
+        android:visibility="visible"
+        app:cardBackgroundColor="#99000000"
+        app:cardCornerRadius="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/readyFlag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="Not Started"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+    </com.google.android.material.card.MaterialCardView>
 
     <View
         android:id="@+id/repFlashOverlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#4CAF50"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:alpha="0"
-        android:clickable="false"/>
+        android:background="#4CAF50"
+        android:clickable="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/repInfoCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        app:cardBackgroundColor="@color/gray"
-        app:cardCornerRadius="8dp"
+        app:cardBackgroundColor="#88000000"
+        app:cardCornerRadius="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -54,14 +88,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/repCounter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Rep# 1"
-                android:textColor="@color/white"
+                android:textColor="@android:color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -70,57 +104,50 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Score: 97%"
-                android:textColor="@color/white"
+                android:textColor="@android:color/white"
                 android:textSize="14sp" />
+
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
 
+
     <com.google.android.material.card.MaterialCardView
-        android:layout_width="wrap_content"
+        android:id="@+id/repFeedbackCard"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        app:cardBackgroundColor="@color/gray"
+        app:cardBackgroundColor="#99000000"
         app:cardCornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:layout_width="220dp"
+        <TextView
+            android:id="@+id/repFeedbackText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="FEEDBACK"
-                android:textColor="@color/accent"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/errorText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:text="Elbow angle is wrong\nFeet too far apart\nGuard hand lowered"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-
-            <Button
-                android:id="@+id/btnEndSession"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="@color/accent"
-                android:text="END SESSION"
-                android:textColor="@color/white"
-                app:cornerRadius="8dp" />
-        </LinearLayout>
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="Incorrect Rep"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
     </com.google.android.material.card.MaterialCardView>
+
+
+    <Button
+        android:id="@+id/btnEndSession"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:backgroundTint="@color/accent"
+        android:fontFamily="@font/jersey"
+        android:text="END SESSION"
+        android:textColor="@android:color/white"
+        android:textSize="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

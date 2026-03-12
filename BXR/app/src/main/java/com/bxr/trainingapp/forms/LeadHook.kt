@@ -33,7 +33,7 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
             tracker.addKeyPoseErrors(checkGuard.errors)
             tracker.changeKeypoints(checkGuard.keypoints)
-            tracker.currentErrors = checkGuard.errors
+            tracker.currentErrors = checkGuard.errors.toMutableList()
             val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
                 tracker.errorCounter.startingPosition++
@@ -48,9 +48,6 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
         FormStates.inProgress -> {
             val checkLeadHook = checkLeadHook(angles, leadHookAngles, THRESHOLD)
             // For Lead Hook, check elbow
-            if (angles["L_Elbow"] != null){
-                tracker.errorCounter.handX = angles["L_Elbow"]!!.y
-            }
 
             // tracker.currentErrors.addAll(checkJab.errors)
             tracker.addKeyPoseErrors(checkLeadHook.errors)
@@ -63,9 +60,8 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.punchStraightCheck(angles, "Lead Hook")) {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
-                    tracker.wasWrong = true
+                    tracker.addErrors(listOf("Punch not straight"))
                     tracker.errorCounter.punchNotStraight = 0
-                    tracker.errorsWithDuplicates.add("Punch not straight")
                     tracker.currentErrors.add("Punch not straight")
                 }
             } else {
@@ -77,9 +73,7 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.leanForwardCheck(angles)) {
                 tracker.errorCounter.leaningForward++
                 if (tracker.errorCounter.leaningForward > errorFrameCheck) {
-                    tracker.wasWrong = true
-                    tracker.errorCounter.leaningForward = 0
-                    tracker.errorsWithDuplicates.add("Leaning forward")
+                    tracker.addErrors(listOf("Leaning forward"))
                     tracker.currentErrors.add("Leaning forward")
                 }
             } else {
@@ -88,9 +82,8 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.leanBackCheck(angles)) {
                 tracker.errorCounter.leaningBackwards++
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
-                    tracker.wasWrong = true
                     tracker.errorCounter.leaningBackwards = 0
-                    tracker.errorsWithDuplicates.add("Leaning backwards")
+                    tracker.addErrors(listOf("Leaning backwards"))
                     tracker.currentErrors.add("Leaning backwards")
                 }
             } else {
@@ -104,16 +97,20 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.punchNotFullCounter = 0
                 }
             }
-            if (angles["L_Elbow"]!!.y > tracker.errorCounter.handX) {
+            if (angles["L_Elbow"]!!.y > tracker.errorCounter.handX+0.01) {
                 tracker.errorCounter.punchNotFullCounter++
                 if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
                     if (tracker.errorCounter.punchNotFull) {
+                        tracker.addErrors(listOf("Punch not full"))
                         tracker.wasWrong = true
-                        tracker.errorsWithDuplicates.add("Punch not full")
                         tracker.currentErrors.add("Punch not full")
+                        tracker.errorCounter.punchNotFull = true
                     }
                     tracker.errorCounter.punchNotFull = true
                 }
+            }
+            if (angles["L_Elbow"] != null){
+                tracker.errorCounter.handX = angles["L_Elbow"]!!.y
             }
             val atClimax = checkLeadHook.errors.isEmpty()
             if (atClimax) {
@@ -124,19 +121,26 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
         FormStates.completed -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
             Log.d("GUARDERRORS", checkGuard.errors.toString())
-            tracker.currentErrors.addAll(checkGuard.errors)
+//            tracker.currentErrors.addAll(checkGuard.errors)
+
+            checkGuard.errors.forEach { error ->
+                if (!tracker.currentErrors.contains(error)) {
+                    tracker.currentErrors.add(error)
+                }
+            }
+
+            if (angles["L_Hand"] != null){
+                tracker.errorCounter.handX = angles["L_Hand"]!!.x
+            }
             tracker.addKeyPoseErrors(checkGuard.errors)
             tracker.changeKeypoints(checkGuard.keypoints)
-            //Check if hands are wrong
-            //Check lead hand placement -- OCCLUDED
 
             //Check punch if straight
             if (checkError.punchStraightCheck(angles, "Lead Hook")) {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
-                    tracker.wasWrong = true
                     tracker.errorCounter.punchNotStraight = 0
-                    tracker.errorsWithDuplicates.add("Punch not straight")
+                    tracker.addErrors(listOf("Punch not straight"))
                     tracker.currentErrors.add("Punch not straight")
                 }
             } else {
@@ -148,9 +152,8 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.leanForwardCheck(angles)) {
                 tracker.errorCounter.leaningForward++
                 if (tracker.errorCounter.leaningForward > errorFrameCheck) {
-                    tracker.wasWrong = true
                     tracker.errorCounter.leaningForward = 0
-                    tracker.errorsWithDuplicates.add("Leaning forward")
+                    tracker.addErrors(listOf("Leaning forward"))
                     tracker.currentErrors.add("Leaning forward")
                 }
             } else {
@@ -160,9 +163,8 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.leanBackCheck(angles)) {
                 tracker.errorCounter.leaningBackwards++
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
-                    tracker.wasWrong = true
                     tracker.errorCounter.leaningBackwards = 0
-                    tracker.errorsWithDuplicates.add("Leaning backwards")
+                    tracker.addErrors(listOf("Leaning backwards"))
                     tracker.currentErrors.add("Leaning backwards")
                 }
             } else {
@@ -170,18 +172,9 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
             }
             val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
-                tracker.addErrors(tracker.errorsWithDuplicates.toSet().toList())
-                tracker.errorsWithDuplicates = mutableListOf()
                 tracker.state = FormStates.notStarted
                 tracker.errorCounter.reset()
-                val repCount = Reps(1,0, 0)
-                if(tracker.wasWrong) {
-                    repCount.wrong++
-                } else {
-                    repCount.correct++
-                }
                 tracker.wasWrong = false
-                tracker.addReps(repCount)
             }
         }
     }

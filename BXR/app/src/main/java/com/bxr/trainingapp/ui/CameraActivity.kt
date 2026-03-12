@@ -14,6 +14,7 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -42,12 +43,15 @@ import com.bxr.trainingapp.forms.trackStraight
 import com.bxr.trainingapp.sessions.FormStates
 import com.bxr.trainingapp.sessions.FormTracker
 import com.bxr.trainingapp.sessions.Handedness
+import com.bxr.trainingapp.sessions.RepResult
 import com.bxr.trainingapp.sessions.SessionTracker
+import com.google.android.material.card.MaterialCardView
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import java.time.Instant
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import androidx.core.graphics.toColorInt
 
 class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListener {
     private lateinit var poseLandmarkerHelper: PoseLandmarkerHelper
@@ -76,9 +80,11 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
     private lateinit var overlay: OverlayView
     private lateinit var tvRepNumber: TextView
     private lateinit var tvPercentWrong: TextView
-    private lateinit var tvErrorMessage: TextView
     private lateinit var repFlashOverlay: View
     private lateinit var readyFlag: TextView
+    private lateinit var errorContainer: LinearLayout
+    private lateinit var repFeedbackCard: MaterialCardView
+    private lateinit var repFeedbackText: TextView
 
     private val errorFirstSeen = mutableMapOf<String, Long>()
     private val errorLastSeen = mutableMapOf<String, Long>()
@@ -129,9 +135,14 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         overlay = findViewById(R.id.overlay)
         tvRepNumber = findViewById(R.id.repCounter)
         tvPercentWrong = findViewById(R.id.bestScore)
-        tvErrorMessage = findViewById(R.id.errorText)
         repFlashOverlay = findViewById(R.id.repFlashOverlay)
         readyFlag = findViewById(R.id.readyFlag)
+        errorContainer = findViewById(R.id.errorContainer)
+
+        repFeedbackCard = findViewById(R.id.repFeedbackCard)
+        repFeedbackText = findViewById(R.id.repFeedbackText)
+
+        repFeedbackCard.visibility = View.INVISIBLE
 
         viewFinder.scaleType = PreviewView.ScaleType.FILL_CENTER
 
@@ -156,7 +167,14 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
             requestPermissions()
         }
 
-
+        findViewById<Button>(R.id.btnEndSession).setOnClickListener {
+            currentSession.endTime = Instant.now()
+            JsonWriter(this.applicationContext).createJSONObject(currentSession, moveName!!)
+            val intent = Intent(this, PostCameraActivity::class.java)
+            intent.putExtra("PUNCH_NAME", moveName)
+            intent.putExtra("SCORE", score)
+            startActivity(intent)
+        }
 
     }
 
@@ -182,34 +200,85 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
             .start()
     }
 
-    private fun handleStateChange(state: FormStates) {
 
-        when (state) {
+    private fun showRepFeedback(isCorrect: Boolean) {
 
-            FormStates.notStarted -> {
-                showReady("READY")
+        if (isCorrect) {
+            repFeedbackText.text = "Correct Rep"
+        } else {
+            repFeedbackText.text = "Incorrect Rep"
+        }
+
+        repFeedbackCard.alpha = 1f
+        repFeedbackCard.visibility = View.VISIBLE
+
+        repFeedbackCard.animate()
+            .alpha(0f)
+            .setStartDelay(800)
+            .setDuration(500)
+            .withEndAction {
+                repFeedbackCard.visibility = View.INVISIBLE
             }
+    }
 
+    private fun handleStateChange(state: FormStates) {
+        when (state) {
+            FormStates.notStarted -> { showReady("READY") }
             FormStates.inProgress -> {
                 showReady("GO")
+                currentSession.formState.startRep()
             }
-
             FormStates.completed -> {
                 showReady("+1")
-                flashGreen()
+
+                if (!currentSession.formState.wasWrong) {
+                    flashGreen("#4CAF50")
+                } else {
+                    flashGreen("#FF0000")
+                }
+
+                val isCorrect = !currentSession.formState.wasWrong
+
+
+                currentSession.formState.endRep()
+                showRepFeedback(isCorrect)
+
+                currentSession.formState.wasWrong = false
             }
         }
     }
 
-    private fun flashGreen() {
+    private fun flashGreen(color: String) {
 
         repFlashOverlay.alpha = 0.6f
+        repFlashOverlay.setBackgroundColor(color.toColorInt())
 
         repFlashOverlay.animate()
             .alpha(0f)
             .setDuration(250)
             .start()
     }
+
+
+    fun showErrors(errors: List<String>) {
+
+        errorContainer.removeAllViews()
+
+        for (error in errors) {
+
+            val view = layoutInflater.inflate(
+                R.layout.error_item,
+                errorContainer,
+                false
+            )
+
+            val label = view.findViewById<TextView>(R.id.errorLabel)
+            label.text = error
+
+            errorContainer.addView(view)
+        }
+    }
+
 
 
     private fun updateState(newAngles: AngleType?){
@@ -224,6 +293,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
             "Rear Uppercut" -> currentSession.formState = trackRearUpperCut(angles, currentSession.formState)
         }
         val newState = currentSession.formState.state
+
 
         if (newState != lastState) {
             runOnUiThread {
@@ -281,25 +351,15 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
                 append("%")
             }
 
-            val newText = displayedErrors.joinToString("\n")
-
-            if (tvErrorMessage.text.toString() != newText) {
-                tvErrorMessage.text = newText
-            }
+            showErrors(displayedErrors)
         }
         currentSession.formState.keyPoseErrors.clear()
-        currentSession.formState.currentErrors.clear()
+        // currentSession.formState.currentErrors.clear()
         Log.d("JABSTATE", currentSession.formState.state.toString())
         // Log.d("ANGLES", angles.toString())
+        currentSession.formState.currentErrors.clear()
 
-        findViewById<Button>(R.id.btnEndSession).setOnClickListener {
-            currentSession.endTime = Instant.now()
-            JsonWriter(this.applicationContext).createJSONObject(currentSession, moveName!!)
-            val intent = Intent(this, PostCameraActivity::class.java)
-            intent.putExtra("PUNCH_NAME", moveName)
-            intent.putExtra("SCORE", score)
-            startActivity(intent)
-        }
+
 
     }
 

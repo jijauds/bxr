@@ -1,12 +1,14 @@
-package com.bxr.trainingapp.model
+package com.bxr.trainingapp.data
+
+import com.bxr.trainingapp.sessions.RepResult
 
 data class SessionLog(
     val id: Int,
     val punchType: String,
     val duration: Int,
     val handedness: String,
-    val errors: List<String>,
-    val reps: Reps
+    val reps: Reps,
+    val repResults: List<RepResult>
 )
 
 data class Reps(
