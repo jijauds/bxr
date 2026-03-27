@@ -35,8 +35,8 @@
         android:layout_centerInParent="true"
         android:layout_marginTop="40dp"
         android:clipToPadding="false"
-        android:paddingStart="60dp"
-        android:paddingEnd="60dp" />
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp" />
 
     <LinearLayout
         android:id="@+id/layoutDots"

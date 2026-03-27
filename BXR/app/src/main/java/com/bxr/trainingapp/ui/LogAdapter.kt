@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bxr.trainingapp.R
-import com.bxr.trainingapp.model.SessionLog
+import com.bxr.trainingapp.data.SessionLog
 
 class LogAdapter(private val logs: List<SessionLog>) :
     RecyclerView.Adapter<LogAdapter.ViewHolder>() {
@@ -55,8 +55,18 @@ class LogAdapter(private val logs: List<SessionLog>) :
             buildString {
                 append("Handedness: ")
                 append(log.handedness)
-                append("\nErrors:\n")
-                append(log.errors.distinct().joinToString("\n"))
+                append("\n\nRep Errors:\n")
+
+                for (rep in log.repResults) {
+
+                    append("\nRep ${rep.repNumber} • ")
+
+                    if (rep.errors.isEmpty()) {
+                        append("Perfect form")
+                    } else {
+                        append(rep.errors.distinct().joinToString(", "))
+                    }
+                }
             }
 
         val isExpanded = position == expandedPosition

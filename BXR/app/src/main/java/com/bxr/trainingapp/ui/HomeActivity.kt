@@ -23,7 +23,11 @@ class HomeActivity : AppCompatActivity() {
         val handedness = prefs.getString("HANDEDNESS", "ORTHODOX")
         val name = prefs.getString("NAME", "User")
 
-        tvUsername.text = "Welcome, $name!"
+        tvUsername.text = buildString {
+            append("Welcome, ")
+            append(name)
+            append("!")
+        }
 
         btnTrain.setOnClickListener {
             val intent = Intent(this, TrainActivity::class.java)
