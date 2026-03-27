@@ -30,118 +30,118 @@ def put_keypoint(frame, point, poi, name, color=(255,0,255)):
                 (int(point[0]), int(point[1]) - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 camera_angles = ["front", "back"]
-move_list = ["guard", "jab", "straight", "leftHook", "rightHood"]
-for move in move_list:
-    for camera_angle in camera_angles:
-        #input_video = "document_6073624840818923477.mp4"  
-        output_video = "outputVideos/"+ camera_angle + "/"  + move + ".mp4"
-        output_csv   = "outputCsvs/"+ camera_angle + "/" + move + ".csv"
+move_list = ["guard", "jab", "straight", "leadHook", "rearHook"]
+#input_video = "document_6073624840818923477.mp4"  
+output_video = "outputVideos/front/guard.mp4"
+output_csv   = "outputCsvs/front/guard.csv"
 
-        #cap = cv2.VideoCapture(input_video)
-        cap = cv2.VideoCapture("/test_data/"+camera_angle+"/"+move+"%04.png", cv2.CAP_IMAGES)
-        if not cap.isOpened():
-            raise RuntimeError("Failed to open input video")
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        fps = cap.get(cv2.CAP_PROP_FPS)
-        if fps == 0:
-            fps = 30
-        w, h = int(cap.get(3)), int(cap.get(4))
-        if w == 0 or h == 0:
-            raise RuntimeError("Invalid video dimensions")
-        outv = cv2.VideoWriter(output_video, fourcc, fps, (w,h))
-        if not outv.isOpened():
-            raise RuntimeError("VideoWriter failed to open")
+#cap = cv2.VideoCapture(input_video)
+cap = cv2.VideoCapture("/testData/front/guard/I%04d.png", cv2.CAP_IMAGES)
+#if not cap.isOpened():
+#    print("/testData/front/guard/I%04d.png")
+#    #print("/testData/"+camera_angle+"/"+move+"/%02d.png")
+#    raise RuntimeError("Failed to open input video")
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+fps = cap.get(cv2.CAP_PROP_FPS)
+if fps == 0:
+    fps = 30
+#w, h = int(cap.get(3)), int(cap.get(4))
+#if w == 0 or h == 0:
+#    raise RuntimeError("Invalid video dimensions")
+outv = cv2.VideoWriter(output_video, fourcc, fps, (1080,1920))
+if not outv.isOpened():
+    raise RuntimeError("VideoWriter failed to open")
 
-        csv_file = open(output_csv, "w", newline="")
-        csv_writer = csv.writer(csv_file)
-        header = ["frame", "L_Elbow", "R_Elbow", "L_Knee", "R_Knee",
-                  "L_Shoulder", "R_Shoulder", "L_Hip", "R_Hip"]
-        csv_writer.writerow(header)
+csv_file = open(output_csv, "w", newline="")
+csv_writer = csv.writer(csv_file)
+header = ["frame", "L_Elbow", "R_Elbow", "L_Knee", "R_Knee",
+            "L_Shoulder", "R_Shoulder", "L_Hip", "R_Hip"]
+csv_writer.writerow(header)
 
-        frame_idx = 0
+frame_idx = 0
 
-        @dataclasses.dataclass
-        class DrawingSpec:
-          # Color for drawing the annotation. Default to the white color.
-          color: Tuple[int, int, int] = (0,0,0)
-          # Thickness for drawing the annotation. Default to 2 pixels.
-          thickness: int = 2
-          # Circle radius. Default to 2 pixels.
-          circle_radius: int = 2
+@dataclasses.dataclass
+class DrawingSpec:
+    # Color for drawing the annotation. Default to the white color.
+    color: Tuple[int, int, int] = (0,0,0)
+    # Thickness for drawing the annotation. Default to 2 pixels.
+    thickness: int = 2
+    # Circle radius. Default to 2 pixels.
+    circle_radius: int = 2
 
-        while True:
-            ret, frame = cap.read()
-            if not ret: break
+while True:
+    ret, frame = cap.read()
+    if not ret: break
 
-            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            result = pose.process(rgb)
+    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    result = pose.process(rgb)
 
-            #print(mp_pose.POSE_CONNECTIONS)
+    #print(mp_pose.POSE_CONNECTIONS)
 
-            angles_row = [frame_idx] + [None]*10 
+    angles_row = [frame_idx] + [None]*10 
 
-            connects = frozenset([(12,11),(12,14),(14,16),(11,13),(13,15),(12,24),(11,23),(24,23),(24,26),(23,25),(26,30),(25,29)])
+    connects = frozenset([(12,11),(12,14),(14,16),(11,13),(13,15),(12,24),(11,23),(24,23),(24,26),(23,25),(26,30),(25,29)])
 
-            if result.pose_landmarks:
-                triplets = {
-                    "L_Hand": (12, 11, 15),
-                    "R_Hand": (11, 12, 16),
-                    "L_Elbow":  (11, 13, 15),
-                    "R_Elbow":  (12, 14, 16),
-                    "L_Knee":   (23, 25, 27),
-                    "R_Knee":   (24, 26, 28),
-                    "L_Shoulder": (13, 11, 23),
-                    "R_Shoulder": (14, 12, 24),
-                    "L_Hip":    (24, 23, 25),
-                    "R_Hip":    (23, 24, 26),
-                }
-                lm = result.pose_landmarks.landmark
-                print(len(lm))
-                coords = {i: (lm[i].x * w, lm[i].y * h, lm[i].visibility) for i in range(len(lm))}
-                angles = {}
-                for i,(name, (a,b,c)) in enumerate(triplets.items()):
-                    if name not in ("L_Hand", "R_Hand"):
-                        angles[b] =  angle_between(coords[a][:2], coords[b][:2], coords[c][:2])
-                    else:
-                        angles[c] = angle_between(coords[a][:2], coords[b][:2], coords[c][:2])
-                print(angles)
-                #angles = {b:angle_between(coords[a][:2], coords[b][:2], coords[c][:2]) for (a,b,c) in triplets.values() if }
-                mp_drawing.draw_landmarks(frame, result.pose_landmarks, connects, DrawingSpec(color=(0,255,0)), DrawingSpec(color=(0,255,0), thickness = 4),angles)
-                #print(mp_pose.POSE_CONNECTIONS)
+    if result.pose_landmarks:
+        triplets = {
+            "L_Hand": (12, 11, 15),
+            "R_Hand": (11, 12, 16),
+            "L_Elbow":  (11, 13, 15),
+            "R_Elbow":  (12, 14, 16),
+            "L_Knee":   (23, 25, 27),
+            "R_Knee":   (24, 26, 28),
+            "L_Shoulder": (13, 11, 23),
+            "R_Shoulder": (14, 12, 24),
+            "L_Hip":    (24, 23, 25),
+            "R_Hip":    (23, 24, 26),
+        }
+        lm = result.pose_landmarks.landmark
+        print(len(lm))
+        coords = {i: (lm[i].x * w, lm[i].y * h, lm[i].visibility) for i in range(len(lm))}
+        angles = {}
+        for i,(name, (a,b,c)) in enumerate(triplets.items()):
+            if name not in ("L_Hand", "R_Hand"):
+                angles[b] =  angle_between(coords[a][:2], coords[b][:2], coords[c][:2])
+            else:
+                angles[c] = angle_between(coords[a][:2], coords[b][:2], coords[c][:2])
+        print(angles)
+        #angles = {b:angle_between(coords[a][:2], coords[b][:2], coords[c][:2]) for (a,b,c) in triplets.values() if }
+        mp_drawing.draw_landmarks(frame, result.pose_landmarks, connects, DrawingSpec(color=(0,255,0)), DrawingSpec(color=(0,255,0), thickness = 4),angles)
+        #print(mp_pose.POSE_CONNECTIONS)
 
-                other_points = {
-                    "L_Foot" : 29,
-                    "R_Foot" : 30,
-                    "Head" : 0,
-                }
+        other_points = {
+            "L_Foot" : 29,
+            "R_Foot" : 30,
+            "Head" : 0,
+        }
 
-                for i, (name, (a, b, c)) in enumerate(triplets.items()):
-                    if coords[a][2] > 0.3 and coords[b][2] > 0.3 and coords[c][2] > 0.3:
-                        if "Hand" not in name:
-                            ang = angles[b]
-                            put_angle(frame, ang, 15*i, f"{name}: {a},{b},{c}")
-                            put_keypoint(frame, coords[b], b, f"{name}")
-                        else:
-                            ang = angles[c]
-                            put_angle(frame, ang, 15*i, f"{name}: {a},{b},{c}")
-                            put_keypoint(frame, coords[c], c, f"{name}")
-                        angles_row[i+1] = round(ang, 2)
-                for i, (name, point) in enumerate(other_points.items()):
-                    if coords[point][2] > 0.3:
-                        color = (255,0,255)
-                        cv2.putText(frame, f"{point}",
-                            (int(coords[point][0]), int(coords[point][1]) - 10),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+        for i, (name, (a, b, c)) in enumerate(triplets.items()):
+            if coords[a][2] > 0.3 and coords[b][2] > 0.3 and coords[c][2] > 0.3:
+                if "Hand" not in name:
+                    ang = angles[b]
+                    put_angle(frame, ang, 15*i, f"{name}: {a},{b},{c}")
+                    put_keypoint(frame, coords[b], b, f"{name}")
+                else:
+                    ang = angles[c]
+                    put_angle(frame, ang, 15*i, f"{name}: {a},{b},{c}")
+                    put_keypoint(frame, coords[c], c, f"{name}")
+                angles_row[i+1] = round(ang, 2)
+        for i, (name, point) in enumerate(other_points.items()):
+            if coords[point][2] > 0.3:
+                color = (255,0,255)
+                cv2.putText(frame, f"{point}",
+                    (int(coords[point][0]), int(coords[point][1]) - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
-            csv_writer.writerow(angles_row)
-            outv.write(frame)
+    csv_writer.writerow(angles_row)
+    outv.write(frame)
 
-            cv2.imshow("boxing", cv2.resize(frame, (540,960)))
-            if cv2.waitKey(1) & 0xFF == ord('q'): break
+    cv2.imshow("boxing", cv2.resize(frame, (540,960)))
+    if cv2.waitKey(1) & 0xFF == ord('q'): break
 
-            frame_idx += 1
-        cap.release()
-        outv.release()
-        csv_file.close()
-        cv2.destroyAllWindows()
-        print(f"Saved {output_video} and {output_csv}")
+    frame_idx += 1
+cap.release()
+outv.release()
+csv_file.close()
+cv2.destroyAllWindows()
+print(f"Saved {output_video} and {output_csv}")
