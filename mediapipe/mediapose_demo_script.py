@@ -29,41 +29,45 @@ def put_keypoint(frame, point, poi, name, color=(255,0,255)):
     cv2.putText(frame, f"{name}:{poi}",
                 (int(point[0]), int(point[1]) - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+camera_angles = ["front", "back"]
+move_list = ["guard", "jab", "straight", "leadHook", "rearHook"]
+#input_video = "document_6073624840818923477.mp4"  
+output_video = "outputVideos/front/guard.mp4"
+output_csv   = "outputCsvs/front/guard.csv"
 
-input_video = "document_6073624840818923477.mp4"  
-output_video = "sideview_1.mp4"
-output_csv   = "sideview_1.csv"
-
-cap = cv2.VideoCapture(input_video)
-if not cap.isOpened():
-    raise RuntimeError("Failed to open input video")
+#cap = cv2.VideoCapture(input_video)
+cap = cv2.VideoCapture("/testData/front/guard/I%04d.png", cv2.CAP_IMAGES)
+#if not cap.isOpened():
+#    print("/testData/front/guard/I%04d.png")
+#    #print("/testData/"+camera_angle+"/"+move+"/%02d.png")
+#    raise RuntimeError("Failed to open input video")
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 fps = cap.get(cv2.CAP_PROP_FPS)
 if fps == 0:
     fps = 30
-w, h = int(cap.get(3)), int(cap.get(4))
-if w == 0 or h == 0:
-    raise RuntimeError("Invalid video dimensions")
-outv = cv2.VideoWriter(output_video, fourcc, fps, (w,h))
+#w, h = int(cap.get(3)), int(cap.get(4))
+#if w == 0 or h == 0:
+#    raise RuntimeError("Invalid video dimensions")
+outv = cv2.VideoWriter(output_video, fourcc, fps, (1080,1920))
 if not outv.isOpened():
     raise RuntimeError("VideoWriter failed to open")
 
 csv_file = open(output_csv, "w", newline="")
 csv_writer = csv.writer(csv_file)
 header = ["frame", "L_Elbow", "R_Elbow", "L_Knee", "R_Knee",
-          "L_Shoulder", "R_Shoulder", "L_Hip", "R_Hip"]
+            "L_Shoulder", "R_Shoulder", "L_Hip", "R_Hip"]
 csv_writer.writerow(header)
 
 frame_idx = 0
 
 @dataclasses.dataclass
 class DrawingSpec:
-  # Color for drawing the annotation. Default to the white color.
-  color: Tuple[int, int, int] = (0,0,0)
-  # Thickness for drawing the annotation. Default to 2 pixels.
-  thickness: int = 2
-  # Circle radius. Default to 2 pixels.
-  circle_radius: int = 2
+    # Color for drawing the annotation. Default to the white color.
+    color: Tuple[int, int, int] = (0,0,0)
+    # Thickness for drawing the annotation. Default to 2 pixels.
+    thickness: int = 2
+    # Circle radius. Default to 2 pixels.
+    circle_radius: int = 2
 
 while True:
     ret, frame = cap.read()

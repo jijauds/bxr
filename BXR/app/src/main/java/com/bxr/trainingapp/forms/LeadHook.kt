@@ -7,16 +7,16 @@ import com.bxr.trainingapp.sessions.FormTracker
 import com.bxr.trainingapp.sessions.Reps
 
 private val leadHookAngles = mapOf(
-    "L_Hand" to 170.0,
-    //"R_Hand" to 170.0,
-    //"L_Elbow" to 165.0,
-    "R_Elbow" to 35.0,
-    "L_Knee" to 172.0,
-    "R_Knee" to 175.0,
-    //"L_Shoulder" to 90.0,
-    "R_Shoulder" to 8.0,
-    "L_Hip" to 106.0,
-    "R_Hip" to 115.0
+    "L_Hand" to Pair(36.0, 180.0),
+    //"R_Hand" to Pair(3.0, 78.0),
+    //"L_Elbow" to Pair(1.0, 180.0),
+    "R_Elbow" to Pair(11.0, 76.0),
+    "L_Knee" to Pair(137.0,180.0),
+    "R_Knee" to Pair(157.0,180.0),
+    //"L_Shoulder" to Pair(65.0,114.0),
+    "R_Shoulder" to Pair(0.0,49.0),
+    "L_Hip" to Pair(82.0,123.0),
+    "R_Hip" to Pair(89.0,117.0)
 )
 
 private const val THRESHOLD = 25.0

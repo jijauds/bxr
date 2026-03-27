@@ -24,7 +24,7 @@ fun getError(name: String, errorMessages: Map<String, String>): String {
     return errorMessages[name] ?: "$name position is incorrect"
 }
 
-fun checkAngle(angles: Map<String, Coords>, correctangles: Map<String, Double>, threshhold: Double): AngleResults{
+fun checkAngle(angles: Map<String, Coords>, correctangles: Map<String, Pair<Double, Double>>, threshhold: Double): AngleResults{
     val errors = mutableListOf<String>()
     val keypoints = mutableMapOf<String, Boolean>()
 
@@ -44,7 +44,7 @@ fun checkAngle(angles: Map<String, Coords>, correctangles: Map<String, Double>, 
                 continue
             }
         }
-        if ((angle.angle < correctangles[name]!! - threshhold || angle.angle > correctangles[name]!! + threshhold)) {
+        if ((angle.angle < correctangles[name]!!.first || angle.angle > correctangles[name]!!.second)) {
             keypoints[name] = false
             errors.add(getError(name, errorMessages))
         } else {
@@ -63,12 +63,12 @@ fun checkAngle(angles: Map<String, Coords>, correctangles: Map<String, Double>, 
     return AngleResults(keypoints, errors)
 }
 
-fun checkStraight(angles: Map<String, Coords>, correctangles: Map<String, Double>, threshhold: Double): AngleResults{
+fun checkStraight(angles: Map<String, Coords>, correctangles: Map<String, Pair<Double, Double>>, threshhold: Double): AngleResults{
     val errors = mutableListOf<String>()
     val keypoints = mutableMapOf<String, Boolean>()
 
     for ((name, angle) in correctangles) {
-        if ((angles[name]!!.angle < angle - threshhold || angles[name]!!.angle > angle + threshhold)) {
+        if ((angles[name]!!.angle < angle.first || angles[name]!!.angle > angle.second)) {
             keypoints[name] = false
             errors.add(getError(name, errorMessages))
         } else {
@@ -87,12 +87,12 @@ fun checkStraight(angles: Map<String, Coords>, correctangles: Map<String, Double
     return AngleResults(keypoints, errors)
 }
 
-fun checkLeadHook(angles: Map<String, Coords>, correctangles: Map<String, Double>, threshhold: Double): AngleResults{
+fun checkLeadHook(angles: Map<String, Coords>, correctangles: Map<String, Pair<Double, Double>>, threshhold: Double): AngleResults{
     val errors = mutableListOf<String>()
     val keypoints = mutableMapOf<String, Boolean>()
 
     for ((name, angle) in correctangles) {
-        if ((angles[name]!!.angle < angle - threshhold || angles[name]!!.angle > angle + threshhold)) {
+        if ((angles[name]!!.angle < angle.first || angles[name]!!.angle > angle.second)) {
             keypoints[name] = false
             errors.add(getError(name, errorMessages))
         } else {
