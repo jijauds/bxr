@@ -9,14 +9,15 @@ private val jabAngles = mapOf(
     "L_Hand" to Pair(152.0, 180.0),
     //"R_Hand" to Pair(0.0, 55.0),
     "L_Elbow" to Pair(146.0, 180.0),
-    "R_Elbow" to Pair(26.0, 63.5),
+    "R_Elbow" to Pair(26.0, 71.0),
     "L_Knee" to Pair(150.0, 180.0),
-    "R_Knee" to Pair(165.0,180.0),
+    "R_Knee" to Pair(120.0,180.0),
     "L_Shoulder" to Pair(67.0, 111.0),
-    "R_Shoulder" to Pair(0.0, 30.0),
-    "L_Hip" to Pair(78.0,111.0),
-    "R_Hip" to Pair(88.0,115.0)
+    "R_Shoulder" to Pair(0.0, 87.0),
+    "L_Hip" to Pair(78.0,121.0),
+    "R_Hip" to Pair(80.0,115.0)
 )
+
 
 private const val THRESHOLD = 20.0
 private val checkError = GenericErrorChecker()
@@ -24,13 +25,11 @@ private val checkError = GenericErrorChecker()
 fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
     val angles = angleType.angles
 
-    // Log.d("REPS", tracker.reps.toString())
     val errorFrameCheck = 2
 
     when (tracker.state) {
         FormStates.notStarted -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
-            Log.d("GUARDERRORS", checkGuard.errors.toString())
             tracker.addKeyPoseErrors(checkGuard.errors)
             tracker.changeKeypoints(checkGuard.keypoints)
             tracker.currentErrors = checkGuard.errors.toMutableList()
@@ -47,10 +46,12 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
 
         FormStates.inProgress -> {
             val checkJab = checkAngle(angles, jabAngles, THRESHOLD)
+            val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
+            val keypointColors = checkGuard.keypoints.toMutableMap()
 
             // tracker.currentErrors.addAll(checkJab.errors)
             tracker.addKeyPoseErrors(checkJab.errors)
-            tracker.changeKeypoints(checkJab.keypoints)
+            // tracker.changeKeypoints(checkJab.keypoints)
 
             //Check if hands are wrong
             //Check rear hand placement
@@ -60,6 +61,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.addErrors(listOf("Guard hand goes down"))
                     tracker.errorCounter.guardHandGoesDown = 0
                     tracker.currentErrors.add("Guard hand goes down")
+                    keypointColors["R_Hand"] = false
                 }
             } else {
                 tracker.errorCounter.guardHandGoesDown = 0
@@ -71,6 +73,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.punchNotStraight = 0
                     tracker.addErrors(listOf("Punch not straight"))
                     tracker.currentErrors.add("Punch not straight")
+                    keypointColors["L_Hand"] = false
                 }
             } else {
                 tracker.errorCounter.punchNotStraight = 0
@@ -84,6 +87,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.leaningForward = 0
                     tracker.addErrors(listOf("Leaning forward"))
                     tracker.currentErrors.add("Leaning forward")
+                    keypointColors["L_Hip"] = false
+                    keypointColors["R_Hip"] = false
                 }
             } else {
                 tracker.errorCounter.leaningForward = 0
@@ -94,6 +99,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.leaningBackwards = 0
                     tracker.addErrors(listOf("Leaning backwards"))
                     tracker.currentErrors.add("Leaning backwards")
+                    keypointColors["L_Hip"] = false
+                    keypointColors["R_Hip"] = false
                 }
             } else {
                 tracker.errorCounter.leaningBackwards = 0
@@ -112,10 +119,14 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                         tracker.addErrors(listOf("Punch not full"))
                         tracker.currentErrors.add("Punch not full")
                         tracker.errorCounter.punchNotFull = true
+                        keypointColors["L_Elbow"] = false
                     }
-                    tracker.errorCounter.punchNotFull = true
+                    tracker.errorCounter.punchNotFull = false
                 }
+            } else {
+                tracker.errorCounter.punchNotFullCounter = 0
             }
+
             if (angles["L_Hand"] != null){
                 tracker.errorCounter.handX = angles["L_Hand"]!!.x
             }
@@ -127,12 +138,12 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (atClimax) {
                 tracker.state = FormStates.completed
             }
+            tracker.changeKeypoints(keypointColors)
         }
 
         FormStates.completed -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
-            Log.d("GUARDERRORS", checkGuard.errors.toString())
-
+            val keypointColors = checkGuard.keypoints.toMutableMap()
             // Fixed potential duplicate accumulation in currentErrors
             checkGuard.errors.forEach { error ->
                 if (!tracker.currentErrors.contains(error)) {
@@ -144,7 +155,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.handX = angles["L_Hand"]!!.x
             }
             tracker.addKeyPoseErrors(checkGuard.errors)
-            tracker.changeKeypoints(checkGuard.keypoints)
+            // tracker.changeKeypoints(checkGuard.keypoints)
 
             //Check if hands are wrong
             //Check rear hand placement
@@ -154,6 +165,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.guardHandGoesDown = 0
                     tracker.addErrors(listOf("Guard hand goes down"))
                     tracker.currentErrors.add("Guard hand goes down")
+                    keypointColors["R_Hand"] = false
                 }
             } else {
                 tracker.errorCounter.guardHandGoesDown = 0
@@ -165,6 +177,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.punchNotStraight = 0
                     tracker.addErrors(listOf("Punch not straight"))
                     tracker.currentErrors.add("Punch not straight")
+                    keypointColors["L_Hand"] = false
                 }
             } else {
                 tracker.errorCounter.punchNotStraight = 0
@@ -178,6 +191,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.leaningForward = 0
                     tracker.addErrors(listOf("Leaning forward"))
                     tracker.currentErrors.add("Leaning forward")
+                    keypointColors["L_Hip"] = false
+                    keypointColors["R_Hip"] = false
                 }
             } else {
                 tracker.errorCounter.leaningForward = 0
@@ -189,6 +204,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.leaningBackwards = 0
                     tracker.addErrors(listOf("Leaning backwards"))
                     tracker.currentErrors.add("Leaning backwards")
+                    keypointColors["L_Hip"] = false
+                    keypointColors["R_Hip"] = false
                 }
             } else {
                 tracker.errorCounter.leaningBackwards = 0
@@ -198,15 +215,9 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (atGuard) {
                 tracker.state = FormStates.notStarted
                 tracker.errorCounter.reset()
-//                val repCount = Reps(1,0, 0)
-//                if(tracker.wasWrong) {
-//                    repCount.wrong++
-//                } else {
-//                    repCount.correct++
-//                }
                 tracker.wasWrong = false
-                // tracker.addReps(repCount)
             }
+            tracker.changeKeypoints(keypointColors)
         }
     }
 

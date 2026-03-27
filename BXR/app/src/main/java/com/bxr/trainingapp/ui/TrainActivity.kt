@@ -14,16 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.bxr.trainingapp.R
 import com.bxr.trainingapp.adapter.CarouselAdapter
-import com.bxr.trainingapp.data.AngleType
-import com.bxr.trainingapp.forms.trackJab
 import com.bxr.trainingapp.model.Move
 import android.net.Uri
 import android.widget.MediaController
-import androidx.core.net.toUri
-import com.bxr.trainingapp.sessions.FormTracker
-import com.bxr.trainingapp.sessions.Handedness
-import com.bxr.trainingapp.sessions.SessionTracker
-import java.time.Instant
 
 class TrainActivity : AppCompatActivity() {
 
@@ -69,13 +62,9 @@ class TrainActivity : AppCompatActivity() {
                 "$guard_desc\n\nAt climax: \n\nLead arm fully extended\nRear arm at guard\nHips and legs same as guard",
                 R.raw.jab_preview
             ),
-            Move("Front Uppercut", R.drawable.move,
+            Move("Rear Hook", R.drawable.move,
                 "$guard_desc\n\nAt climax: \n\nLead arm fully extended\nRear arm at guard\nHips and legs same as guard",
-                R.raw.front_uppercut_preview
-            ),
-            Move("Rear Uppercut", R.drawable.move,
-                "$guard_desc\n\nAt climax: \n\nLead arm fully extended\nRear arm at guard\nHips and legs same as guard",
-                R.raw.rear_uppercut_preview
+                R.raw.jab_preview
             )
         )
 

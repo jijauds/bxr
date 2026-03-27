@@ -50,16 +50,16 @@
             android:textColor="#BDBDBD"
             android:textSize="14sp" />
 
-        <Button
-            android:id="@+id/btnStart"
-            android:layout_width="160dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="24dp"
-            android:backgroundTint="@color/accent"
-            android:text="RESTART"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+<!--        <Button-->
+<!--            android:id="@+id/btnStart"-->
+<!--            android:layout_width="160dp"-->
+<!--            android:layout_height="48dp"-->
+<!--            android:layout_marginTop="24dp"-->
+<!--            android:backgroundTint="@color/accent"-->
+<!--            android:text="RESTART"-->
+<!--            android:textColor="#FFFFFF"-->
+<!--            android:textSize="16sp"-->
+<!--            android:textStyle="bold" />-->
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -76,7 +76,7 @@
                 android:focusable="true"
                 android:text="View Log Details"
                 android:textColor="#BDBDBD"
-                android:textSize="10sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvMovesList"
@@ -87,7 +87,7 @@
                 android:focusable="true"
                 android:text="View Moves List"
                 android:textColor="#BDBDBD"
-                android:textSize="10sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvBackHome"
@@ -98,7 +98,7 @@
                 android:focusable="true"
                 android:text="Back to Home"
                 android:textColor="#BDBDBD"
-                android:textSize="10sp" />
+                android:textSize="16sp" />
 
         </LinearLayout>
 
