@@ -136,11 +136,11 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
             val endX = end.x() * imageWidth * scaleFactor + offsetX
             val endY = end.y() * imageHeight * scaleFactor + offsetY
 
-            if (keypointErrors[keypoint_name_pairing[startIdx]] == true || keypointErrors[keypoint_name_pairing[endIdx]] == true){
-                canvas.drawLine(startX, startY, endX, endY, linePaintCorrect)
+            if (keypointErrors[keypoint_name_pairing[startIdx]] == false || keypointErrors[keypoint_name_pairing[endIdx]] == false){
+                canvas.drawLine(startX, startY, endX, endY, linePaintWrong)
             }
             else {
-                canvas.drawLine(startX, startY, endX, endY, linePaintWrong)
+                canvas.drawLine(startX, startY, endX, endY, linePaintCorrect)
             }
         }
     }

@@ -4,7 +4,6 @@ import android.util.Log
 import com.bxr.trainingapp.data.AngleType
 import com.bxr.trainingapp.sessions.FormStates
 import com.bxr.trainingapp.sessions.FormTracker
-import com.bxr.trainingapp.sessions.Reps
 
 private val leadUpperCutAngles = mapOf(
     "L_Hand" to 140.0,
@@ -22,7 +21,7 @@ private val leadUpperCutAngles = mapOf(
 private const val THRESHOLD = 20.0
 private val checkError = GenericErrorChecker()
 
-fun trackLeadUpperCut(angleType: AngleType, tracker: FormTracker): FormTracker {
+fun trackRearHook(angleType: AngleType, tracker: FormTracker): FormTracker {
     val angles = angleType.angles
 
     // Log.d("REPS", tracker.reps.toString())

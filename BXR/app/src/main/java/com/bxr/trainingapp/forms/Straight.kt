@@ -47,10 +47,12 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
 
         FormStates.inProgress -> {
             val checkStraight = checkStraight(angles, straightAngles,THRESHOLD)
+            val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
+            val keypointColors = checkGuard.keypoints.toMutableMap()
 
             // tracker.currentErrors.addAll(checkJab.errors)
             tracker.addKeyPoseErrors(checkStraight.errors)
-            tracker.changeKeypoints(checkStraight.keypoints)
+            //tracker.changeKeypoints(checkStraight.keypoints)
 
             //Check if hands are wrong
             //Check lead hand placement -- OCCLUDED
@@ -62,6 +64,7 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.punchNotStraight = 0
                     tracker.addErrors(listOf("Punch not straight"))
                     tracker.currentErrors.add("Punch not straight")
+                    keypointColors["R_Hand"] = false
                 }
             } else {
                 tracker.errorCounter.punchNotStraight = 0
@@ -72,8 +75,11 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.leanForwardCheck(angles)) {
                 tracker.errorCounter.leaningForward++
                 if (tracker.errorCounter.leaningForward > errorFrameCheck) {
+                    tracker.errorCounter.leaningForward = 0
                     tracker.addErrors(listOf("Leaning forward"))
                     tracker.currentErrors.add("Leaning forward")
+                    keypointColors["L_Hip"] = false
+                    keypointColors["R_Hip"] = false
                 }
             } else {
                 tracker.errorCounter.leaningForward = 0
@@ -84,6 +90,8 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.leaningBackwards = 0
                     tracker.addErrors(listOf("Leaning backwards"))
                     tracker.currentErrors.add("Leaning backwards")
+                    keypointColors["L_Hip"] = false
+                    keypointColors["R_Hip"] = false
                 }
             } else {
                 tracker.errorCounter.leaningBackwards = 0
@@ -92,7 +100,7 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             // Check if punch was stretched out
             if (angles["R_Elbow"]!!.angle !in 165.0..180.0) {
                 tracker.errorCounter.punchNotFull = true
-            }
+            } else tracker.errorCounter.punchNotFull = false
             if (angles["R_Hand"]!!.x < tracker.errorCounter.handX-0.01) {
                 tracker.errorCounter.punchNotFullCounter++
                 if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
@@ -100,9 +108,12 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                         tracker.addErrors(listOf("Punch not full"))
                         tracker.currentErrors.add("Punch not full")
                         tracker.errorCounter.punchNotFull = true
+                        keypointColors["R_Elbow"] = false
                     }
-                    tracker.errorCounter.punchNotFull = true
+                    tracker.errorCounter.punchNotFull = false
                 }
+            } else {
+                tracker.errorCounter.punchNotFullCounter = 0
             }
             if (angles["R_Hand"] != null){
                 tracker.errorCounter.handX = angles["R_Hand"]!!.x
@@ -111,21 +122,19 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (atClimax) {
                 tracker.state = FormStates.completed
             }
+            tracker.changeKeypoints(keypointColors)
         }
 
         FormStates.completed -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
-            Log.d("GUARDERRORS", checkGuard.errors.toString())
+            val keypointColors = checkGuard.keypoints.toMutableMap()
             //tracker.currentErrors.addAll(checkGuard.errors)
-            Log.d("STRAIGHTSHIT", "checkguard")
 
             checkGuard.errors.forEach { error ->
                 if (!tracker.currentErrors.contains(error)) {
                     tracker.currentErrors.add(error)
                 }
             }
-            Log.d("STRAIGHTSHIT", "after add")
-
 
             if (angles["R_Hand"] != null){
                 Log.d("STRAIGHTSHIT", "in condi")
@@ -146,6 +155,7 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.punchNotStraight = 0
                     tracker.addErrors(listOf("Punch not straight"))
                     tracker.currentErrors.add("Punch not straight")
+                    keypointColors["R_Hand"] = false
                 }
             } else {
                 tracker.errorCounter.punchNotStraight = 0
@@ -159,6 +169,8 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.leaningForward = 0
                     tracker.addErrors(listOf("Leaning forward"))
                     tracker.currentErrors.add("Leaning forward")
+                    keypointColors["L_Hip"] = false
+                    keypointColors["R_Hip"] = false
                 }
             } else {
                 tracker.errorCounter.leaningForward = 0
@@ -170,18 +182,19 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.leaningBackwards = 0
                     tracker.addErrors(listOf("Leaning backwards"))
                     tracker.currentErrors.add("Leaning backwards")
+                    keypointColors["L_Hip"] = false
+                    keypointColors["R_Hip"] = false
                 }
             } else {
                 tracker.errorCounter.leaningBackwards = 0
             }
-            Log.d("STRAIGHTSHIT", "after errors")
             val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
                 tracker.state = FormStates.notStarted
                 tracker.errorCounter.reset()
                 tracker.wasWrong = false
             }
-            Log.d("STRAIGHTSHIT", "after everything")
+            tracker.changeKeypoints(keypointColors)
         }
     }
 

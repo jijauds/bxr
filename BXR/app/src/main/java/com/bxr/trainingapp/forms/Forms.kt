@@ -4,7 +4,6 @@ enum class FormTypes {
     Jab,
     Straight,
     LeadHook,
-    LeadUppercut,
-    RearUppercut,
+    RearHook,
     NotSelected
 }

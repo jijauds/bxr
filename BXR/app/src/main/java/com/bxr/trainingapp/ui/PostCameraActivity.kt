@@ -45,10 +45,10 @@ class PostCameraActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        findViewById<Button>(R.id.btnStart).setOnClickListener {
-            val intent = Intent(this, CameraActivity::class.java)
-            intent.putExtra("MOVE_NAME", moveName)
-            startActivity(intent)
-        }
+//        findViewById<Button>(R.id.btnStart).setOnClickListener {
+//            val intent = Intent(this, CameraActivity::class.java)
+//            intent.putExtra("MOVE_NAME", moveName)
+//            startActivity(intent)
+//        }
     }
 }
