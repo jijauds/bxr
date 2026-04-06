@@ -96,5 +96,35 @@
             android:text="I am right-handed."
             android:textColor="@color/light_gray"
             android:textSize="16sp" />
+
     </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/cameraGroup"
+        android:layout_width="207dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnSave"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextText">
+
+        <RadioButton
+            android:id="@+id/front_camera"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Front Camera"
+            android:textColor="@color/light_gray"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/rear_camera"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Rear Camera"
+            android:textColor="@color/light_gray"
+            android:textSize="16sp" />
+
+    </RadioGroup>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
