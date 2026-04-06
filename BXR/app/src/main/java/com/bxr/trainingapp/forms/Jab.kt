@@ -61,6 +61,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.addErrors(listOf("Guard hand goes down"))
                     tracker.errorCounter.guardHandGoesDown = 0
                     tracker.currentErrors.add("Guard hand goes down")
+                    tracker.wasWrong = true
                     keypointColors["R_Hand"] = false
                 }
             } else {
@@ -74,6 +75,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.addErrors(listOf("Punch not straight"))
                     tracker.currentErrors.add("Punch not straight")
                     keypointColors["L_Hand"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.punchNotStraight = 0
@@ -89,6 +91,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.currentErrors.add("Leaning forward")
                     keypointColors["L_Hip"] = false
                     keypointColors["R_Hip"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.leaningForward = 0
@@ -101,6 +104,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.currentErrors.add("Leaning backwards")
                     keypointColors["L_Hip"] = false
                     keypointColors["R_Hip"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.leaningBackwards = 0
@@ -120,6 +124,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                         tracker.currentErrors.add("Punch not full")
                         tracker.errorCounter.punchNotFull = true
                         keypointColors["L_Elbow"] = false
+                        tracker.wasWrong = true
                     }
                     tracker.errorCounter.punchNotFull = false
                 }
@@ -166,6 +171,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.addErrors(listOf("Guard hand goes down"))
                     tracker.currentErrors.add("Guard hand goes down")
                     keypointColors["R_Hand"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.guardHandGoesDown = 0
@@ -178,6 +184,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.addErrors(listOf("Punch not straight"))
                     tracker.currentErrors.add("Punch not straight")
                     keypointColors["L_Hand"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.punchNotStraight = 0
@@ -193,6 +200,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.currentErrors.add("Leaning forward")
                     keypointColors["L_Hip"] = false
                     keypointColors["R_Hip"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.leaningForward = 0
@@ -206,6 +214,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.currentErrors.add("Leaning backwards")
                     keypointColors["L_Hip"] = false
                     keypointColors["R_Hip"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.leaningBackwards = 0
@@ -215,7 +224,6 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (atGuard) {
                 tracker.state = FormStates.notStarted
                 tracker.errorCounter.reset()
-                tracker.wasWrong = false
             }
             tracker.changeKeypoints(keypointColors)
         }

@@ -38,7 +38,7 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.startingPosition++
                 if (tracker.errorCounter.startingPosition > errorFrameCheck) {
                     tracker.errorCounter.startingPosition = 0
-                    angles["L_Hand"]?.let { tracker.errorCounter.handX = it.x }
+                    angles["L_Elbow"]?.let { tracker.errorCounter.handX = it.y }
                     tracker.state = FormStates.inProgress
                 }
             }
@@ -63,6 +63,7 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.guardHandGoesDown = 0
                     tracker.currentErrors.add("Guard hand goes down")
                     keypointColors["R_Hand"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.guardHandGoesDown = 0
@@ -76,6 +77,7 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.punchNotStraight = 0
                     tracker.currentErrors.add("Punch not straight")
                     keypointColors["L_Hand"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.punchNotStraight = 0
@@ -90,6 +92,7 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.currentErrors.add("Leaning forward")
                     keypointColors["L_Hip"] = false
                     keypointColors["R_Hip"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.leaningForward = 0
@@ -102,6 +105,7 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.currentErrors.add("Leaning backwards")
                     keypointColors["L_Hip"] = false
                     keypointColors["R_Hip"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.leaningBackwards = 0
@@ -114,7 +118,7 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.punchNotFullCounter = 0
                 }
             }
-            if (angles["L_Elbow"]!!.y > tracker.errorCounter.handX+0.01) {
+            if (angles["L_Elbow"]!!.y < tracker.errorCounter.handX+0.01) {
                 tracker.errorCounter.punchNotFullCounter++
                 if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
                     if (tracker.errorCounter.punchNotFull) {
@@ -150,9 +154,6 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                 }
             }
 
-            if (angles["L_Hand"] != null){
-                tracker.errorCounter.handX = angles["L_Hand"]!!.x
-            }
             tracker.addKeyPoseErrors(checkGuard.errors)
             // tracker.changeKeypoints(checkGuard.keypoints)
 
@@ -163,6 +164,7 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.addErrors(listOf("Guard hand goes down"))
                     tracker.currentErrors.add("Guard hand goes down")
                     keypointColors["R_Hand"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.guardHandGoesDown = 0
@@ -175,6 +177,7 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.addErrors(listOf("Punch not straight"))
                     tracker.currentErrors.add("Punch not straight")
                     keypointColors["L_Hand"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.punchNotStraight = 0
@@ -190,6 +193,7 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.currentErrors.add("Leaning forward")
                     keypointColors["L_Hip"] = false
                     keypointColors["R_Hip"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.leaningForward = 0
@@ -203,6 +207,7 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.currentErrors.add("Leaning backwards")
                     keypointColors["L_Hip"] = false
                     keypointColors["R_Hip"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.leaningBackwards = 0
