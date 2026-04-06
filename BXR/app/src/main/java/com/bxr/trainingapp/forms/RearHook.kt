@@ -1,21 +1,20 @@
 package com.bxr.trainingapp.forms
 
-import android.util.Log
 import com.bxr.trainingapp.data.AngleType
 import com.bxr.trainingapp.sessions.FormStates
 import com.bxr.trainingapp.sessions.FormTracker
 
-private val leadUpperCutAngles = mapOf(
-    "L_Hand" to 140.0,
-    //"R_Hand" to 55.0,
-    "L_Elbow" to 60.0,
-    "R_Elbow" to 35.0,
-    "L_Knee" to 172.0,
-    "R_Knee" to 175.0,
-    "L_Shoulder" to 63.0,
-    "R_Shoulder" to 11.0,
-    "L_Hip" to 122.0,
-    "R_Hip" to 101.0
+private val rearHookAngles = mapOf(
+    //"L_Hand" to Pair(6.0,120.0),
+    //"R_Hand" to Pair(119.0,180.0),
+    //"L_Elbow" to Pair(8.0,180.0),
+    //"R_Elbow" to Pair(0.0,180.0),
+    "L_Knee" to Pair(132.0,180.0),
+    "R_Knee" to Pair(117.0,178.0),
+    //"L_Shoulder" to Pair(19.0,139.0),
+    "R_Shoulder" to Pair(96.0,122.0),
+    "L_Hip" to Pair(5.0,160.0),
+    "R_Hip" to Pair(10.0,150.0)
 )
 
 private const val THRESHOLD = 20.0
@@ -24,13 +23,11 @@ private val checkError = GenericErrorChecker()
 fun trackRearHook(angleType: AngleType, tracker: FormTracker): FormTracker {
     val angles = angleType.angles
 
-    // Log.d("REPS", tracker.reps.toString())
     val errorFrameCheck = 2
 
     when (tracker.state) {
         FormStates.notStarted -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
-            Log.d("GUARDERRORS", checkGuard.errors.toString())
             tracker.addKeyPoseErrors(checkGuard.errors)
             tracker.changeKeypoints(checkGuard.keypoints)
             tracker.currentErrors = checkGuard.errors
@@ -39,41 +36,32 @@ fun trackRearHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.startingPosition++
                 if (tracker.errorCounter.startingPosition > errorFrameCheck) {
                     tracker.errorCounter.startingPosition = 0
-                    tracker.errorCounter.handX = angles["L_Hand"]!!.x
+                    tracker.errorCounter.handX = angles["R_Elbow"]!!.y
                     tracker.state = FormStates.inProgress
                 }
             }
         }
 
         FormStates.inProgress -> {
-            val checkLeadUpperCut = checkLeadUpperCutAngle(angles, leadUpperCutAngles, THRESHOLD)
-            if (angles["L_Hand"] != null){
-                tracker.errorCounter.handX = angles["L_Hand"]!!.x
-            }
+            val checkRearHook = checkRearHookAngle(angles, rearHookAngles, THRESHOLD)
+            val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
+            val keypointColors = checkGuard.keypoints.toMutableMap()
 
-            // tracker.currentErrors.addAll(checkLeadUpperCut.errors)
-            tracker.addKeyPoseErrors(checkLeadUpperCut.errors)
-            tracker.changeKeypoints(checkLeadUpperCut.keypoints)
+            // tracker.currentErrors.addAll(checkRearHook.errors)
+            tracker.addKeyPoseErrors(checkRearHook.errors)
+            //tracker.changeKeypoints(checkRearHook.keypoints)
 
             //Check if hands are wrong
             //Check rear hand placement
-            if (checkError.leadUpperCutGuardCheck(angles)) {
-                tracker.errorCounter.guardHandGoesDown++
-                if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
-                    tracker.addErrors(listOf("Guard hand goes down"))
-                    tracker.errorCounter.guardHandGoesDown = 0
-                    tracker.currentErrors.add("Guard hand goes down")
-                }
-            } else {
-                tracker.errorCounter.guardHandGoesDown = 0
-            }
             //Check punch if straight
-            if (checkError.punchStraightCheck(angles, "Lead Upper Cut")) {
+            if (checkError.punchStraightCheck(angles, "Rear Hook")) {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
                     tracker.errorCounter.punchNotStraight = 0
                     tracker.addErrors(listOf("Punch not straight"))
                     tracker.currentErrors.add("Punch not straight")
+                    keypointColors["R_Hand"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.punchNotStraight = 0
@@ -87,58 +75,72 @@ fun trackRearHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.leaningBackwards = 0
                     tracker.addErrors(listOf("Leaning backwards"))
                     tracker.currentErrors.add("Leaning backwards")
+                    keypointColors["L_Hip"] = false
+                    keypointColors["R_Hip"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.leaningBackwards = 0
             }
 
             // Check if punch was stretched out
-            if (angles["L_Hand"]!!.y < angles["L_Shoulder"]!!.y+0.05) {
-                tracker.errorCounter.punchNotFull = false
-                tracker.errorCounter.punchNotFullCounter = 0
+            if (angles["R_Hand"]?.x != null && angles["R_Elbow"]?.x != null && angles["R_Elbow"]?.x != null) {
+                if (angles["R_Hand"]!!.x in angles["R_Elbow"]!!.x-0.05..angles["R_Elbow"]!!.x+0.05 && angles["R_Hand"]!!.y in angles["R_Elbow"]!!.y-0.05..angles["R_Elbow"]!!.y+0.05 ) {
+                    tracker.errorCounter.punchNotFull = false
+                    tracker.errorCounter.punchNotFullCounter = 0
+                }
             }
-            if (angles["L_Hand"]!!.x < tracker.errorCounter.handX) {
+            if (angles["R_Hand"]!!.x < tracker.errorCounter.handX) {
                 tracker.errorCounter.punchNotFullCounter++
                 if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
                     if (tracker.errorCounter.punchNotFull) {
                         tracker.addErrors(listOf("Punch not full"))
                         tracker.currentErrors.add("Punch not full")
                         tracker.errorCounter.punchNotFull = true
+                        keypointColors["L_Elbow"] = false
+                        tracker.wasWrong = true
                     }
                     tracker.errorCounter.punchNotFull = true
                 }
+            } else {
+                tracker.errorCounter.punchNotFullCounter = 0
             }
-            val atClimax = checkLeadUpperCut.errors.isEmpty()
+            if (angles["R_Elbow"] != null){
+                tracker.errorCounter.handX = angles["R_Elbow"]!!.y
+            }
+            val atClimax = checkRearHook.errors.isEmpty()
             if (atClimax) {
                 tracker.state = FormStates.completed
             }
+            tracker.changeKeypoints(keypointColors)
         }
 
         FormStates.completed -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
-            Log.d("GUARDERRORS", checkGuard.errors.toString())
+            val keypointColors = checkGuard.keypoints.toMutableMap()
+
+            checkGuard.errors.forEach { error ->
+                if (!tracker.currentErrors.contains(error)) {
+                    tracker.currentErrors.add(error)
+                }
+            }
+
+            tracker.addKeyPoseErrors(checkGuard.errors)
+
 //            tracker.currentErrors.addAll(checkGuard.errors)
 //            tracker.addKeyPoseErrors(checkGuard.errors)
 //            tracker.changeKeypoints(checkGuard.keypoints)
             //Check if hands are wrong
             //Check rear hand placement
-            if (checkError.leadUpperCutGuardCheck(angles)) {
-                tracker.errorCounter.guardHandGoesDown++
-                if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
-                    tracker.errorCounter.guardHandGoesDown = 0
-                    tracker.addErrors(listOf("Guard hand goes down"))
-                    tracker.currentErrors.add("Guard hand goes down")
-                }
-            } else {
-                tracker.errorCounter.guardHandGoesDown = 0
-            }
             //Check punch if straight
-            if (checkError.punchStraightCheck(angles, "Lead Upper Cut")) {
+            if (checkError.punchStraightCheck(angles, "Rear Hook")) {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
                     tracker.errorCounter.punchNotStraight = 0
                     tracker.addErrors(listOf("Punch not straight"))
                     tracker.currentErrors.add("Punch not straight")
+                    keypointColors["R_Hand"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.punchNotStraight = 0
@@ -153,6 +155,9 @@ fun trackRearHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.leaningBackwards = 0
                     tracker.addErrors(listOf("Leaning backwards"))
                     tracker.currentErrors.add("Leaning backwards")
+                    keypointColors["L_Hip"] = false
+                    keypointColors["R_Hip"] = false
+                    tracker.wasWrong = true
                 }
             } else {
                 tracker.errorCounter.leaningBackwards = 0
@@ -163,6 +168,7 @@ fun trackRearHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.reset()
                 tracker.wasWrong = false
             }
+            tracker.changeKeypoints(keypointColors)
         }
     }
 

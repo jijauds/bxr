@@ -27,13 +27,6 @@ class GenericErrorChecker {
         return hand.y > (shoulder.y + threshhold)
     }
 
-    fun leadUpperCutGuardCheck(angles: Map<String, Coords>): Boolean {
-        val hand = angles["R_Hand"] ?: return false
-        val shoulder = angles["L_Shoulder"] ?: return false
-
-        return hand.y > (shoulder.y + threshhold)
-    }
-
     fun punchStraightCheck(angles: Map<String, Coords>, punchType: String): Boolean {
         when (punchType) {
             "Jab" -> {
@@ -51,6 +44,12 @@ class GenericErrorChecker {
             "Lead Hook" -> {
                 val hand = angles["L_Hand"] ?: return false
                 val shoulder = angles["L_Shoulder"] ?: return false
+
+                return hand.y !in (shoulder.y - 0.05)..(shoulder.y + 0.05)
+            }
+            "Rear Hook" -> {
+                val hand = angles["R_Hand"] ?: return false
+                val shoulder = angles["R_Shoulder"] ?: return false
 
                 return hand.y !in (shoulder.y - 0.05)..(shoulder.y + 0.05)
             }

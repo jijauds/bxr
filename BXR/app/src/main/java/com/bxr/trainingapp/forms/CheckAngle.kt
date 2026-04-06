@@ -106,6 +106,27 @@ fun checkLeadHook(angles: Map<String, Coords>, correctangles: Map<String, Pair<D
     return AngleResults(keypoints, errors)
 }
 
+fun checkRearHookAngle(angles: Map<String, Coords>, correctangles: Map<String, Pair<Double, Double>>, threshhold: Double): AngleResults{
+    val errors = mutableListOf<String>()
+    val keypoints = mutableMapOf<String, Boolean>()
+
+    for ((name, angle) in correctangles) {
+        if ((angles[name]!!.angle < angle.first || angles[name]!!.angle > angle.second)) {
+            keypoints[name] = false
+            errors.add(getError(name, errorMessages))
+        } else {
+            keypoints[name] = true
+        }
+    }
+
+    if (angles["R_Hand"]?.x != null && angles["R_Elbow"]?.x != null && angles["R_Elbow"]?.x != null) {
+        if (!(angles["R_Hand"]!!.x in angles["R_Elbow"]!!.x-0.05..angles["R_Elbow"]!!.x+0.05 && angles["R_Hand"]!!.y in angles["R_Elbow"]!!.y-0.05..angles["R_Elbow"]!!.y+0.05 )) {
+            keypoints["R_Hand"] = false
+            errors.add("Keep Rear Hand Straight")
+        }
+    }
+    return AngleResults(keypoints, errors)
+}
 
 fun checkLeadUpperCutAngle(angles: Map<String, Coords>, correctangles: Map<String, Double>, threshhold: Double): AngleResults{
     val errors = mutableListOf<String>()
