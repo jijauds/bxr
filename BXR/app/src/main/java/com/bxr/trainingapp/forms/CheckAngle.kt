@@ -110,7 +110,7 @@ fun checkLeadHook(angles: Map<String, Coords>, correctangles: Map<String, Pair<D
             errors.add(getError("L_Elbow_Low", errorMessages))
         }
         // Check Elbow too high
-        if (angles["L_Elbow"]!!.y < angles["L_Shoulder"]!!.y + 0.05){
+        if (angles["L_Elbow"]!!.y < angles["L_Shoulder"]!!.y - 0.05){
             keypoints["L_Elbow"] = false
             errors.add(getError("L_Elbow_High", errorMessages))
         }
@@ -147,7 +147,7 @@ fun checkRearHookAngle(angles: Map<String, Coords>, correctangles: Map<String, P
             errors.add(getError("R_Elbow_Low", errorMessages))
         }
         // Check Elbow too high
-        if (angles["R_Elbow"]!!.y < angles["R_Shoulder"]!!.y + 0.05){
+        if (angles["R_Elbow"]!!.y < angles["R_Shoulder"]!!.y - 0.05){
             keypoints["R_Elbow"] = false
             errors.add(getError("R_Elbow_High", errorMessages))
         }
