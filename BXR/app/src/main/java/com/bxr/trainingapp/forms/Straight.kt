@@ -54,6 +54,7 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.readyPunchNotFull = false
             } else {
                 tracker.errorCounter.readyPunchNotFull = true
+                tracker.currentErrors += checkStraight.errors.toMutableList()
             }
 
             // tracker.currentErrors.addAll(checkJab.errors)

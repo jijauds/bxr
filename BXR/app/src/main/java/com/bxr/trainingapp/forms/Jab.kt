@@ -55,6 +55,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.readyPunchNotFull = false
             } else {
                 tracker.errorCounter.readyPunchNotFull = true
+                tracker.currentErrors += checkJab.errors.toMutableList()
             }
 
             // tracker.currentErrors.addAll(checkJab.errors)

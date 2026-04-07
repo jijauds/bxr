@@ -56,6 +56,7 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.readyPunchNotFull = false
             } else {
                 tracker.errorCounter.readyPunchNotFull = true
+                tracker.currentErrors += checkLeadHook.errors.toMutableList()
             }
             // tracker.currentErrors.addAll(checkJab.errors)
             tracker.addKeyPoseErrors(checkLeadHook.errors)

@@ -54,6 +54,7 @@ fun trackRearHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.readyPunchNotFull = false
             } else {
                 tracker.errorCounter.readyPunchNotFull = true
+                tracker.currentErrors += checkRearHook.errors.toMutableList()
             }
 
             // tracker.currentErrors.addAll(checkRearHook.errors)
