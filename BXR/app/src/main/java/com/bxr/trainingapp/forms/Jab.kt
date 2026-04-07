@@ -8,7 +8,7 @@ import com.bxr.trainingapp.sessions.FormTracker
 private val jabAngles = mapOf(
     "L_Hand" to Pair(152.0, 180.0),
     //"R_Hand" to Pair(0.0, 55.0),
-    "L_Elbow" to Pair(146.0, 180.0),
+    "L_Elbow" to Pair(165.0, 180.0),
     "R_Elbow" to Pair(26.0, 71.0),
     "L_Knee" to Pair(150.0, 180.0),
     "R_Knee" to Pair(120.0,180.0),
@@ -48,6 +48,14 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             val checkJab = checkAngle(angles, jabAngles, THRESHOLD)
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
             val keypointColors = checkGuard.keypoints.toMutableMap()
+
+            val atGuard = checkGuard.errors.isEmpty()
+            if (atGuard) {
+                tracker.errorCounter.reset()
+                tracker.errorCounter.readyPunchNotFull = false
+            } else {
+                tracker.errorCounter.readyPunchNotFull = true
+            }
 
             // tracker.currentErrors.addAll(checkJab.errors)
             tracker.addKeyPoseErrors(checkJab.errors)
@@ -111,25 +119,30 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             }
 
             // Check if punch was stretched out
-            if (angles["L_Elbow"]!!.angle !in 165.0..180.0) {
-                tracker.errorCounter.punchNotFull = true
-            } else tracker.errorCounter.punchNotFull = false
-
-
-            if (angles["L_Hand"]!!.x < tracker.errorCounter.handX-0.01) {
-                tracker.errorCounter.punchNotFullCounter++
-                if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
-                    if (tracker.errorCounter.punchNotFull) {
-                        tracker.addErrors(listOf("Punch not full"))
-                        tracker.currentErrors.add("Punch not full")
-                        tracker.errorCounter.punchNotFull = true
-                        keypointColors["L_Elbow"] = false
-                        tracker.wasWrong = true
-                    }
+            if (tracker.errorCounter.readyPunchNotFull){
+                if (angles["L_Elbow"]!!.angle !in 165.0..180.0) {
+                    tracker.errorCounter.punchNotFull = true
+                } else {
                     tracker.errorCounter.punchNotFull = false
+                    tracker.errorCounter.readyPunchNotFull = false
                 }
-            } else {
-                tracker.errorCounter.punchNotFullCounter = 0
+
+
+                if (angles["L_Hand"]!!.x < tracker.errorCounter.handX-0.01) {
+                    tracker.errorCounter.punchNotFullCounter++
+                    if (tracker.errorCounter.punchNotFullCounter > 0) {
+                        if (tracker.errorCounter.punchNotFull) {
+                            tracker.addErrors(listOf("Punch not full"))
+                            tracker.currentErrors.add("Punch not full")
+                            tracker.errorCounter.punchNotFull = true
+                            keypointColors["L_Elbow"] = false
+                            tracker.wasWrong = true
+                        }
+                        tracker.errorCounter.punchNotFull = false
+                    }
+                } else {
+                    tracker.errorCounter.punchNotFullCounter = 0
+                }
             }
 
             if (angles["L_Hand"] != null){
@@ -149,7 +162,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
         FormStates.completed -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
             val keypointColors = checkGuard.keypoints.toMutableMap()
-            // Fixed potential duplicate accumulation in currentErrors
+
             checkGuard.errors.forEach { error ->
                 if (!tracker.currentErrors.contains(error)) {
                     tracker.currentErrors.add(error)

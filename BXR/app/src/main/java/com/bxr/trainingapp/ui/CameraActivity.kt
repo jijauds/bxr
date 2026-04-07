@@ -322,6 +322,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
 
             errorLastSeen[error] = now
         }
+
         Log.d("HELLO", "After looking at current errors: " + newState.toString())
 
         val visibleErrors = mutableListOf<String>()

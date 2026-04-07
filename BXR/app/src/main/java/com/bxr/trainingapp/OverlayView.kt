@@ -39,7 +39,7 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     View(context, attrs) {
 
     var rotationDegrees = 0
-    var isFrontCamera = false
+    var isFrontCamera : Boolean? = false
     private var results: PoseLandmarkerResult? = null
     private var keypointErrors : Map<String, Boolean> = mapOf()
     private val pointPaint = Paint()
@@ -108,7 +108,12 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
 
         // canvas.rotate(rotationDegrees.toFloat(), width / 2f, height / 2f)
 
-        canvas.scale(-1f, 1f, width / 2f, height / 2f)
+        if (isFrontCamera == true){
+            canvas.scale(-1f, 1f, width / 2f, height / 2f)}
+        else {
+            canvas.scale(1f, 1f, width / 2f, height / 2f)
+        }
+        //canvas.scale(-1f, 1f, width / 2f, height / 2f)
 
 
         val result = results ?: return
