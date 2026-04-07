@@ -12,22 +12,22 @@ data class AngleResults(
 val errorMessages = mapOf(
     "R_Hand_Low" to "Your right hand is too low",
     "R_Hand_Behind" to "Keep your right hand in front of you",
-    "R_Hand" to "Place your right hand between your shoulders",
-    "L_Knee" to "Move your left leg forward",
-    "R_Knee" to "Move your right leg back",
+    "R_Hand" to "Fix your right hand",
+    "L_Knee" to "Fix your left knee",
+    "R_Knee" to "Fix your right knee",
     "R_Elbow_High" to "Your right elbow is too high",
     "R_Elbow_Low" to "Your right elbow is too low",
     "R_Elbow" to "Fix your right arm",
     "L_Elbow_High" to "Your left elbow is too high",
     "L_Elbow_Low" to "Your left elbow is too low",
     "L_Elbow" to "Fix your left arm",
-    "L_Shoulder" to "Fix your left arm",
-    "R_Shoulder" to "Fix your right arm",
+    "L_Shoulder" to "Fix your left shoulder",
+    "R_Shoulder" to "Fix your right shoulder",
     "L_Hip" to "Fix your left leg",
     "R_Hip" to "Fix your right leg"
 )
 fun getError(name: String, errorMessages: Map<String, String>): String {
-    return "$name position is incorrect"
+    return errorMessages[name] ?: "$name is incorrect"
 }
 
 fun checkAngle(angles: Map<String, Coords>, correctangles: Map<String, Pair<Double, Double>>, threshhold: Double): AngleResults{
@@ -125,7 +125,7 @@ fun checkLeadHook(angles: Map<String, Coords>, correctangles: Map<String, Pair<D
         }
         // Check hand is close to elbow
         if (angles["L_Elbow"] != null){
-            if (angles["L_Hand" ]!!.x > angles["L_Elbow"]!!.x + 0.05){
+            if (angles["L_Hand" ]!!.x > angles["L_Elbow"]!!.x + 0.2){
                 keypoints["L_Hand"] = false
                 errors.add("Hook your arm more")
             }
@@ -177,7 +177,7 @@ fun checkRearHookAngle(angles: Map<String, Coords>, correctangles: Map<String, P
         }
         // Check hand is close to elbow
         if (angles["R_Elbow"]!= null){
-            if (angles["R_Hand" ]!!.x > angles["R_Elbow"]!!.x + 0.05){
+            if (angles["R_Hand" ]!!.x > angles["R_Elbow"]!!.x + 0.2){
                 keypoints["R_Hand"] = false
                 errors.add("Hook your arm more")
             }
