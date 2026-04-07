@@ -120,7 +120,7 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
 
             // Check if Elbow too high
             if (angles["L_Elbow"]?.y != null && angles["L_Shoulder"]?.y != null) {
-                if (angles["L_Elbow"]!!.y < angles["L_Shoulder"]!!.y + 0.05){
+                if (angles["L_Elbow"]!!.y < angles["L_Shoulder"]!!.y - 0.05){
                     keypointColors["L_Elbow"] = false
                     tracker.addErrors(listOf("Elbow too high"))
                     tracker.currentErrors.add("Elbow too high")

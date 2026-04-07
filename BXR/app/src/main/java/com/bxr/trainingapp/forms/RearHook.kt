@@ -93,7 +93,7 @@ fun trackRearHook(angleType: AngleType, tracker: FormTracker): FormTracker {
             }
             // Check if Elbow too high
             if (angles["R_Elbow"]?.y != null && angles["R_Shoulder"]?.y != null) {
-                if (angles["R_Elbow"]!!.y < angles["R_Shoulder"]!!.y + 0.05){
+                if (angles["R_Elbow"]!!.y < angles["R_Shoulder"]!!.y - 0.05){
                     keypointColors["R_Elbow"] = false
                     tracker.addErrors(listOf("Elbow too high"))
                     tracker.currentErrors.add("Elbow too high")
