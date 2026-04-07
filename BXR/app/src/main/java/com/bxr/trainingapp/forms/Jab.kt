@@ -126,8 +126,6 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.punchNotFull = false
                     tracker.errorCounter.readyPunchNotFull = false
                 }
-
-
                 if (angles["L_Hand"]!!.x < tracker.errorCounter.handX-0.01) {
                     tracker.errorCounter.punchNotFullCounter++
                     if (tracker.errorCounter.punchNotFullCounter > 0) {
@@ -162,6 +160,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
         FormStates.completed -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
             val keypointColors = checkGuard.keypoints.toMutableMap()
+
+            val atGuard = checkGuard.errors.isEmpty()
 
             checkGuard.errors.forEach { error ->
                 if (!tracker.currentErrors.contains(error)) {
@@ -233,7 +233,6 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.leaningBackwards = 0
             }
 
-            val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
                 tracker.state = FormStates.notStarted
                 tracker.errorCounter.reset()

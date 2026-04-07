@@ -48,6 +48,14 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
             val keypointColors = checkGuard.keypoints.toMutableMap()
 
+            val atGuard = checkGuard.errors.isEmpty()
+            if (atGuard) {
+                tracker.errorCounter.reset()
+                tracker.errorCounter.readyPunchNotFull = false
+            } else {
+                tracker.errorCounter.readyPunchNotFull = true
+            }
+
             // tracker.currentErrors.addAll(checkJab.errors)
             tracker.addKeyPoseErrors(checkStraight.errors)
             //tracker.changeKeypoints(checkStraight.keypoints)
@@ -99,23 +107,28 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
             }
 
             // Check if punch was stretched out
-            if (angles["R_Elbow"]!!.angle !in 165.0..180.0) {
-                tracker.errorCounter.punchNotFull = true
-            } else tracker.errorCounter.punchNotFull = false
-            if (angles["R_Hand"]!!.x < tracker.errorCounter.handX-0.01) {
-                tracker.errorCounter.punchNotFullCounter++
-                if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
-                    if (tracker.errorCounter.punchNotFull) {
-                        tracker.addErrors(listOf("Punch not full"))
-                        tracker.currentErrors.add("Punch not full")
-                        tracker.errorCounter.punchNotFull = true
-                        keypointColors["R_Elbow"] = false
-                        tracker.wasWrong = true
-                    }
+            if (tracker.errorCounter.readyPunchNotFull){
+                if (angles["R_Elbow"]!!.angle !in 165.0..180.0) {
+                    tracker.errorCounter.punchNotFull = true
+                } else {
                     tracker.errorCounter.punchNotFull = false
+                    tracker.errorCounter.readyPunchNotFull = false
                 }
-            } else {
-                tracker.errorCounter.punchNotFullCounter = 0
+                if (angles["R_Hand"]!!.x < tracker.errorCounter.handX-0.01) {
+                    tracker.errorCounter.punchNotFullCounter++
+                    if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
+                        if (tracker.errorCounter.punchNotFull) {
+                            tracker.addErrors(listOf("Punch not full"))
+                            tracker.currentErrors.add("Punch not full")
+                            tracker.errorCounter.punchNotFull = true
+                            keypointColors["R_Elbow"] = false
+                            tracker.wasWrong = true
+                        }
+                        tracker.errorCounter.punchNotFull = false
+                    }
+                } else {
+                    tracker.errorCounter.punchNotFullCounter = 0
+                }
             }
             if (angles["R_Hand"] != null){
                 tracker.errorCounter.handX = angles["R_Hand"]!!.x
