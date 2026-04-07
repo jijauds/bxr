@@ -128,7 +128,7 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                         tracker.errorCounter.readyPunchNotFull = false
                     }
                 }
-                if (angles["L_Elbow"]!!.y > tracker.errorCounter.handX+0.01) {
+                if (angles["L_Elbow"]!!.y > tracker.errorCounter.handX+0.05) {
                     tracker.errorCounter.punchNotFullCounter++
                     if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
                         if (tracker.errorCounter.punchNotFull) {
