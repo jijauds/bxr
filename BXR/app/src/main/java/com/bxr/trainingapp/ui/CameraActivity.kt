@@ -1,6 +1,7 @@
 package com.bxr.trainingapp.ui
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -71,7 +72,6 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private var cameraFacing = CameraSelector.LENS_FACING_FRONT
-
     private lateinit var backgroundExecutor: ExecutorService
 
     private lateinit var viewFinder: PreviewView
@@ -128,7 +128,15 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
 
         // to do other moobs
         moveName = intent.getStringExtra("MOVE_NAME")
+        cameraFacing = getSharedPreferences("USER_PREFS", Context.MODE_PRIVATE)
+            .getInt("CAMERA_FACING", CameraSelector.LENS_FACING_FRONT)
+        //cameraFacing = CameraSelector.LENS_FACING_BACK
+        Log.d("MFINGCAMERASELECTOR", cameraFacing.toString())
 
+        when(getSharedPreferences("USER_PREFS", Context.MODE_PRIVATE).getString("HANDEDNESS", "ORTHODOX")){
+            "ORTHODOX" -> currentSession.handedness = Handedness.right
+            "SOUTHPAW" -> currentSession.handedness = Handedness.left
+        }
         viewFinder = findViewById(R.id.view_finder)
         overlay = findViewById(R.id.overlay)
         tvRepNumber = findViewById(R.id.repCounter)
@@ -180,7 +188,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         startTime = Instant.now(),
         endTime = Instant.now(),
         formState = FormTracker(),
-        handedness = Handedness.right,
+        handedness = Handedness.right
     )
 
     private fun showReady(text: String) {
@@ -492,6 +500,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         if(this::poseLandmarkerHelper.isInitialized) {
             val rotation = imageProxy.imageInfo.rotationDegrees
             // overlay.rotationDegrees = imageProxy.imageInfo.rotationDegrees
+
             overlay.isFrontCamera =
                 cameraFacing == CameraSelector.LENS_FACING_FRONT
             poseLandmarkerHelper.detectLiveStream(

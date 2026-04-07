@@ -2,6 +2,7 @@ package com.bxr.trainingapp.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.bxr.trainingapp.ui.HomeActivity
@@ -16,18 +17,41 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings)
 
-        val btnOrthodox = findViewById<RadioButton>(R.id.left_handed)
-        val btnSouthpaw = findViewById<RadioButton>(R.id.right_handed)
-        val setName = findViewById<EditText>(R.id.editTextText)
+        val btnOrthodox = findViewById<RadioButton>(R.id.right_handed)
+        val btnSouthpaw = findViewById<RadioButton>(R.id.left_handed)
+        val btnFront = findViewById<RadioButton>(R.id.front_camera)
+        val btnRear = findViewById<RadioButton>(R.id.rear_camera)
+        val spaceName = findViewById<EditText>(R.id.editTextText)
         val btnSave = findViewById<Button>(R.id.btnSave)
 
+        if(getSharedPreferences("USER_PREFS", MODE_PRIVATE).getString("HANDEDNESS", "ORTHODOX") == "ORTHODOX"){
+            btnOrthodox.isChecked = true
+        } else {
+            btnSouthpaw.isChecked = true
+        }
+
+        if(getSharedPreferences("USER_PREFS", MODE_PRIVATE).getInt("CAMERA_FACING", 0) == 0){
+            btnFront.isChecked = true
+        } else {
+            btnRear.isChecked = true
+        }
+
+        spaceName.setText(getSharedPreferences("USER_PREFS", MODE_PRIVATE).getString("NAME", "Name"))
+
+        btnFront.setOnClickListener {
+            saveCamera(0)
+        }
+
+        btnRear.setOnClickListener {
+            saveCamera(1)
+        }
 
         btnOrthodox.setOnClickListener {
-            saveHandedness("ORTHODOX", setName.text.toString())
+            saveHandedness("ORTHODOX")
         }
 
         btnSouthpaw.setOnClickListener {
-            saveHandedness("SOUTHPAW", setName.text.toString())
+            saveHandedness("SOUTHPAW")
         }
 
         findViewById<Button>(R.id.btnClearData).setOnClickListener {
@@ -35,17 +59,32 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         btnSave.setOnClickListener {
-            goToHome()
+            goToHome(spaceName.text.toString())
         }
     }
 
-    private fun saveHandedness(type: String, name: String) {
-        val prefs = getSharedPreferences("USER_PREFS", MODE_PRIVATE)
-        prefs.edit().putString("HANDEDNESS", type).apply()
-        prefs.edit().putString("NAME", name).apply()
+    private fun saveCamera(type: Int) {
+        val prefs = getSharedPreferences("USER_PREFS", MODE_PRIVATE) ?: return
+        with (prefs.edit()) {
+            putInt("CAMERA_FACING", type)
+            commit()
+        }
     }
 
-    private fun goToHome() {
+    private fun saveHandedness(type: String) {
+        val prefs = getSharedPreferences("USER_PREFS", MODE_PRIVATE) ?: return
+        with (prefs.edit()) {
+            putString("HANDEDNESS", type)
+            commit()
+        }
+    }
+
+    private fun goToHome(type: String) {
+        val prefs = getSharedPreferences("USER_PREFS", MODE_PRIVATE) ?: return
+        with (prefs.edit()) {
+            putString("NAME", type)
+            commit()
+        }
         val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)
         finish()
