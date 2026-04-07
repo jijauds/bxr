@@ -102,14 +102,14 @@ fun trackRearHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                         tracker.errorCounter.punchNotFull = true
                     }
                 }
-                if (angles["R_Hand"]!!.x < tracker.errorCounter.handX) {
+                if (angles["L_Elbow"]!!.y > tracker.errorCounter.handX+0.01) {
                     tracker.errorCounter.punchNotFullCounter++
                     if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
                         if (tracker.errorCounter.punchNotFull) {
                             tracker.addErrors(listOf("Punch not full"))
                             tracker.currentErrors.add("Punch not full")
                             tracker.errorCounter.punchNotFull = true
-                            keypointColors["L_Elbow"] = false
+                            keypointColors["R_Elbow"] = false
                             tracker.wasWrong = true
                         }
                         tracker.errorCounter.punchNotFull = true
