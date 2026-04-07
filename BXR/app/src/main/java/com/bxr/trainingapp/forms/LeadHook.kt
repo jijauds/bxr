@@ -118,6 +118,15 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.leaningBackwards = 0
             }
 
+            // Check if Elbow too high
+            if (angles["L_Elbow"]?.y != null && angles["L_Shoulder"]?.y != null) {
+                if (angles["L_Elbow"]!!.y < angles["L_Shoulder"]!!.y + 0.05){
+                    keypointColors["L_Elbow"] = false
+                    tracker.addErrors(listOf("Elbow too high"))
+                    tracker.currentErrors.add("Elbow too high")
+                }
+            }
+
             // Check if punch was stretched out
             if (tracker.errorCounter.readyPunchNotFull){
                 if (angles["L_Hand"]?.x != null && angles["L_Elbow"]?.x != null && angles["L_Elbow"]?.x != null) {
