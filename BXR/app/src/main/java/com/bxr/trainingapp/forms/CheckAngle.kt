@@ -21,7 +21,7 @@ val errorMessages = mapOf(
     "R_Hip" to "Fix your right leg"
 )
 fun getError(name: String, errorMessages: Map<String, String>): String {
-    return errorMessages[name] ?: "$name position is incorrect"
+    return "$name position is incorrect"
 }
 
 fun checkAngle(angles: Map<String, Coords>, correctangles: Map<String, Pair<Double, Double>>, threshhold: Double): AngleResults{
@@ -45,6 +45,13 @@ fun checkAngle(angles: Map<String, Coords>, correctangles: Map<String, Pair<Doub
         }
     }
 
+    if (angles["R_Hand"]?.x != null && angles["R_Shoulder"]?.x != null){
+        if (angles["R_Hand"]!!.x < angles["R_Shoulder"]!!.x){
+            errors.add("Put your guard hand in front of you")
+            keypoints["R_Hand"] = false
+            keypoints["R_Elbow"] = false
+        }
+    }
     return AngleResults(keypoints, errors)
 }
 

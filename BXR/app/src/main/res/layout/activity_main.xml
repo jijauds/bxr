@@ -94,7 +94,7 @@
                 android:id="@+id/repCounter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Rep# 1"
+                android:text="Rep# "
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -103,7 +103,7 @@
                 android:id="@+id/bestScore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Score: 97%"
+                android:text="Score: %"
                 android:textColor="@android:color/white"
                 android:textSize="14sp" />
 
