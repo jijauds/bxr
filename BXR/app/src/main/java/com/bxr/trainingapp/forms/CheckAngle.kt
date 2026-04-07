@@ -124,9 +124,11 @@ fun checkLeadHook(angles: Map<String, Coords>, correctangles: Map<String, Pair<D
             errors.add("Keep Left Hand Straight")
         }
         // Check hand is close to elbow
-        if (angles["L_Hand" ]!!.x > angles["L_Elbow"]!!.x + 0.05){
-            keypoints["L_Hand"] = false
-            errors.add("Hook your arm more")
+        if (angles["L_Elbow"] != null){
+            if (angles["L_Hand" ]!!.x > angles["L_Elbow"]!!.x + 0.05){
+                keypoints["L_Hand"] = false
+                errors.add("Hook your arm more")
+            }
         }
     }
 
@@ -174,9 +176,11 @@ fun checkRearHookAngle(angles: Map<String, Coords>, correctangles: Map<String, P
             errors.add("Keep Right Hand Straight")
         }
         // Check hand is close to elbow
-        if (angles["R_Hand" ]!!.x > angles["R_Elbow"]!!.x + 0.05){
-            keypoints["R_Hand"] = false
-            errors.add("Hook your arm more")
+        if (angles["R_Elbow"]!= null){
+            if (angles["R_Hand" ]!!.x > angles["R_Elbow"]!!.x + 0.05){
+                keypoints["R_Hand"] = false
+                errors.add("Hook your arm more")
+            }
         }
     }
     return AngleResults(keypoints, errors)
