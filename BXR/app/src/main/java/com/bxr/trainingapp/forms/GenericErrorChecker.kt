@@ -6,7 +6,7 @@ import com.bxr.trainingapp.sessions.FormTracker
 import kotlin.collections.set
 
 class GenericErrorChecker {
-    private val threshhold = 0.01;
+    private val threshhold = 0.05;
 
     fun torsoCenterX(angles: Map<String, Coords>): Double? {
 
