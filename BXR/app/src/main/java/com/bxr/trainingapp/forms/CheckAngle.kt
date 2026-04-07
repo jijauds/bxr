@@ -119,7 +119,7 @@ fun checkLeadHook(angles: Map<String, Coords>, correctangles: Map<String, Pair<D
     // Check Hand
     if (angles["L_Hand"] != null && angles["L_Shoulder"] != null){
         // Check hand is straight
-        if (angles["L_Hand"]!!.y !in angles["L_Shoulder"]!!.y - 0.02..angles["L_Shoulder"]!!.y + 0.02){
+        if (angles["L_Hand"]!!.y !in angles["L_Shoulder"]!!.y - 0.05..angles["L_Shoulder"]!!.y + 0.05){
             keypoints["L_Hand"] = false
             errors.add("Keep Left Hand Straight")
         }
