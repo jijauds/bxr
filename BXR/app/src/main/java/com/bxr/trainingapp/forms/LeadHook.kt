@@ -15,8 +15,8 @@ private val leadHookAngles = mapOf(
     "R_Knee" to Pair(130.0,180.0),
     //"L_Shoulder" to Pair(65.0,114.0),
     "R_Shoulder" to Pair(0.0,60.0),
-    "L_Hip" to Pair(82.0,123.0),
-    "R_Hip" to Pair(89.0,117.0)
+    "L_Hip" to Pair(81.0,125.0),
+    "R_Hip" to Pair(89.0,140.0)
 )
 
 private const val THRESHOLD = 25.0
