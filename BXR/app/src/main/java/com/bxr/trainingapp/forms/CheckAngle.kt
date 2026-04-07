@@ -116,6 +116,20 @@ fun checkLeadHook(angles: Map<String, Coords>, correctangles: Map<String, Pair<D
         }
     }
 
+    // Check Hand
+    if (angles["L_Hand"] != null && angles["L_Shoulder"] != null){
+        // Check hand is straight
+        if (angles["L_Hand"]!!.y !in angles["L_Shoulder"]!!.y - 0.02..angles["L_Shoulder"]!!.y + 0.02){
+            keypoints["L_Hand"] = false
+            errors.add("Keep Left Hand Straight")
+        }
+        // Check hand is close to elbow
+        if (angles["L_Hand" ]!!.x > angles["L_Elbow"]!!.x + 0.05){
+            keypoints["L_Hand"] = false
+            errors.add("Hook your arm more")
+        }
+    }
+
     // Check lead hand if straight
     //if (angles["L_Hand"]?.x != null && angles["L_Elbow"]?.x != null && angles["L_Elbow"]?.x != null) {
         //if (!(angles["L_Hand"]!!.x in angles["L_Elbow"]!!.x-0.05..angles["L_Elbow"]!!.x+0.05 && angles["L_Hand"]!!.y in angles["L_Elbow"]!!.y-0.05..angles["L_Elbow"]!!.y+0.05 )) {
@@ -150,6 +164,19 @@ fun checkRearHookAngle(angles: Map<String, Coords>, correctangles: Map<String, P
         if (angles["R_Elbow"]!!.y < angles["R_Shoulder"]!!.y - 0.05){
             keypoints["R_Elbow"] = false
             errors.add(getError("R_Elbow_High", errorMessages))
+        }
+    }
+    // Check Hand
+    if (angles["R_Hand"] != null && angles["R_Shoulder"] != null){
+        // Check hand is straight
+        if (angles["R_Hand"]!!.y !in angles["R_Shoulder"]!!.y - 0.02..angles["R_Shoulder"]!!.y + 0.02){
+            keypoints["R_Hand"] = false
+            errors.add("Keep Right Hand Straight")
+        }
+        // Check hand is close to elbow
+        if (angles["R_Hand" ]!!.x > angles["R_Elbow"]!!.x + 0.05){
+            keypoints["R_Hand"] = false
+            errors.add("Hook your arm more")
         }
     }
     return AngleResults(keypoints, errors)
