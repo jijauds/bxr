@@ -121,11 +121,11 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
             // Check if punch was stretched out
             if (tracker.errorCounter.readyPunchNotFull){
                 if (angles["L_Hand"]?.x != null && angles["L_Elbow"]?.x != null && angles["L_Elbow"]?.x != null) {
-                    if (angles["L_Hand"]!!.x in angles["L_Elbow"]!!.x-0.05..angles["L_Elbow"]!!.x+0.05 && angles["L_Hand"]!!.y in angles["L_Elbow"]!!.y-0.05..angles["L_Elbow"]!!.y+0.05 ) {
+                    if (!(angles["L_Hand"]!!.x in angles["L_Elbow"]!!.x-0.01..angles["L_Elbow"]!!.x+0.01 && angles["L_Hand"]!!.y in angles["L_Elbow"]!!.y-0.01..angles["L_Elbow"]!!.y+0.01 )) {
+                        tracker.errorCounter.punchNotFull = true
+                    } else {
                         tracker.errorCounter.punchNotFull = false
                         tracker.errorCounter.readyPunchNotFull = false
-                    } else {
-                        tracker.errorCounter.punchNotFull = true
                     }
                 }
                 if (angles["L_Elbow"]!!.y > tracker.errorCounter.handX+0.01) {

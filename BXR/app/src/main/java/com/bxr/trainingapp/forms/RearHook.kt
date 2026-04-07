@@ -95,14 +95,14 @@ fun trackRearHook(angleType: AngleType, tracker: FormTracker): FormTracker {
             // Check if punch was stretched out
             if (tracker.errorCounter.readyPunchNotFull){
                 if (angles["R_Hand"]?.x != null && angles["R_Elbow"]?.x != null && angles["R_Elbow"]?.x != null) {
-                    if (angles["R_Hand"]!!.x in angles["R_Elbow"]!!.x-0.05..angles["R_Elbow"]!!.x+0.05 && angles["R_Hand"]!!.y in angles["R_Elbow"]!!.y-0.05..angles["R_Elbow"]!!.y+0.05 ) {
+                    if (angles["R_Hand"]!!.x in angles["R_Elbow"]!!.x-0.01..angles["R_Elbow"]!!.x+0.01 && angles["R_Hand"]!!.y in angles["R_Elbow"]!!.y-0.01..angles["R_Elbow"]!!.y+0.01 ) {
                         tracker.errorCounter.punchNotFull = false
                         tracker.errorCounter.readyPunchNotFull = false
                     } else {
                         tracker.errorCounter.punchNotFull = true
                     }
                 }
-                if (angles["L_Elbow"]!!.y > tracker.errorCounter.handX+0.01) {
+                if (angles["R_Elbow"]!!.y > tracker.errorCounter.handX+0.01) {
                     tracker.errorCounter.punchNotFullCounter++
                     if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
                         if (tracker.errorCounter.punchNotFull) {
