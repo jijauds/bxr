@@ -7,16 +7,16 @@ import com.bxr.trainingapp.sessions.FormTracker
 import com.bxr.trainingapp.sessions.Reps
 
 private val leadHookAngles = mapOf(
-    "L_Hand" to Pair(36.0, 180.0),
+    //"L_Hand" to Pair(36.0, 180.0),
     //"R_Hand" to Pair(3.0, 78.0),
     //"L_Elbow" to Pair(1.0, 180.0),
     "R_Elbow" to Pair(26.0, 71.0),
-    "L_Knee" to Pair(137.0,180.0),
+    "L_Knee" to Pair(135.0,180.0),
     "R_Knee" to Pair(130.0,180.0),
-    "L_Shoulder" to Pair(65.0,114.0),
+    //"L_Shoulder" to Pair(65.0,114.0),
     "R_Shoulder" to Pair(0.0,60.0),
-    "L_Hip" to Pair(82.0,123.0),
-    "R_Hip" to Pair(89.0,117.0)
+    "L_Hip" to Pair(81.0,125.0),
+    "R_Hip" to Pair(89.0,140.0)
 )
 
 private const val THRESHOLD = 25.0
@@ -50,6 +50,14 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
             val keypointColors = checkGuard.keypoints.toMutableMap()
             // For Lead Hook, check elbow
 
+            val atGuard = checkGuard.errors.isEmpty()
+            if (atGuard) {
+                tracker.errorCounter.reset()
+                tracker.errorCounter.readyPunchNotFull = false
+            } else {
+                tracker.errorCounter.readyPunchNotFull = true
+                tracker.currentErrors += checkLeadHook.errors.toMutableList()
+            }
             // tracker.currentErrors.addAll(checkJab.errors)
             tracker.addKeyPoseErrors(checkLeadHook.errors)
             // tracker.changeKeypoints(checkLeadHook.keypoints)
@@ -111,27 +119,40 @@ fun trackLeadHook(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.leaningBackwards = 0
             }
 
-            // Check if punch was stretched out
-            if (angles["L_Hand"]?.x != null && angles["L_Elbow"]?.x != null && angles["L_Elbow"]?.x != null) {
-                if (angles["L_Hand"]!!.x in angles["L_Elbow"]!!.x-0.05..angles["L_Elbow"]!!.x+0.05 && angles["L_Hand"]!!.y in angles["L_Elbow"]!!.y-0.05..angles["L_Elbow"]!!.y+0.05 ) {
-                    tracker.errorCounter.punchNotFull = false
-                    tracker.errorCounter.punchNotFullCounter = 0
+            // Check if Elbow too high
+            if (angles["L_Elbow"]?.y != null && angles["L_Shoulder"]?.y != null) {
+                if (angles["L_Elbow"]!!.y < angles["L_Shoulder"]!!.y - 0.05){
+                    keypointColors["L_Elbow"] = false
+                    tracker.addErrors(listOf("Elbow too high"))
+                    tracker.currentErrors.add("Elbow too high")
                 }
             }
-            if (angles["L_Elbow"]!!.y < tracker.errorCounter.handX+0.01) {
-                tracker.errorCounter.punchNotFullCounter++
-                if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
-                    if (tracker.errorCounter.punchNotFull) {
-                        tracker.addErrors(listOf("Punch not full"))
-                        tracker.wasWrong = true
-                        tracker.currentErrors.add("Punch not full")
+
+            // Check if punch was stretched out
+            if (tracker.errorCounter.readyPunchNotFull){
+                if (angles["L_Hand"]?.x != null && angles["L_Elbow"]?.x != null && angles["L_Elbow"]?.x != null) {
+                    if (!(angles["L_Hand"]!!.x in angles["L_Elbow"]!!.x-0.01..angles["L_Elbow"]!!.x+0.01 && angles["L_Hand"]!!.y in angles["L_Elbow"]!!.y-0.01..angles["L_Elbow"]!!.y+0.01 )) {
                         tracker.errorCounter.punchNotFull = true
-                        keypointColors["L_Elbow"] = false
+                    } else {
+                        tracker.errorCounter.punchNotFull = false
+                        tracker.errorCounter.readyPunchNotFull = false
                     }
-                    tracker.errorCounter.punchNotFull = true
                 }
-            } else {
-                tracker.errorCounter.punchNotFullCounter = 0
+                if (angles["L_Elbow"]!!.y > tracker.errorCounter.handX+0.05) {
+                    tracker.errorCounter.punchNotFullCounter++
+                    if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
+                        if (tracker.errorCounter.punchNotFull) {
+                            tracker.addErrors(listOf("Punch not full"))
+                            tracker.wasWrong = true
+                            tracker.currentErrors.add("Punch not full")
+                            tracker.errorCounter.punchNotFull = true
+                            keypointColors["L_Elbow"] = false
+                        }
+                        tracker.errorCounter.punchNotFull = true
+                    }
+                } else {
+                    tracker.errorCounter.punchNotFullCounter = 0
+                }
             }
             if (angles["L_Elbow"] != null){
                 tracker.errorCounter.handX = angles["L_Elbow"]!!.y

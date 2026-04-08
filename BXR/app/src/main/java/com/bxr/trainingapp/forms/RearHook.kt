@@ -47,6 +47,16 @@ fun trackRearHook(angleType: AngleType, tracker: FormTracker): FormTracker {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
             val keypointColors = checkGuard.keypoints.toMutableMap()
 
+
+            val atGuard = checkGuard.errors.isEmpty()
+            if (atGuard) {
+                tracker.errorCounter.reset()
+                tracker.errorCounter.readyPunchNotFull = false
+            } else {
+                tracker.errorCounter.readyPunchNotFull = true
+                tracker.currentErrors += checkRearHook.errors.toMutableList()
+            }
+
             // tracker.currentErrors.addAll(checkRearHook.errors)
             tracker.addKeyPoseErrors(checkRearHook.errors)
             //tracker.changeKeypoints(checkRearHook.keypoints)
@@ -82,28 +92,40 @@ fun trackRearHook(angleType: AngleType, tracker: FormTracker): FormTracker {
             } else {
                 tracker.errorCounter.leaningBackwards = 0
             }
-
-            // Check if punch was stretched out
-            if (angles["R_Hand"]?.x != null && angles["R_Elbow"]?.x != null && angles["R_Elbow"]?.x != null) {
-                if (angles["R_Hand"]!!.x in angles["R_Elbow"]!!.x-0.05..angles["R_Elbow"]!!.x+0.05 && angles["R_Hand"]!!.y in angles["R_Elbow"]!!.y-0.05..angles["R_Elbow"]!!.y+0.05 ) {
-                    tracker.errorCounter.punchNotFull = false
-                    tracker.errorCounter.punchNotFullCounter = 0
+            // Check if Elbow too high
+            if (angles["R_Elbow"]?.y != null && angles["R_Shoulder"]?.y != null) {
+                if (angles["R_Elbow"]!!.y < angles["R_Shoulder"]!!.y - 0.05){
+                    keypointColors["R_Elbow"] = false
+                    tracker.addErrors(listOf("Elbow too high"))
+                    tracker.currentErrors.add("Elbow too high")
                 }
             }
-            if (angles["R_Hand"]!!.x < tracker.errorCounter.handX) {
-                tracker.errorCounter.punchNotFullCounter++
-                if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
-                    if (tracker.errorCounter.punchNotFull) {
-                        tracker.addErrors(listOf("Punch not full"))
-                        tracker.currentErrors.add("Punch not full")
+
+            // Check if punch was stretched out
+            if (tracker.errorCounter.readyPunchNotFull){
+                if (angles["R_Hand"]?.x != null && angles["R_Elbow"]?.x != null && angles["R_Elbow"]?.x != null) {
+                    if (angles["R_Hand"]!!.x in angles["R_Elbow"]!!.x-0.01..angles["R_Elbow"]!!.x+0.01 && angles["R_Hand"]!!.y in angles["R_Elbow"]!!.y-0.01..angles["R_Elbow"]!!.y+0.01 ) {
+                        tracker.errorCounter.punchNotFull = false
+                        tracker.errorCounter.readyPunchNotFull = false
+                    } else {
                         tracker.errorCounter.punchNotFull = true
-                        keypointColors["L_Elbow"] = false
-                        tracker.wasWrong = true
                     }
-                    tracker.errorCounter.punchNotFull = true
                 }
-            } else {
-                tracker.errorCounter.punchNotFullCounter = 0
+                if (angles["R_Elbow"]!!.y > tracker.errorCounter.handX+0.01) {
+                    tracker.errorCounter.punchNotFullCounter++
+                    if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
+                        if (tracker.errorCounter.punchNotFull) {
+                            tracker.addErrors(listOf("Punch not full"))
+                            tracker.currentErrors.add("Punch not full")
+                            tracker.errorCounter.punchNotFull = true
+                            keypointColors["R_Elbow"] = false
+                            tracker.wasWrong = true
+                        }
+                        tracker.errorCounter.punchNotFull = true
+                    }
+                } else {
+                    tracker.errorCounter.punchNotFullCounter = 0
+                }
             }
             if (angles["R_Elbow"] != null){
                 tracker.errorCounter.handX = angles["R_Elbow"]!!.y
@@ -127,11 +149,7 @@ fun trackRearHook(angleType: AngleType, tracker: FormTracker): FormTracker {
 
             tracker.addKeyPoseErrors(checkGuard.errors)
 
-//            tracker.currentErrors.addAll(checkGuard.errors)
-//            tracker.addKeyPoseErrors(checkGuard.errors)
-//            tracker.changeKeypoints(checkGuard.keypoints)
             //Check if hands are wrong
-            //Check rear hand placement
             //Check punch if straight
             if (checkError.punchStraightCheck(angles, "Rear Hook")) {
                 tracker.errorCounter.punchNotStraight++

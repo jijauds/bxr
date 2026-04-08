@@ -10,7 +10,7 @@ private val jabAngles = mapOf(
     //"R_Hand" to Pair(0.0, 55.0),
     "L_Elbow" to Pair(165.0, 180.0),
     "R_Elbow" to Pair(26.0, 71.0),
-    "L_Knee" to Pair(150.0, 180.0),
+    "L_Knee" to Pair(135.0, 180.0),
     "R_Knee" to Pair(120.0,180.0),
     "L_Shoulder" to Pair(67.0, 111.0),
     "R_Shoulder" to Pair(0.0, 87.0),
@@ -55,6 +55,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.readyPunchNotFull = false
             } else {
                 tracker.errorCounter.readyPunchNotFull = true
+                tracker.currentErrors += checkJab.errors.toMutableList()
             }
 
             // tracker.currentErrors.addAll(checkJab.errors)
@@ -126,9 +127,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.punchNotFull = false
                     tracker.errorCounter.readyPunchNotFull = false
                 }
-
-
-                if (angles["L_Hand"]!!.x < tracker.errorCounter.handX-0.01) {
+                if (angles["L_Hand"]!!.x < tracker.errorCounter.handX-0.02) {
                     tracker.errorCounter.punchNotFullCounter++
                     if (tracker.errorCounter.punchNotFullCounter > 0) {
                         if (tracker.errorCounter.punchNotFull) {
@@ -162,6 +161,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
         FormStates.completed -> {
             val checkGuard = checkAngle(angles, stanceAngles, THRESHOLD)
             val keypointColors = checkGuard.keypoints.toMutableMap()
+
+            val atGuard = checkGuard.errors.isEmpty()
 
             checkGuard.errors.forEach { error ->
                 if (!tracker.currentErrors.contains(error)) {
@@ -233,7 +234,6 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.leaningBackwards = 0
             }
 
-            val atGuard = checkGuard.errors.isEmpty()
             if (atGuard) {
                 tracker.state = FormStates.notStarted
                 tracker.errorCounter.reset()
