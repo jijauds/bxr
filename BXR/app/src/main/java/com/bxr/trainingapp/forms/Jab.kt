@@ -10,7 +10,7 @@ private val jabAngles = mapOf(
     //"R_Hand" to Pair(0.0, 55.0),
     "L_Elbow" to Pair(165.0, 180.0),
     "R_Elbow" to Pair(26.0, 71.0),
-    "L_Knee" to Pair(150.0, 180.0),
+    "L_Knee" to Pair(135.0, 180.0),
     "R_Knee" to Pair(120.0,180.0),
     "L_Shoulder" to Pair(67.0, 111.0),
     "R_Shoulder" to Pair(0.0, 87.0),
