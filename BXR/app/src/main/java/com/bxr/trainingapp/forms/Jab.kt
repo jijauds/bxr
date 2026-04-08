@@ -127,7 +127,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.punchNotFull = false
                     tracker.errorCounter.readyPunchNotFull = false
                 }
-                if (angles["L_Hand"]!!.x < tracker.errorCounter.handX-0.01) {
+                if (angles["L_Hand"]!!.x < tracker.errorCounter.handX-0.02) {
                     tracker.errorCounter.punchNotFullCounter++
                     if (tracker.errorCounter.punchNotFullCounter > 0) {
                         if (tracker.errorCounter.punchNotFull) {

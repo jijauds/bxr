@@ -115,7 +115,7 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.punchNotFull = false
                     tracker.errorCounter.readyPunchNotFull = false
                 }
-                if (angles["R_Hand"]!!.x < tracker.errorCounter.handX-0.01) {
+                if (angles["R_Hand"]!!.x < tracker.errorCounter.handX-0.02) {
                     tracker.errorCounter.punchNotFullCounter++
                     if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
                         if (tracker.errorCounter.punchNotFull) {
