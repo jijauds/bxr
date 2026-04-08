@@ -171,7 +171,7 @@ fun checkRearHookAngle(angles: Map<String, Coords>, correctangles: Map<String, P
     // Check Hand
     if (angles["R_Hand"] != null && angles["R_Shoulder"] != null){
         // Check hand is straight
-        if (angles["R_Hand"]!!.y !in angles["R_Shoulder"]!!.y - 0.02..angles["R_Shoulder"]!!.y + 0.02){
+        if (angles["R_Hand"]!!.y !in angles["R_Shoulder"]!!.y - 0.05..angles["R_Shoulder"]!!.y + 0.05){
             keypoints["R_Hand"] = false
             errors.add("Keep Right Hand Straight")
         }
