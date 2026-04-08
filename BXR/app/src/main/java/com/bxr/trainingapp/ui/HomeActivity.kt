@@ -13,8 +13,8 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_screen)
 
-        val tvUsername = findViewById<TextView>(R.id.tv_username)
-        val btnTrain = findViewById<Button>(R.id.train_button)
+        // val tvUsername = findViewById<TextView>(R.id.tv_username)
+        val btnTrain = findViewById<CardView>(R.id.train_button)
         val btnLogs = findViewById<Button>(R.id.logs_button)
         val btnSettings = findViewById<Button>(R.id.settings_button)
 

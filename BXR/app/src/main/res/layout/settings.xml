@@ -8,123 +8,149 @@
     android:background="@color/black"
     tools:context=".ui.CameraActivity">
 
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:src="@drawable/ic_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="62dp"
+        android:layout_marginStart="32dp"
+        app:tint="@color/accent" />
+
+    <TextView
+        android:id="@+id/settingsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SETTINGS"
+        android:textColor="@color/light_gray"
+        android:textSize="40sp"
+        android:fontFamily="@font/jersey"
+        app:layout_constraintTop_toTopOf="@id/btnBack"
+        app:layout_constraintStart_toEndOf="@id/btnBack"
+        app:layout_constraintBottom_toBottomOf="@id/btnBack"
+        android:layout_marginStart="52dp"/>
+
+    <TextView
+        android:id="@+id/txtNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:textColor="@color/light_gray"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/settingsTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="40dp"/>
+
+    <TextView
+        android:id="@+id/setTextText"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:text="Name"
+        android:gravity="center"
+        android:textColor="@color/light_gray"
+        android:textSize="20sp"
+        android:fontFamily="@font/jersey"
+        android:background="@drawable/rounded_card"
+        app:layout_constraintTop_toBottomOf="@id/txtNameLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="12dp"/>
+
+    <TextView
+        android:id="@+id/txtHandLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current Handedness"
+        android:textColor="@color/light_gray"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/setTextText"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="40dp"/>
+
+    <TextView
+        android:id="@+id/btnHandedness"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:text="Right-handed"
+        android:gravity="center"
+        android:textColor="@color/light_gray"
+        android:textSize="20sp"
+        android:fontFamily="@font/jersey"
+        android:background="@drawable/rounded_card"
+        app:layout_constraintTop_toBottomOf="@id/txtHandLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="12dp"/>
+
+    <TextView
+        android:id="@+id/txtCameraLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current Camera"
+        android:textColor="@color/light_gray"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/btnHandedness"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"/>
+
+    <TextView
+        android:id="@+id/btnCamera"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:text="Front"
+        android:gravity="center"
+        android:textColor="@color/light_gray"
+        android:textSize="20sp"
+        android:fontFamily="@font/jersey"
+        android:background="@drawable/rounded_card"
+        app:layout_constraintTop_toBottomOf="@id/txtCameraLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="12dp"/>
+
+    <CheckBox
+        android:id="@+id/checkOverlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show skeletal overlay"
+        android:textColor="@color/light_gray"
+        app:layout_constraintTop_toBottomOf="@id/btnCamera"
+        app:layout_constraintStart_toStartOf="@id/btnCamera"
+        android:layout_marginTop="24dp"/>
+
     <Button
         android:id="@+id/btnSave"
-        android:layout_width="232dp"
-        android:layout_height="82dp"
-        android:layout_marginBottom="48dp"
-        android:backgroundTint="@color/accent"
-        android:lineSpacingExtra="48sp"
+        android:layout_width="220dp"
+        android:layout_height="70dp"
         android:text="SAVE"
-        android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="34sp"
-        android:textStyle="bold"
-        android:typeface="monospace"
+        android:textSize="28sp"
         android:fontFamily="@font/jersey"
+        android:backgroundTint="@color/accent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginBottom="48dp"/>
 
     <Button
         android:id="@+id/btnClearData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="CLEAR ALL LOGS"
-        android:textColor="#FF4444"
-        android:textSize="18sp"
+        android:text="CLEAR USER DATA"
+        android:textColor="@color/light_gray"
         android:background="@android:color/transparent"
         android:fontFamily="@font/jersey"
-
         app:layout_constraintBottom_toTopOf="@id/btnSave"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="16dp"/>:w
-
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="What should we call you?"
-        android:textAlignment="center"
-        android:textColor="@color/light_gray"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextText"
-        app:layout_constraintEnd_toEndOf="@+id/editTextText"
-        app:layout_constraintStart_toStartOf="@+id/editTextText" />
-
-    <EditText
-        android:id="@+id/editTextText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Name"
-        android:textAlignment="center"
-        android:textColor="@color/light_gray"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/radioGroup"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="207dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnSave"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText">
-
-        <RadioButton
-            android:id="@+id/left_handed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="I am left-handed."
-            android:textColor="@color/light_gray"
-            android:textSize="16sp" />
-
-        <RadioButton
-            android:id="@+id/right_handed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="I am right-handed."
-            android:textColor="@color/light_gray"
-            android:textSize="16sp" />
-
-    </RadioGroup>
-
-    <RadioGroup
-        android:id="@+id/cameraGroup"
-        android:layout_width="207dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnSave"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText">
-
-        <RadioButton
-            android:id="@+id/front_camera"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Front Camera"
-            android:textColor="@color/light_gray"
-            android:textSize="16sp" />
-
-        <RadioButton
-            android:id="@+id/rear_camera"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Rear Camera"
-            android:textColor="@color/light_gray"
-            android:textSize="16sp" />
-
-    </RadioGroup>
+        android:layout_marginBottom="12dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
