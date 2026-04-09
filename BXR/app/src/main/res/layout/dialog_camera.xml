@@ -9,8 +9,8 @@
         android:text="Set camera for training."
         android:textColor="@color/light_gray"
         android:textSize="18sp"
-        android:layout_height="10dp"
-        android:layout_width="10dp"/>
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"/>
 
     <Button
         android:id="@+id/btnFront"

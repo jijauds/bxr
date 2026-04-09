@@ -25,79 +25,81 @@
             android:scaleType="fitCenter"
             android:src="@drawable/practice"/>
 
-        <androidx.cardview.widget.CardView
+        <Button
             android:id="@+id/manual_button"
-            android:layout_width="240dp"
-            android:layout_height="64dp"
-            android:layout_marginTop="28dp"
-            app:cardCornerRadius="28dp"
-            app:cardElevation="10dp"
-            app:cardBackgroundColor="@color/gray">
+            android:layout_width="232dp"
+            android:layout_height="82dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/gray"
+            android:lineSpacingExtra="60sp"
+            android:text="How To Use"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            android:fontFamily="@font/jersey"
+            app:layout_constraintBottom_toTopOf="@+id/settings_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/train_button"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="HOW TO USE"
-                android:textColor="@color/white"
-                android:textSize="22sp"
-                android:fontFamily="@font/jersey"/>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
+        <Button
             android:id="@+id/settings_button"
-            android:layout_width="240dp"
-            android:layout_height="64dp"
-            android:layout_marginTop="18dp"
-            app:cardCornerRadius="28dp"
-            app:cardElevation="10dp"
-            app:cardBackgroundColor="@color/gray">
+            android:layout_width="232dp"
+            android:layout_height="82dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/gray"
+            android:lineSpacingExtra="60sp"
+            android:text="Settings"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            android:fontFamily="@font/jersey"
+            app:layout_constraintBottom_toTopOf="@+id/about_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/manual_button"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="SETTINGS"
-                android:textColor="@color/white"
-                android:textSize="22sp"
-                android:fontFamily="@font/jersey"/>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
+        <Button
             android:id="@+id/about_button"
-            android:layout_width="240dp"
-            android:layout_height="64dp"
-            android:layout_marginTop="18dp"
-            app:cardCornerRadius="28dp"
-            app:cardElevation="10dp"
-            app:cardBackgroundColor="@color/gray">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="ABOUT"
-                android:textColor="@color/white"
-                android:textSize="22sp"
-                android:fontFamily="@font/jersey"/>
-        </androidx.cardview.widget.CardView>
+            android:layout_width="232dp"
+            android:layout_height="82dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/gray"
+            android:lineSpacingExtra="60sp"
+            android:text="About Us"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            android:fontFamily="@font/jersey"
+            app:layout_constraintBottom_toTopOf="@+id/logs_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/settings_button"/>
 
         <Button
             android:id="@+id/logs_button"
             android:layout_width="232dp"
-            android:layout_height="62dp"
+            android:layout_height="82dp"
             android:layout_marginTop="16dp"
             android:backgroundTint="@color/gray"
             android:lineSpacingExtra="60sp"
             android:text="Logs"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="24sp"
+            android:textSize="36sp"
             android:textStyle="bold"
             android:typeface="monospace"
-            app:layout_constraintEnd_toEndOf="@+id/train_button"
-            app:layout_constraintStart_toStartOf="@+id/train_button"
-            app:layout_constraintTop_toBottomOf="@+id/train_button" />
+            android:fontFamily="@font/jersey"
+            app:layout_constraintBottom_toTopOf="@+id/trouble_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/about_button"/>
 
     </LinearLayout>
 
