@@ -1,0 +1,30 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/rounded_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:text="Enter your name"
+        android:textColor="@color/light_gray"
+        android:textSize="18sp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"/>
+
+    <EditText
+        android:id="@+id/editName"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/light_gray"
+        android:background="@drawable/rounded_card"
+        android:padding="12dp"/>
+
+    <Button
+        android:id="@+id/btnConfirmName"
+        style="@style/SelectorButton"
+        android:backgroundTint="@color/accent"
+        android:text="Save"
+        android:textColorLink="@color/accent" />
+</LinearLayout>

@@ -8,20 +8,85 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tvSummary"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/tvDate"
+            android:text="09/25/25"
+            android:textColor="#CCCCCC"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tvSession"
+            android:text="Session 1"
+            android:textColor="#CCCCCC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tvHandedness"
+            android:text="Southpaw"
+            android:textColor="#CCCCCC"
+            android:layout_marginStart="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvDuration"
+            android:text="00:37"
+            android:background="@drawable/stat_bg"
+            android:padding="8dp"
+            android:textColor="@color/white"
+            android:layout_marginEnd="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tvReps"
+            android:text="00 Reps"
+            android:background="@drawable/stat_bg"
+            android:padding="8dp"
+            android:textColor="@color/white"
+            android:layout_marginEnd="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tvAccuracy"
+            android:text="97.35%"
+            android:background="@drawable/stat_bg_highlight"
+            android:padding="8dp"
+            android:textColor="@color/accent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvDetails"
         android:textColor="@color/white"
         android:visibility="gone"
-        android:layout_marginTop="10dp"
-        android:layout_width="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/btnPlayback"
+        android:text="VIEW PLAYBACK"
+        android:visibility="gone"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
 </LinearLayout>

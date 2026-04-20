@@ -1,75 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    tools:context=".ui.CameraActivity">
+    android:background="@color/black">
 
-    <TextView
-        android:id="@+id/tv_username"
+    <LinearLayout
+        android:id="@+id/menu_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/train_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:text="Welcome, User!" />
-
-    <Button
-        android:id="@+id/train_button"
-        android:layout_width="232dp"
-        android:layout_height="82dp"
-        android:backgroundTint="@color/accent"
-        android:lineSpacingExtra="60sp"
-        android:text="TRAIN"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="48sp"
-        android:textStyle="bold"
-        android:typeface="monospace"
-        android:fontFamily="@font/jersey"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <Button
-        android:id="@+id/logs_button"
-        android:layout_width="232dp"
-        android:layout_height="62dp"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="@color/gray"
-        android:lineSpacingExtra="60sp"
-        android:text="Logs"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:typeface="monospace"
-        app:layout_constraintEnd_toEndOf="@+id/train_button"
-        app:layout_constraintStart_toStartOf="@+id/train_button"
-        app:layout_constraintTop_toBottomOf="@+id/train_button" />
+        <ImageButton
+            android:id="@+id/train_button"
+            android:layout_width="260dp"
+            android:layout_height="180dp"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:src="@drawable/practice"/>
 
-    <Button
-        android:id="@+id/settings_button"
-        android:layout_width="232dp"
-        android:layout_height="62dp"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="@color/gray"
-        android:lineSpacingExtra="60sp"
-        android:text="Settings"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:typeface="monospace"
-        app:layout_constraintEnd_toEndOf="@+id/logs_button"
-        app:layout_constraintStart_toStartOf="@+id/logs_button"
-        app:layout_constraintTop_toBottomOf="@+id/logs_button" />
+        <Button
+            android:id="@+id/manual_button"
+            android:layout_width="232dp"
+            android:layout_height="82dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/gray"
+            android:lineSpacingExtra="60sp"
+            android:text="How To Use"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            android:fontFamily="@font/jersey"
+            app:layout_constraintBottom_toTopOf="@+id/settings_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/train_button"/>
+
+        <Button
+            android:id="@+id/settings_button"
+            android:layout_width="232dp"
+            android:layout_height="82dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/gray"
+            android:lineSpacingExtra="60sp"
+            android:text="Settings"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            android:fontFamily="@font/jersey"
+            app:layout_constraintBottom_toTopOf="@+id/about_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/manual_button"/>
+
+        <Button
+            android:id="@+id/about_button"
+            android:layout_width="232dp"
+            android:layout_height="82dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/gray"
+            android:lineSpacingExtra="60sp"
+            android:text="About Us"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            android:fontFamily="@font/jersey"
+            app:layout_constraintBottom_toTopOf="@+id/logs_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/settings_button"/>
+
+        <!-- <Button
+            android:id="@+id/logs_button"
+            android:layout_width="232dp"
+            android:layout_height="82dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/gray"
+            android:lineSpacingExtra="60sp"
+            android:text="Logs"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            android:fontFamily="@font/jersey"
+            app:layout_constraintBottom_toTopOf="@+id/trouble_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/about_button"/>
+          -->
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

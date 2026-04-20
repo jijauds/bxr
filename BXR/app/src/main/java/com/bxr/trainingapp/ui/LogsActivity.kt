@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.bxr.trainingapp.R
-import com.bxr.trainingapp.adapter.CarouselAdapter
+import com.bxr.trainingapp.adapter.MoveAdapter
 import com.bxr.trainingapp.model.Move
 
 class LogsActivity : AppCompatActivity() {
@@ -70,7 +70,7 @@ class LogsActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = layoutManager
 
-        val adapter = CarouselAdapter(moves) { }
+        val adapter = MoveAdapter(moves) { }
 
         recyclerView.adapter = adapter
 

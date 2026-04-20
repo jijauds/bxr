@@ -26,7 +26,7 @@
             app:tint="@color/accent" />
 
         <TextView
-            android:id="@+id/aboutTitle"
+            android:id="@+id/moveDetailTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="PRACTICE"
@@ -39,6 +39,24 @@
             android:layout_marginStart="52dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- <Button
+        android:id="@+id/btnTrain"
+        android:text="Train"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/btnLearn"
+        android:text="Learn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/btnLogs"
+        android:text="Logs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/> -->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerMoves"

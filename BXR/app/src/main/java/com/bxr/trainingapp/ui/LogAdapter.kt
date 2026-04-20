@@ -7,6 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bxr.trainingapp.R
 import com.bxr.trainingapp.data.SessionLog
+import android.widget.Button
+import android.content.Intent
 
 class LogAdapter(private val logs: List<SessionLog>) :
     RecyclerView.Adapter<LogAdapter.ViewHolder>() {
@@ -15,8 +17,14 @@ class LogAdapter(private val logs: List<SessionLog>) :
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        val summary: TextView = view.findViewById(R.id.tvSummary)
+        val tvDate: TextView = view.findViewById(R.id.tvDate)
+        val tvSession: TextView = view.findViewById(R.id.tvSession)
+        val tvHandedness: TextView = view.findViewById(R.id.tvHandedness)
+        val tvDuration: TextView = view.findViewById(R.id.tvDuration)
+        val tvReps: TextView = view.findViewById(R.id.tvReps)
+        val tvAccuracy: TextView = view.findViewById(R.id.tvAccuracy)
         val details: TextView = view.findViewById(R.id.tvDetails)
+        val btnPlayback: Button = view.findViewById(R.id.btnPlayback)
 
     }
 
@@ -30,54 +38,62 @@ class LogAdapter(private val logs: List<SessionLog>) :
 
     override fun getItemCount() = logs.size
 
+    fun formatTime(seconds: Int): String {
+        val mins = seconds / 60
+        val secs = seconds % 60
+        return String.format("%02d:%02d", mins, secs)
+    }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val log = logs[position]
+
         val accuracy = if (log.reps.total > 0) {
-            (log.reps.correct.toDouble() / log.reps.total * 100).toInt()
-        } else 0
+            (log.reps.correct.toDouble() / log.reps.total * 100)
+        } else 0.0
 
-        holder.summary.text =
-            buildString {
-                append("Session ")
-                append(log.id)
-                append(" • ")
-                append(log.duration)
-                append("s • ")
-                append(log.reps.correct)
-                append("/")
-                append(log.reps.total)
-                append(" • ")
-                append(" ($accuracy%)")
-            }
+        // holder.tvDate.text = log.date
+        holder.tvSession.text = "Session ${log.id}"
+        holder.tvHandedness.text = log.handedness
 
-        holder.details.text =
-            buildString {
-                append("Handedness: ")
-                append(log.handedness)
-                append("\n\nRep Errors:\n")
+        holder.tvDuration.text = formatTime(log.duration)
+        holder.tvReps.text = "${log.reps.total} Reps"
+        holder.tvAccuracy.text = String.format("%.2f%%", accuracy)
 
-                for (rep in log.repResults) {
+        holder.details.text = buildString {
+            log.repResults.forEach { rep ->
+                append("Rep ${rep.repNumber}  ")
 
-                    append("\nRep ${rep.repNumber} • ")
-
-                    if (rep.errors.isEmpty()) {
-                        append("Perfect form")
-                    } else {
-                        append(rep.errors.distinct().joinToString(", "))
-                    }
+                if (rep.errors.isEmpty()) {
+                    append("Perfect form\n")
+                } else {
+                    append(rep.errors.distinct().joinToString(", "))
+                    append("\n")
                 }
             }
+        }
 
         val isExpanded = position == expandedPosition
+
         holder.details.visibility = if (isExpanded) View.VISIBLE else View.GONE
+        holder.btnPlayback.visibility = if (isExpanded) View.VISIBLE else View.GONE
 
         holder.itemView.setOnClickListener {
+            // expandedPosition = if (isExpanded) -1 else position
+            // notifyDataSetChanged()
 
-            expandedPosition =
-                if (isExpanded) -1 else position
+            val previous = expandedPosition
+            expandedPosition = if (isExpanded) -1 else position
 
-            notifyDataSetChanged()
+            if (previous != -1) notifyItemChanged(previous)
+            notifyItemChanged(position)
+        }
+
+        holder.btnPlayback.setOnClickListener {
+            val context = holder.itemView.context
+            val intent = Intent(context, VideoPlayerActivity::class.java)
+            intent.putExtra("SESSION_ID", log.id)
+            context.startActivity(intent)
         }
     }
 }
