@@ -9,8 +9,8 @@
         android:text="Enter your name"
         android:textColor="@color/light_gray"
         android:textSize="18sp"
-        android:layout_height="10dp"
-        android:layout_width="10dp"/>
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"/>
 
     <EditText
         android:id="@+id/editName"

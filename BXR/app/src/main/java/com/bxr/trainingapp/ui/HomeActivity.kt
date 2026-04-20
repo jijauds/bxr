@@ -36,10 +36,10 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        btnLogs.setOnClickListener {
-            val intent = Intent(this, LogsActivity::class.java)
-            startActivity(intent)
-        }
+//        btnLogs.setOnClickListener {
+//            val intent = Intent(this, LogsActivity::class.java)
+//            startActivity(intent)
+//        }
 
         btnSettings.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
