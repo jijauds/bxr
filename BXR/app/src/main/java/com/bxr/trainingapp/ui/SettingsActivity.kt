@@ -26,7 +26,7 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.settings)
+        setContentView(R.layout.page_home_settings)
 
         prefs = getSharedPreferences("USER_PREFS", MODE_PRIVATE)
 
@@ -80,7 +80,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun showHandednessDialog() {
         val view = LayoutInflater.from(this)
-            .inflate(R.layout.dialog_handedness, null)
+            .inflate(R.layout.dialog_settings_handedness, null)
 
         val dialog = AlertDialog.Builder(this)
             .setView(view)
@@ -103,7 +103,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun showCameraDialog() {
         val view = LayoutInflater.from(this)
-            .inflate(R.layout.dialog_camera, null)
+            .inflate(R.layout.dialog_settings_camera, null)
 
         val dialog = AlertDialog.Builder(this)
             .setView(view)
@@ -125,7 +125,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun showNameDialog() {
-        val view = layoutInflater.inflate(R.layout.dialog_name, null)
+        val view = layoutInflater.inflate(R.layout.dialog_settings_name, null)
         val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
             .setView(view)
             .create()

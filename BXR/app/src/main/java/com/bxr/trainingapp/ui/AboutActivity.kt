@@ -1,7 +1,6 @@
 package com.bxr.trainingapp.ui
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
@@ -13,7 +12,7 @@ class AboutActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_about)
+        setContentView(R.layout.page_home_about)
 
         val btnBack = findViewById<ImageView>(R.id.btnBack)
 

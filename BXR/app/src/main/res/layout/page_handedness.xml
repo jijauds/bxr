@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <TextView
+        android:id="@+id/tvQuestion"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Which is your dominant hand?"
+        android:textColor="@color/white"
+        android:textSize="70sp"
+        android:textStyle="bold"
+        android:lineSpacingMultiplier="0.6"
+        android:fontFamily="@font/jersey"
+        android:gravity="left"
+        android:lineSpacingExtra="6dp"
+        android:layout_marginTop="150dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="@id/btnLeft"
+        app:layout_constraintEnd_toEndOf="@id/btnLeft" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/btnLeft"
+        android:layout_width="260dp"
+        android:layout_height="60dp"
+        app:cardCornerRadius="16dp"
+        app:cardBackgroundColor="@color/gray"
+        app:strokeColor="@color/light_gray"
+        app:strokeWidth="5dp"
+        app:layout_constraintTop_toBottomOf="@id/tvQuestion"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="40dp">
+
+        <TextView
+            android:id="@+id/textLeft"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="I am left-handed."
+            android:textSize="24dp"
+            android:gravity="center"
+            android:textColor="@color/light_gray"
+            android:fontFamily="@font/jersey"/>
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/btnRight"
+        android:layout_width="260dp"
+        android:layout_height="60dp"
+        app:cardCornerRadius="16dp"
+        app:cardBackgroundColor="@color/gray"
+        app:strokeColor="@color/light_gray"
+        app:strokeWidth="5dp"
+        app:layout_constraintTop_toBottomOf="@id/btnLeft"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/textRight"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="I am right-handed."
+            android:textSize="24dp"
+            android:gravity="center"
+            android:textColor="@color/light_gray"
+            android:fontFamily="@font/jersey"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <ImageButton
+        android:id="@+id/btnNext"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_back"
+        android:scaleX="-1"
+        android:layout_marginTop="120dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnRight"
+        app:layout_constraintStart_toStartOf="@id/btnRight"/>
+
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_back"
+        android:layout_marginTop="120dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnRight"
+        app:layout_constraintEnd_toEndOf="@id/btnRight"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

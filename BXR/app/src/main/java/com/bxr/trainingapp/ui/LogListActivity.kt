@@ -9,12 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bxr.trainingapp.R
+import com.bxr.trainingapp.adapter.LogAdapter
 import com.bxr.trainingapp.data.LogRepository
 
 class LogListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_logs)
+        setContentView(R.layout.page_home_logs)
 
         val recyclerLogs = findViewById<RecyclerView>(R.id.recyclerMoves)
         val tvEmptyMessage = findViewById<TextView>(R.id.tvEmptyMessage)

@@ -1,46 +1,29 @@
 package com.bxr.trainingapp.ui
 
-import android.app.Dialog
 import android.os.Bundle
-import android.widget.Button
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bxr.trainingapp.R
+import com.bxr.trainingapp.adapter.HowToAdapter
+import com.bxr.trainingapp.data.HowToData
 
 class ManualActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_manual)
+        setContentView(R.layout.page_home_howtouse)
 
-        val btnGeneral = findViewById<Button>(R.id.btn_general)
-        val btnCameraManual = findViewById<Button>(R.id.btn_camera_manual)
-        val btnTraining = findViewById<Button>(R.id.btn_training)
-        val btnErrors = findViewById<Button>(R.id.btn_errors)
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerHowTo)
 
-        fun showPopup(layout: Int) {
-            val dialog = Dialog(this)
-            dialog.setContentView(layout)
-            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-            dialog.window?.attributes?.windowAnimations = android.R.style.Animation_Dialog
-            dialog.show()
+        recyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
+        recyclerView.adapter = HowToAdapter(HowToData.list)
+
+        findViewById<ImageView>(R.id.btnBack).setOnClickListener {
+            finish()
         }
-
-        btnGeneral.setOnClickListener {
-            showPopup(R.layout.dialog_general)
-        }
-
-        btnCameraManual.setOnClickListener {
-            showPopup(R.layout.dialog_camera_manual)
-        }
-
-        btnTraining.setOnClickListener {
-            showPopup(R.layout.dialog_training)
-        }
-
-        btnErrors.setOnClickListener {
-            showPopup(R.layout.dialog_errors)
-        }
-
     }
-
 }

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.bxr.trainingapp.R
 import com.bxr.trainingapp.adapter.MoveAdapter
+import com.bxr.trainingapp.data.MoveRepository
 import com.bxr.trainingapp.model.Move
 
 class LogsActivity : AppCompatActivity() {
@@ -28,7 +29,7 @@ class LogsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_logs)
+        setContentView(R.layout.page_home_logs)
 
         recyclerView = findViewById(R.id.recyclerMoves)
         layoutDots = findViewById(R.id.layoutDots)
@@ -38,13 +39,7 @@ class LogsActivity : AppCompatActivity() {
             finish()
         }
 
-        moves = listOf(
-            Move("Jab", R.drawable.move, "", 0),
-            Move("Straight", R.drawable.move, "", 0),
-            Move("Front Hook", R.drawable.move, "", 0),
-            Move("Front Uppercut", R.drawable.move, "", 0),
-            Move("Rear Uppercut", R.drawable.move, "", 0)
-        )
+        moves = MoveRepository.moves
 
         setupRecycler()
         setupDots()

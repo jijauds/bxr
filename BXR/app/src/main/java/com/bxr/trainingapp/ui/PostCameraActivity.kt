@@ -2,7 +2,6 @@ package com.bxr.trainingapp.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bxr.trainingapp.R
@@ -14,7 +13,7 @@ class PostCameraActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.session_done)
+        setContentView(R.layout.page_move_train_done)
 
         moveName = intent.getStringExtra("MOVE_NAME")
         score = intent.getIntExtra("SCORE", 0)

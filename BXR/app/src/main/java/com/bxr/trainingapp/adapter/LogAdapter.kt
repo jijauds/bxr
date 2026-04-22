@@ -1,14 +1,15 @@
-package com.bxr.trainingapp.ui
+package com.bxr.trainingapp.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bxr.trainingapp.R
 import com.bxr.trainingapp.data.SessionLog
-import android.widget.Button
-import android.content.Intent
+import com.bxr.trainingapp.ui.VideoPlayerActivity
 
 class LogAdapter(private val logs: List<SessionLog>) :
     RecyclerView.Adapter<LogAdapter.ViewHolder>() {
@@ -31,7 +32,7 @@ class LogAdapter(private val logs: List<SessionLog>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.log_item, parent, false)
+            .inflate(R.layout.item_log, parent, false)
 
         return ViewHolder(view)
     }
