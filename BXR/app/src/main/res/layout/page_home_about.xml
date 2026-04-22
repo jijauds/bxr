@@ -39,10 +39,10 @@
 
         <ImageView
             android:id="@+id/logoImage"
-            android:layout_width="220dp"
+            android:layout_width="420dp"
             android:layout_height="220dp"
             android:layout_marginTop="80dp"
-            android:src="@drawable/logo"
+            android:src="@drawable/logo_full_1"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@id/aboutTitle" />
@@ -217,7 +217,7 @@
             android:id="@+id/text13"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="\n\n\n"
+            android:text="\n\n\n\n\n\n\n\n\n"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="14sp"

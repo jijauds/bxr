@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bxr.trainingapp.R
 import com.bxr.trainingapp.adapter.MoveAdapter
 import com.bxr.trainingapp.data.MoveRepository
+import com.bxr.trainingapp.model.moveScore
 
 class TrainActivity : AppCompatActivity() {
 
@@ -23,6 +24,8 @@ class TrainActivity : AppCompatActivity() {
         val recycler = findViewById<RecyclerView>(R.id.recyclerMoves)
 
         val moves = MoveRepository.moves
+
+        moveScore.refresh(this)
 
         recycler.layoutManager = LinearLayoutManager(this)
 

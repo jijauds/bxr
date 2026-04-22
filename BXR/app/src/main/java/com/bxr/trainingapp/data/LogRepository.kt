@@ -38,4 +38,22 @@ object LogRepository {
             emptyList()
         }
     }
+
+    fun getBestScoreForMove(context: Context, moveName: String): Int {
+        val logs = loadLogs(context)
+
+        return logs
+            .filter { it.punchType == moveName }
+            .mapNotNull { log ->
+                val total = log.reps.total
+                val correct = log.reps.correct
+
+                if (total > 0) {
+                    (correct * 100) / total
+                } else {
+                    null
+                }
+            }
+            .maxOrNull() ?: 0
+    }
 }

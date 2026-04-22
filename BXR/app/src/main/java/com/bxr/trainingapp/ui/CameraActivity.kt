@@ -15,6 +15,7 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -51,6 +52,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import androidx.core.graphics.toColorInt
+import com.bxr.trainingapp.model.moveScore
 
 class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListener {
     private lateinit var poseLandmarkerHelper: PoseLandmarkerHelper
@@ -125,6 +127,8 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        val prefs = getSharedPreferences("USER_PREFS", MODE_PRIVATE)
+        val showOverlay = prefs.getBoolean("SHOW_OVERLAY", true)
 
         // to do other moobs
         moveName = intent.getStringExtra("MOVE_NAME")
@@ -139,6 +143,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         }
         viewFinder = findViewById(R.id.view_finder)
         overlay = findViewById(R.id.overlay)
+        overlay.showSkeleton = showOverlay
         tvRepNumber = findViewById(R.id.repCounter)
         tvPercentWrong = findViewById(R.id.bestScore)
         repFlashOverlay = findViewById(R.id.repFlashOverlay)
@@ -176,6 +181,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
         findViewById<Button>(R.id.btnEndSession).setOnClickListener {
             currentSession.endTime = Instant.now()
             JsonWriter(this.applicationContext).createJSONObject(currentSession, moveName!!)
+            moveScore.refresh(this)
             val intent = Intent(this, PostCameraActivity::class.java)
             intent.putExtra("PUNCH_NAME", moveName)
             intent.putExtra("SCORE", score)

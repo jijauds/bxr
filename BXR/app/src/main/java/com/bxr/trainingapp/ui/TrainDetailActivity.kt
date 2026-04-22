@@ -13,6 +13,7 @@ import com.bxr.trainingapp.R
 import com.bxr.trainingapp.adapter.MoveAdapter
 import com.bxr.trainingapp.data.MoveRepository
 import com.bxr.trainingapp.model.Move
+import com.bxr.trainingapp.model.moveScore
 
 class TrainDetailActivity : AppCompatActivity() {
 
@@ -38,15 +39,37 @@ class TrainDetailActivity : AppCompatActivity() {
 
         tvName.text = move.name
 
+        moveScore.refresh(this)
+        val bestScore = moveScore.bestScores[move.name] ?: 0
+
         val actions = listOf(
-            Move("Train", R.drawable.move, "Get up and prepare to record a training session.", emptyList(), move.videoRes),
-            Move("Learn", R.drawable.move, "Pointers on how to perform this move.", emptyList(),move.videoRes),
-            Move("Logs", R.drawable.move, "See how well you have been doing this move.",emptyList(), move.videoRes)
+            Move(
+                "Train",
+                R.drawable.move,
+                "Get up and prepare to record a training session.",
+                emptyList(),
+                move.videoRes
+            ),
+            Move(
+                "Learn",
+                R.drawable.move,
+                "Pointers on how to perform this move.",
+                emptyList(),
+                move.videoRes
+            ),
+            Move(
+                "Logs",
+                R.drawable.move,
+                "See how well you have been doing this move. Best: $bestScore%",
+                emptyList(),
+                move.videoRes
+            )
         )
 
         recycler.layoutManager = LinearLayoutManager(this)
 
         recycler.adapter = MoveAdapter(actions) { action ->
+
             when (action.name) {
 
                 "Train" -> {
@@ -70,10 +93,15 @@ class TrainDetailActivity : AppCompatActivity() {
                     val tvCritical = dialog.findViewById<TextView>(R.id.tvCritical)
                     val btnVideo = dialog.findViewById<Button>(R.id.btnVideo)
                     val btnTrain = dialog.findViewById<Button>(R.id.btnTrain)
+                    val btnClose = dialog.findViewById<Button>(R.id.btnClose)
 
                     tvName.text = move.name
                     tvDesc.text = move.description
                     tvCritical.text = move.criticalPoints.joinToString("\n• ", prefix = "• ")
+
+                    btnClose.setOnClickListener {
+                        dialog.dismiss()
+                    }
 
                     btnVideo.setOnClickListener {
                         startActivity(

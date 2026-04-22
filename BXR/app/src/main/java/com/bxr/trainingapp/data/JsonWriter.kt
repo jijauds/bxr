@@ -51,7 +51,9 @@ class JsonWriter(context: Context) {
 
         val formState = tracker.formState
 
-        val id = if (jsonContents.isEmpty()) 0 else jsonContents.last().id + 1
+        val id = jsonContents
+            .filter { it.punchType == punchType }
+            .size
 
         val jsonOutput = SessionLog(
             id = id,
@@ -66,7 +68,9 @@ class JsonWriter(context: Context) {
             punchType = punchType
         )
 
-        saveJSONToInternalStorage(jsonOutput)
+        if (tracker.formState.reps.total > 0) {
+            saveJSONToInternalStorage(jsonOutput)
+        }
     }
 
     private fun saveJSONToInternalStorage(json: SessionLog) {
