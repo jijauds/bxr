@@ -21,8 +21,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="62dp"
-            android:layout_marginStart="32dp"
-            app:tint="@color/accent" />
+            android:layout_marginStart="32dp"/>
 
         <TextView
             android:id="@+id/aboutTitle"

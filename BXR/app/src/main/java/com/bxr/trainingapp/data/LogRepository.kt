@@ -56,4 +56,10 @@ object LogRepository {
             }
             .maxOrNull() ?: 0
     }
+
+    fun deleteLog(context: Context, id: Int) {
+        val writer = JsonWriter(context)
+        writer.deleteLogById(id)
+    }
+
 }

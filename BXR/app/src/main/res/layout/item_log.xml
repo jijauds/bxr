@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/rounded_corner_view"
     android:padding="16dp"
@@ -83,10 +83,16 @@
         android:layout_height="wrap_content"/>
 
     <Button
-        android:id="@+id/btnPlayback"
-        android:text="VIEW PLAYBACK"
-        android:visibility="gone"
+        android:id="@+id/btnDelete"
+        android:text="DELETE LOG"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:backgroundTint="@color/accent"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="22sp"
+        android:fontFamily="@font/jersey"/>
 
 </LinearLayout>

@@ -180,12 +180,22 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
 
         findViewById<Button>(R.id.btnEndSession).setOnClickListener {
             currentSession.endTime = Instant.now()
-            JsonWriter(this.applicationContext).createJSONObject(currentSession, moveName!!)
             moveScore.refresh(this)
-            val intent = Intent(this, PostCameraActivity::class.java)
-            intent.putExtra("PUNCH_NAME", moveName)
-            intent.putExtra("SCORE", score)
+
+            val logId = JsonWriter(this.applicationContext)
+                .createJSONObject(currentSession, moveName!!)
+
+            val intent = Intent(this, PostCameraActivity::class.java).apply {
+
+                Log.d("DEBUG_CAMERA", "sending moveName = $moveName")
+                putExtra("LOG_ID", logId)
+                putExtra("MOVE_NAME", moveName)
+                putExtra("SCORE", score)
+                putExtra("REPS", currentSession.formState.reps.total)
+            }
+
             startActivity(intent)
+            finish()
         }
 
     }
