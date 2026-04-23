@@ -5,6 +5,9 @@ import android.util.Log
 import com.bxr.trainingapp.sessions.SessionTracker
 import com.google.gson.Gson
 import java.io.File
+import java.time.format.DateTimeFormatter
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 
 class JsonWriter(context: Context) {
@@ -44,12 +47,13 @@ class JsonWriter(context: Context) {
         }
     }
 
+    @OptIn(ExperimentalTime::class)
     fun createJSONObject(tracker: SessionTracker, punchType: String): Int {
+
+        val date = DateTimeFormatter.ISO_INSTANT.format(tracker.startTime)
 
         val duration =
             ((tracker.endTime.toEpochMilli() - tracker.startTime.toEpochMilli()) / 1000).toInt()
-
-        val formState = tracker.formState
 
         val id = jsonContents
             .filter { it.punchType == punchType }
@@ -65,7 +69,8 @@ class JsonWriter(context: Context) {
                 wrong = tracker.formState.reps.wrong
             ),
             repResults = tracker.formState.repResults,
-            punchType = punchType
+            punchType = punchType,
+            date = date
         )
 
         if (tracker.formState.reps.total > 0) {

@@ -48,6 +48,20 @@ class LogAdapter(private val logs: MutableList<SessionLog>) :
         return String.format("%02d:%02d", mins, secs)
     }
 
+    fun formatDate(isoString: String): String {
+        return try {
+            val instant = java.time.Instant.parse(isoString)
+
+            val formatter = java.time.format.DateTimeFormatter
+                .ofPattern("MMM dd, yyyy • hh:mm a")
+                .withZone(java.time.ZoneId.systemDefault())
+
+            formatter.format(instant)
+        } catch (e: Exception) {
+            "Invalid date"
+        }
+    }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val log = logs[position]
@@ -56,7 +70,7 @@ class LogAdapter(private val logs: MutableList<SessionLog>) :
             (log.reps.correct.toDouble() / log.reps.total * 100)
         } else 0.0
 
-        // holder.tvDate.text = log.date
+        holder.tvDate.text = formatDate(log.date ?: "")
         holder.tvSession.text = "Session ${log.id}"
         holder.tvHandedness.text = log.handedness
 
