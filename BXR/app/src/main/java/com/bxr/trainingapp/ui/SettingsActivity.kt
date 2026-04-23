@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -19,20 +20,22 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var btnHandedness: TextView
     private lateinit var btnCamera: TextView
     private lateinit var btnName: TextView
-    private var userName = "Name"
+    private lateinit var checkOverlay: CheckBox
 
+    private var userName = "Name"
     private var handedness = "ORTHODOX"
     private var cameraFacing = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.settings)
+        setContentView(R.layout.page_home_settings)
 
         prefs = getSharedPreferences("USER_PREFS", MODE_PRIVATE)
 
         btnHandedness = findViewById(R.id.btnHandedness)
         btnCamera = findViewById(R.id.btnCamera)
         btnName = findViewById(R.id.setTextText)
+        checkOverlay = findViewById(R.id.checkOverlay)
 
         val btnSave = findViewById<Button>(R.id.btnSave)
 
@@ -62,11 +65,19 @@ class SettingsActivity : AppCompatActivity() {
             showDeleteConfirmation()
         }
 
+        checkOverlay.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit()
+                .putBoolean("SHOW_OVERLAY", isChecked)
+                .apply()
+        }
     }
 
     private fun loadPrefs() {
         handedness = prefs.getString("HANDEDNESS", "ORTHODOX")!!
         cameraFacing = prefs.getInt("CAMERA_FACING", 0)
+        userName = prefs.getString("NAME", "Name")!!
+
+        val showOverlay = prefs.getBoolean("SHOW_OVERLAY", true) // default ON
 
         btnHandedness.text =
             if (handedness == "ORTHODOX") "Right-handed" else "Left-handed"
@@ -74,13 +85,27 @@ class SettingsActivity : AppCompatActivity() {
         btnCamera.text =
             if (cameraFacing == 0) "Front" else "Rear"
 
-        userName = prefs.getString("NAME", "Name")!!
         btnName.text = userName
+
+        checkOverlay.isChecked = showOverlay
+    }
+
+    private fun saveAll() {
+        with(prefs.edit()) {
+            putString("HANDEDNESS", handedness)
+            putInt("CAMERA_FACING", cameraFacing)
+            putString("NAME", userName)
+            putBoolean("SHOW_OVERLAY", checkOverlay.isChecked) // important
+            apply()
+        }
+
+        startActivity(Intent(this, HomeActivity::class.java))
+        finish()
     }
 
     private fun showHandednessDialog() {
         val view = LayoutInflater.from(this)
-            .inflate(R.layout.dialog_handedness, null)
+            .inflate(R.layout.dialog_settings_handedness, null)
 
         val dialog = AlertDialog.Builder(this)
             .setView(view)
@@ -103,7 +128,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun showCameraDialog() {
         val view = LayoutInflater.from(this)
-            .inflate(R.layout.dialog_camera, null)
+            .inflate(R.layout.dialog_settings_camera, null)
 
         val dialog = AlertDialog.Builder(this)
             .setView(view)
@@ -125,8 +150,8 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun showNameDialog() {
-        val view = layoutInflater.inflate(R.layout.dialog_name, null)
-        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+        val view = layoutInflater.inflate(R.layout.dialog_settings_name, null)
+        val dialog = AlertDialog.Builder(this)
             .setView(view)
             .create()
 
@@ -142,18 +167,6 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         dialog.show()
-    }
-
-    private fun saveAll() {
-        with(prefs.edit()) {
-            putString("HANDEDNESS", handedness)
-            putInt("CAMERA_FACING", cameraFacing)
-            putString("NAME", userName)
-            apply()
-        }
-
-        startActivity(Intent(this, HomeActivity::class.java))
-        finish()
     }
 
     private fun showDeleteConfirmation() {

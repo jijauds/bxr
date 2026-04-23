@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.bxr.trainingapp.R
 import com.bxr.trainingapp.adapter.MoveAdapter
+import com.bxr.trainingapp.data.LogRepository
+import com.bxr.trainingapp.data.MoveRepository
 import com.bxr.trainingapp.model.Move
 
 class LogsActivity : AppCompatActivity() {
@@ -22,13 +24,12 @@ class LogsActivity : AppCompatActivity() {
     private lateinit var tvMoveTitle: TextView
 
     private lateinit var moves: List<Move>
-
     private var currentPosition = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_logs)
+        setContentView(R.layout.page_home_logs)
 
         recyclerView = findViewById(R.id.recyclerMoves)
         layoutDots = findViewById(R.id.layoutDots)
@@ -38,32 +39,32 @@ class LogsActivity : AppCompatActivity() {
             finish()
         }
 
-        moves = listOf(
-            Move("Jab", R.drawable.move, "", 0),
-            Move("Straight", R.drawable.move, "", 0),
-            Move("Front Hook", R.drawable.move, "", 0),
-            Move("Front Uppercut", R.drawable.move, "", 0),
-            Move("Rear Uppercut", R.drawable.move, "", 0)
-        )
+        moves = MoveRepository.moves
 
-        setupRecycler()
+        val logs = LogRepository.loadLogs(this)
+
+        val bestScores = logs
+            .groupBy { it.punchType }
+            .mapValues { entry ->
+                entry.value.maxOfOrNull { log ->
+                    val total = log.reps.total
+                    val correct = log.reps.correct
+                    if (total > 0) (correct * 100) / total else 0
+                } ?: 0
+            }
+
+        setupRecycler(bestScores)
         setupDots()
         updateUI(0)
 
         findViewById<Button>(R.id.btnView).setOnClickListener {
-
             val intent = Intent(this, LogListActivity::class.java)
-
-            intent.putExtra(
-                "PUNCH_TYPE",
-                moves[currentPosition].name
-            )
-
+            intent.putExtra("PUNCH_TYPE", moves[currentPosition].name)
             startActivity(intent)
         }
     }
 
-    private fun setupRecycler() {
+    private fun setupRecycler(bestScores: Map<String, Int>) {
 
         val layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -90,7 +91,6 @@ class LogsActivity : AppCompatActivity() {
                     val pos = layoutManager.getPosition(centerView!!)
 
                     if (pos != currentPosition) {
-
                         currentPosition = pos
                         updateUI(pos)
                     }
@@ -111,7 +111,6 @@ class LogsActivity : AppCompatActivity() {
             params.setMargins(8, 0, 8, 0)
 
             dot.layoutParams = params
-
             dot.setBackgroundResource(R.drawable.dot_inactive)
 
             layoutDots.addView(dot)

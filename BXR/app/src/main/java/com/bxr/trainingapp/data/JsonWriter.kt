@@ -44,14 +44,16 @@ class JsonWriter(context: Context) {
         }
     }
 
-    fun createJSONObject(tracker: SessionTracker, punchType: String) {
+    fun createJSONObject(tracker: SessionTracker, punchType: String): Int {
 
         val duration =
             ((tracker.endTime.toEpochMilli() - tracker.startTime.toEpochMilli()) / 1000).toInt()
 
         val formState = tracker.formState
 
-        val id = if (jsonContents.isEmpty()) 0 else jsonContents.last().id + 1
+        val id = jsonContents
+            .filter { it.punchType == punchType }
+            .size
 
         val jsonOutput = SessionLog(
             id = id,
@@ -66,7 +68,11 @@ class JsonWriter(context: Context) {
             punchType = punchType
         )
 
-        saveJSONToInternalStorage(jsonOutput)
+        if (tracker.formState.reps.total > 0) {
+            saveJSONToInternalStorage(jsonOutput)
+        }
+
+        return id
     }
 
     private fun saveJSONToInternalStorage(json: SessionLog) {
@@ -82,5 +88,14 @@ class JsonWriter(context: Context) {
     fun clearData() {
         jsonContents.clear()
         file.writeText("[]")
+    }
+
+    fun deleteLogById(id: Int) {
+        jsonContents.removeAll { it.id == id }
+
+        val json = gson.toJson(jsonContents)
+        file.writeText(json)
+
+        Log.d("JSON_DELETE", "Deleted log id=$id")
     }
 }

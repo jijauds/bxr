@@ -2,35 +2,50 @@ package com.bxr.trainingapp.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
+import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bxr.trainingapp.R
+import com.bxr.trainingapp.data.LogRepository
+import com.bxr.trainingapp.sessions.RepResult
 
 class PostCameraActivity : AppCompatActivity() {
 
     private var moveName: String? = null
     private var score: Int? = null
+    private var reps: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.session_done)
+        setContentView(R.layout.page_move_train_done)
 
         moveName = intent.getStringExtra("MOVE_NAME")
         score = intent.getIntExtra("SCORE", 0)
+        reps = intent.getIntExtra("REPS", 0)
+        val logId = intent.getIntExtra("LOG_ID", -1)
+
+        val tvTitle = findViewById<TextView>(R.id.tvTitle)
 
         val tvScore = findViewById<TextView>(R.id.tvScore)
+        val tvReps = findViewById<TextView>(R.id.tvReps)
         val tvLogDetails = findViewById<TextView>(R.id.tvLogDetails)
         val tvMovesList = findViewById<TextView>(R.id.tvMovesList)
         val tvBackHome = findViewById<TextView>(R.id.tvBackHome)
+        val tvErrors = findViewById<TextView>(R.id.tvErrors)
+
 
         tvScore.text = buildString {
             append(score)
             append("%")
         }
 
+        tvReps.text = buildString {
+            append(reps)
+        }
+
         tvLogDetails.setOnClickListener {
             val intent = Intent(this, LogListActivity::class.java)
+
             intent.putExtra("PUNCH_TYPE", moveName)
             startActivity(intent)
         }
@@ -43,6 +58,28 @@ class PostCameraActivity : AppCompatActivity() {
         tvBackHome.setOnClickListener {
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
+        }
+
+        val logs = LogRepository.loadLogs(this)
+        val log = logs.find { it.id == logId }
+
+        if (log == null) {
+            tvLogDetails.text = "Log not found"
+            return
+        }
+
+        val errors = log.repResults ?: emptyList()
+
+        tvErrors.text = if (errors.isEmpty()) {
+            "No errors."
+        } else {
+            val filtered = errors.filter { it.errors.isNotEmpty() }
+
+            if (filtered.isEmpty()) {
+                "Perfect form."
+            } else {
+                filtered.joinToString("\n") { "${it.errors}" }
+            }
         }
 
 //        findViewById<Button>(R.id.btnStart).setOnClickListener {

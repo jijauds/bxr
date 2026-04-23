@@ -8,12 +8,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bxr.trainingapp.R
+import com.bxr.trainingapp.data.LogRepository
 import com.bxr.trainingapp.model.Move
 
 class MoveAdapter(
     private val moves: List<Move>,
     private val onClick: (Move) -> Unit
 ) : RecyclerView.Adapter<MoveAdapter.MoveViewHolder>() {
+
 
     class MoveViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val name: TextView = view.findViewById(R.id.tvMoveName)
@@ -35,7 +37,18 @@ class MoveAdapter(
 
         holder.name.text = move.name
         holder.description.text = move.description
-        holder.accuracy.text = "${(85..99).random()}%"
+
+        val best = LogRepository.getBestScoreForMove(
+            holder.itemView.context,
+            move.name
+        )
+
+        if (move.name == "Train" || move.name == "Learn" || move.name == "Logs") {
+            holder.accuracy.visibility = View.GONE
+        } else {
+            holder.accuracy.visibility = View.VISIBLE
+            holder.accuracy.text = "Best: $best%"
+        }
 
         holder.itemView.setOnTouchListener { v, event ->
 
@@ -74,5 +87,6 @@ class MoveAdapter(
         holder.itemView.setOnClickListener {
             onClick(move)
         }
+
     }
 }

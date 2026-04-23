@@ -4,20 +4,20 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import com.bxr.trainingapp.R
+import com.bxr.trainingapp.data.LogRepository
+import com.bxr.trainingapp.model.moveScore
 
 class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.home_screen)
+        setContentView(R.layout.page_home)
 
         // val tvUsername = findViewById<TextView>(R.id.tv_username)
         val btnTrain = findViewById<ImageButton>(R.id.train_button)
-        val btnLogs = findViewById<Button>(R.id.logs_button)
+        // val btnLogs = findViewById<Button>(R.id.logs_button)
         val btnSettings = findViewById<Button>(R.id.settings_button)
         val btnAbout = findViewById<Button>(R.id.about_button)
         val btnManual = findViewById<Button>(R.id.manual_button)
@@ -30,6 +30,8 @@ class HomeActivity : AppCompatActivity() {
 //            append(name)
 //            append("!")
 //        }
+
+        moveScore.refresh(this)
 
         btnTrain.setOnClickListener {
             val intent = Intent(this, TrainActivity::class.java)

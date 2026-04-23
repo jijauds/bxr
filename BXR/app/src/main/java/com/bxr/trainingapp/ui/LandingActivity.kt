@@ -10,7 +10,7 @@ class LandingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.landing)
+        setContentView(R.layout.page_landing)
 
         val btnStart = findViewById<Button>(R.id.start_button)
 

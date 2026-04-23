@@ -1,16 +1,19 @@
-package com.bxr.trainingapp.ui
+package com.bxr.trainingapp.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bxr.trainingapp.R
+import com.bxr.trainingapp.data.LogRepository
 import com.bxr.trainingapp.data.SessionLog
-import android.widget.Button
-import android.content.Intent
+import com.bxr.trainingapp.ui.VideoPlayerActivity
 
-class LogAdapter(private val logs: List<SessionLog>) :
+class LogAdapter(private val logs: MutableList<SessionLog>) :
     RecyclerView.Adapter<LogAdapter.ViewHolder>() {
 
     private var expandedPosition = -1
@@ -24,14 +27,15 @@ class LogAdapter(private val logs: List<SessionLog>) :
         val tvReps: TextView = view.findViewById(R.id.tvReps)
         val tvAccuracy: TextView = view.findViewById(R.id.tvAccuracy)
         val details: TextView = view.findViewById(R.id.tvDetails)
-        val btnPlayback: Button = view.findViewById(R.id.btnPlayback)
+        // val btnPlayback: Button = view.findViewById(R.id.btnPlayback)
+        val btnDelete: Button = view.findViewById(R.id.btnDelete)
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.log_item, parent, false)
+            .inflate(R.layout.item_log, parent, false)
 
         return ViewHolder(view)
     }
@@ -76,7 +80,8 @@ class LogAdapter(private val logs: List<SessionLog>) :
         val isExpanded = position == expandedPosition
 
         holder.details.visibility = if (isExpanded) View.VISIBLE else View.GONE
-        holder.btnPlayback.visibility = if (isExpanded) View.VISIBLE else View.GONE
+        //holder.btnPlayback.visibility = if (isExpanded) View.VISIBLE else View.GONE
+        holder.btnDelete.visibility = if (isExpanded) View.VISIBLE else View.GONE
 
         holder.itemView.setOnClickListener {
             // expandedPosition = if (isExpanded) -1 else position
@@ -89,11 +94,25 @@ class LogAdapter(private val logs: List<SessionLog>) :
             notifyItemChanged(position)
         }
 
-        holder.btnPlayback.setOnClickListener {
+//        holder.btnPlayback.setOnClickListener {
+//            val context = holder.itemView.context
+//            val intent = Intent(context, VideoPlayerActivity::class.java)
+//            intent.putExtra("SESSION_ID", log.id)
+//            context.startActivity(intent)
+//        }
+
+        holder.btnDelete.setOnClickListener {
             val context = holder.itemView.context
-            val intent = Intent(context, VideoPlayerActivity::class.java)
-            intent.putExtra("SESSION_ID", log.id)
-            context.startActivity(intent)
+
+            val position = holder.bindingAdapterPosition
+            if (position == RecyclerView.NO_POSITION) return@setOnClickListener
+
+            LogRepository.deleteLog(context, log.id)
+
+            logs.removeAt(position)
+            notifyItemRemoved(position)
+
+            Toast.makeText(context, "Log deleted", Toast.LENGTH_SHORT).show()
         }
     }
 }

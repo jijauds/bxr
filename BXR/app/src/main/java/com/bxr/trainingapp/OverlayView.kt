@@ -40,6 +40,7 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
 
     var rotationDegrees = 0
     var isFrontCamera : Boolean? = false
+    var showSkeleton : Boolean = true
     private var results: PoseLandmarkerResult? = null
     private var keypointErrors : Map<String, Boolean> = mapOf()
     private val pointPaint = Paint()
@@ -105,6 +106,8 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
+        if (!showSkeleton) return
 
         // canvas.rotate(rotationDegrees.toFloat(), width / 2f, height / 2f)
 
