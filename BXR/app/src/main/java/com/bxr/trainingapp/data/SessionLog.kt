@@ -2,6 +2,7 @@ package com.bxr.trainingapp.data
 
 import com.bxr.trainingapp.sessions.RepResult
 import java.text.SimpleDateFormat
+import java.time.Instant
 import java.util.Date
 import java.util.Locale
 
@@ -12,7 +13,7 @@ data class SessionLog(
     val handedness: String,
     val reps: Reps,
     val repResults: List<RepResult>,
-    val date: String = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(Date())
+    val date: String ?= null
 )
 
 data class Reps(
