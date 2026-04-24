@@ -18,7 +18,8 @@ object MoveRepository {
                 "Rotate your shoulder slightly to protect your jaw.",
                 "Stay balanced—do not overcommit your weight."
             ),
-            videoRes = R.raw.jab_preview
+            videoRes = R.raw.jab_preview,
+            animRes = R.drawable.jab_anim
         ),
 
         Move(
@@ -32,7 +33,8 @@ object MoveRepository {
                 "Keep your lead hand up to guard your face.",
                 "Return quickly to your stance after impact."
             ),
-            videoRes = R.raw.straight_preview
+            videoRes = R.raw.straight_preview,
+            animRes = R.drawable.straight_anim
         ),
 
         Move(
@@ -46,7 +48,8 @@ object MoveRepository {
                 "Keep your rear hand up to guard your chin.",
                 "Maintain balance—avoid leaning forward."
             ),
-            videoRes = R.raw.front_hook_preview
+            videoRes = R.raw.front_hook_preview,
+            animRes = R.drawable.leadhook_anim
         ),
 
         Move(
@@ -60,7 +63,9 @@ object MoveRepository {
                 "Avoid dropping your hand before throwing.",
                 "Return quickly to guard after the punch."
             ),
-            videoRes = R.raw.jab_preview
-        )
+            videoRes = R.raw.rear_hook_preview,
+            animRes = R.drawable.rearhook_anim
+        ),
+
     )
 }

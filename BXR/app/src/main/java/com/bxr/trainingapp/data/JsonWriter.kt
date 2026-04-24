@@ -60,7 +60,7 @@ class JsonWriter(context: Context) {
             .size
 
         val jsonOutput = SessionLog(
-            id = id,
+            id = id + 1,
             duration = duration,
             handedness = tracker.handedness.toString(),
             reps = com.bxr.trainingapp.data.Reps(

@@ -2,7 +2,9 @@ package com.bxr.trainingapp.ui
 
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
+import android.view.MotionEvent
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -48,21 +50,24 @@ class TrainDetailActivity : AppCompatActivity() {
                 R.drawable.move,
                 "Get up and prepare to record a training session.",
                 emptyList(),
-                move.videoRes
+                move.videoRes,
+                move.animRes
             ),
             Move(
                 "Learn",
                 R.drawable.move,
                 "Pointers on how to perform this move.",
                 emptyList(),
-                move.videoRes
+                move.videoRes,
+                move.animRes
             ),
             Move(
                 "Logs",
                 R.drawable.move,
                 "See how well you have been doing this move. Best: $bestScore%",
                 emptyList(),
-                move.videoRes
+                move.videoRes,
+                move.animRes
             )
         )
 
@@ -94,10 +99,25 @@ class TrainDetailActivity : AppCompatActivity() {
                     val btnVideo = dialog.findViewById<Button>(R.id.btnVideo)
                     val btnTrain = dialog.findViewById<Button>(R.id.btnTrain)
                     val btnClose = dialog.findViewById<Button>(R.id.btnClose)
+                    val imgMove = dialog.findViewById<ImageView>(R.id.imgMove)
+                    imgMove.setImageResource(R.drawable.jab_anim)
 
                     tvName.text = move.name
                     tvDesc.text = move.description
                     tvCritical.text = move.criticalPoints.joinToString("\n• ", prefix = "• ")
+
+                    imgMove.setImageResource(move.animRes)
+
+                    val animation = imgMove.drawable as AnimationDrawable
+                    animation.start()
+
+                    imgMove.setOnTouchListener { _, event ->
+                        when (event.action) {
+                            MotionEvent.ACTION_DOWN -> animation.stop()
+                            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> animation.start()
+                        }
+                        true
+                    }
 
                     btnClose.setOnClickListener {
                         dialog.dismiss()
