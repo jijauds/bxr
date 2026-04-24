@@ -27,21 +27,24 @@ object HowToData {
             title = "Camera",
             content = listOf(
                 HowToContent.Text("During the training session, your phone must be placed somewhere it can stay upright and your whole body is visible to the camera (around 2 meters away from you)."),
-                HowToContent.Text("Your body must be oriented in such a way that you are oriented sideways, with your striking hand is facing the camera."),
-                HowToContent.Image(R.drawable.move)
+                HowToContent.Text("Your body must be oriented in such a way that you are oriented sideways, non-dominant hand facing the camera."),
+                HowToContent.Image(R.drawable.howtouse_camera),
             )
         ),
 
         HowToItem(
             title = "Training Sessions",
             content = listOf(
-                HowToContent.Text("Your body must be oriented in such a way that you are oriented sideways, with your striking hand is facing the camera."),
-                HowToContent.Image(R.drawable.move),
+                HowToContent.Image(R.drawable.howtouse_ready),
+                HowToContent.Text("Your body must be oriented in such a way that you are oriented sideways, with your striking hand is facing the camera." +
+                        "The application will say Ready."),
+                HowToContent.Image(R.drawable.howtouse_go),
                 HowToContent.Text("Once you have a proper Guard Stance, the application will display"),
                 HowToContent.Subtitle("Go!"),
                 HowToContent.Text("prompting you to perform a punch."),
-                HowToContent.Image(R.drawable.move),
+                HowToContent.Image(R.drawable.howtouse_errors),
                 HowToContent.Text("Once a punch is performed correctly, if one of these errors appears at any point in between entering the Guard stance and the rep counting, it will return an Incorrect Rep. Otherwise, if no errors appear meaning that the punch was executed correctly after the Guard Stance, it will return Correct Rep."),
+                HowToContent.Image(R.drawable.howtouse_repdone),
                 HowToContent.Subtitle("After each punch, it will wait again until you enter Guard Stance correctly, and will again say Go! when you have."),
                 HowToContent.Text("You may click End Session to end the current training session and it will be saved in a log that can be accessed by the Logs tab under a move.")
             )
@@ -53,14 +56,14 @@ object HowToData {
                 HowToContent.Subtitle("Punch Not Straight"),
                 HowToContent.Text("Your punch deviates from the correct path."),
 
-                HowToContent.Subtitle("Punch Not Fully Extended"),
+                HowToContent.Subtitle("Punch Not Full"),
                 HowToContent.Text("Your arm does not reach full extension."),
 
-                HowToContent.Subtitle("Low Guard"),
-                HowToContent.Text("Your non-punching hand drops too low."),
+                HowToContent.Subtitle("Leaning Forwards/Backwards"),
+                HowToContent.Text("Your body is not aligned correctly during the punch."),
 
-                HowToContent.Subtitle("Improper Stance"),
-                HowToContent.Text("Your body is not aligned correctly during the punch.")
+                HowToContent.Subtitle("Guard Hand Down"),
+                HowToContent.Text("Your non-punching hand drops too low.")
             )
         )
 

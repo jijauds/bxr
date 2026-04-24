@@ -8,7 +8,8 @@ data class Move(
     val imageRes: Int,
     val description: String,
     val criticalPoints: List<String>,
-    val videoRes: Int
+    val videoRes: Int,
+    val animRes: Int
 )
 
 sealed class HowToContent {

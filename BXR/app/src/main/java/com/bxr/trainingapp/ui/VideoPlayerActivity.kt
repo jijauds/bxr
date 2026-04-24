@@ -15,6 +15,7 @@ class VideoPlayerActivity : AppCompatActivity() {
 
     private lateinit var videoView: VideoView
     private lateinit var btnPlayPause: ImageButton
+    private lateinit var btnRewind: ImageButton
     private lateinit var seekBar: SeekBar
 
     private var isPlaying = false
@@ -33,6 +34,8 @@ class VideoPlayerActivity : AppCompatActivity() {
         videoView = findViewById(R.id.videoView)
         btnPlayPause = findViewById(R.id.btnPlayPause)
         seekBar = findViewById(R.id.seekBar)
+        btnRewind = findViewById(R.id.btnRewind)
+
         val btnClose = findViewById<ImageView>(R.id.btnClose)
 
         val uri = "android.resource://$packageName/$videoRes".toUri()
@@ -58,6 +61,12 @@ class VideoPlayerActivity : AppCompatActivity() {
                 updateSeekBar()
             }
             isPlaying = !isPlaying
+        }
+
+        btnRewind.setOnClickListener {
+            videoView.seekTo(0);
+            videoView.start();
+            updateSeekBar()
         }
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
