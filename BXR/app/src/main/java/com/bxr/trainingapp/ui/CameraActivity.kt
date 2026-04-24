@@ -251,8 +251,6 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
                 currentSession.formState.startRep()
             }
             FormStates.completed -> {
-                showReady("+1")
-
                 if (!currentSession.formState.wasWrong) {
                     flashGreen("#4CAF50")
                 } else {
@@ -260,7 +258,6 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
                 }
 
                 val isCorrect = !currentSession.formState.wasWrong
-
 
                 Log.d("HIWTF","HASDA")
                 currentSession.formState.endRep()
@@ -276,6 +273,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
 
         repFlashOverlay.alpha = 0.6f
         repFlashOverlay.setBackgroundColor(color.toColorInt())
+        repFeedbackCard.setBackgroundColor(color.toColorInt())
 
         repFlashOverlay.animate()
             .alpha(0f)

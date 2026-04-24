@@ -1,6 +1,5 @@
 package com.bxr.trainingapp.forms
 
-import android.util.Log
 import com.bxr.trainingapp.data.Coords
 import kotlin.ranges.contains
 

@@ -2,11 +2,9 @@ package com.bxr.trainingapp.forms
 
 import android.util.Log
 import com.bxr.trainingapp.data.Coords
-import com.bxr.trainingapp.sessions.FormTracker
-import kotlin.collections.set
 
 class GenericErrorChecker {
-    private val threshhold = 0.05;
+    private val threshold = 0.05;
 
     fun torsoCenterX(angles: Map<String, Coords>): Double? {
 
@@ -24,7 +22,7 @@ class GenericErrorChecker {
         val hand = angles["R_Hand"] ?: return false
         val shoulder = angles["R_Shoulder"] ?: return false
 
-        return hand.y > (shoulder.y + threshhold)
+        return hand.y > (shoulder.y + threshold)
     }
 
     fun punchStraightCheck(angles: Map<String, Coords>, punchType: String): Boolean {

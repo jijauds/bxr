@@ -3,6 +3,8 @@ package com.bxr.trainingapp.ui
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bxr.trainingapp.R
 
@@ -12,7 +14,8 @@ class LandingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.page_landing)
 
-        val btnStart = findViewById<Button>(R.id.start_button)
+        val btnStart = findViewById<ImageButton>(R.id.start_button)
+        val startText = findViewById<TextView>(R.id.start_text)
 
         btnStart.setOnClickListener {
             navigateNext()
@@ -32,4 +35,5 @@ class LandingActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
 }
