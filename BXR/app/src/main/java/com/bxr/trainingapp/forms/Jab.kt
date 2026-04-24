@@ -79,7 +79,7 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             //Check punch if straight
             if (checkError.punchStraightCheck(angles, "Jab")) {
                 tracker.errorCounter.punchNotStraight++
-                if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
+                if (tracker.errorCounter.punchNotStraight >= 1) {
                     tracker.errorCounter.punchNotStraight = 0
                     tracker.addErrors(listOf("Punch not straight"))
                     tracker.currentErrors.add("Punch not straight")
