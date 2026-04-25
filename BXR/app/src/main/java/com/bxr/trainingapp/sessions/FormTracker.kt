@@ -1,9 +1,11 @@
 package com.bxr.trainingapp.sessions
+import android.util.Log
 import com.bxr.trainingapp.forms.ErrorTypes
+import com.bxr.trainingapp.model.FormError
 
 data class RepResult(
     val repNumber: Int,
-    val errors: MutableList<String> = mutableListOf(),
+    val errors: MutableList<FormError> = mutableListOf(),
     var isCorrect: Boolean = true
 )
 
@@ -20,29 +22,21 @@ class FormTracker {
 
     var repResults: MutableList<RepResult> = mutableListOf()
     private var currentRep: RepResult? = null
-    var keyPoseErrors: MutableList<String> = mutableListOf()
-    var errors: MutableList<String> = mutableListOf()
-    var currentErrors: MutableList<String> = mutableListOf()
+    var keyPoseErrors: MutableList<FormError> = mutableListOf()
+    var errors: MutableList<FormError> = mutableListOf()
+    var currentErrors: MutableList<FormError> = mutableListOf()
     var errorCounter = ErrorTypes()
     var wasWrong = false
     var keypoints: Map<String, Boolean> = mapOf()
-    var errorsWithDuplicates: MutableList<String> = mutableListOf()
-
-    fun addReps(newReps: Reps) {
-        this.reps.total += newReps.total
-        this.reps.correct += newReps.correct
-        this.reps.wrong += newReps.wrong
-    }
-
-    fun addKeyPoseErrors(newErrors: List<String>) {
+    fun addKeyPoseErrors(newErrors: List<FormError>) {
         this.keyPoseErrors.addAll(newErrors) }
 
-    fun addErrors(newErrors: List<String>) {
+    fun addErrors(newErrors: List<FormError>) {
         if (newErrors.isEmpty()) return
         wasWrong = true
 
         for (error in newErrors) {
-            if (!errors.contains(error)) {
+            if (!errors.any { it == error }) {
                 errors.add(error)
             }
         }
@@ -53,6 +47,7 @@ class FormTracker {
     }
 
     fun startRep() {
+        wasWrong = false
         val repNumber = reps.total + 1
         currentRep = RepResult(repNumber)
     }
@@ -60,18 +55,17 @@ class FormTracker {
     fun endRep() {
         currentRep?.let {
             it.isCorrect = !wasWrong
-
-            it.errors.clear()
-            it.errors.addAll(errors.distinct())
+            it.errors.addAll(errors)
 
             repResults.add(it)
             reps.total++
             if (!wasWrong) reps.correct++
             else reps.wrong++
         }
+        Log.d("ERRORS FOR THE REP", errors.toString())
         currentRep = null
         errors.clear()
-        currentErrors.clear()
+        wasWrong = false
     }
 }
 

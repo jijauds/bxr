@@ -10,7 +10,7 @@
         android:id="@+id/cardContainer"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:background="@color/gray"
+        android:background="@drawable/rounded_card"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:padding="20dp"
@@ -23,11 +23,11 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:fontFamily="@font/jersey"
             android:text="Session done!"
             android:textColor="@color/white"
-            android:textSize="14sp"
+            android:textSize="36sp"
             android:textStyle="bold" />
 
         <TextView
@@ -71,11 +71,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
             android:fontFamily="@font/jersey"
-            android:text="No errors."
+            android:text="An error occurred."
             android:textColor="@color/accent"
-            android:textSize="16sp" />
+            android:textSize="20sp" />
 
 
         <LinearLayout
