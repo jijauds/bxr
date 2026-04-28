@@ -23,9 +23,6 @@ class PostCameraActivity : AppCompatActivity() {
         score = intent.getIntExtra("SCORE", 0)
         reps = intent.getIntExtra("REPS", 0)
         val logId = intent.getIntExtra("LOG_ID", -1)
-
-        val tvTitle = findViewById<TextView>(R.id.tvTitle)
-
         val tvScore = findViewById<TextView>(R.id.tvScore)
         val tvReps = findViewById<TextView>(R.id.tvReps)
         val tvLogDetails = findViewById<TextView>(R.id.tvLogDetails)
@@ -61,25 +58,31 @@ class PostCameraActivity : AppCompatActivity() {
         }
 
         val logs = LogRepository.loadLogs(this)
-        val log = logs.find { it.id == logId }
+        val log = logs.find { it.id == logId.toInt() }
 
         if (log == null) {
             tvLogDetails.text = "Log not found"
             return
         }
 
-        val errors = log.repResults ?: emptyList()
+        val repResults = log.repResults
 
-        tvErrors.text = if (errors.isEmpty()) {
-            "No errors."
-        } else {
-            val filtered = errors.filter { it.errors.isNotEmpty() }
+        val allErrors = repResults
+            .flatMap { it.errors }
+            .groupBy { it.message }
 
-            if (filtered.isEmpty()) {
-                "Perfect form."
-            } else {
-                filtered.joinToString("\n") { "${it.errors}" }
-            }
+        Log.d("FLATTENED_ERRORS",
+            repResults.flatMap { it.errors }
+                .joinToString { it.message }
+        )
+
+        tvErrors.text = when {
+            repResults.isEmpty() -> "No data."
+            allErrors.isEmpty() -> "Perfect form."
+            else -> "Errors:\n" + allErrors.entries.joinToString("\n")
+//            else -> allErrors.entries.joinToString("\n") { (message, count) ->
+//                "$message (${count}x)"
+//            }
         }
 
 //        findViewById<Button>(R.id.btnStart).setOnClickListener {

@@ -13,9 +13,9 @@ import android.content.res.Configuration
 import android.os.Build
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
-import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -53,6 +53,8 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import androidx.core.graphics.toColorInt
 import com.bxr.trainingapp.model.moveScore
+import com.bxr.trainingapp.model.ErrorType
+import com.bxr.trainingapp.model.FormError
 
 class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListener {
     private lateinit var poseLandmarkerHelper: PoseLandmarkerHelper
@@ -86,13 +88,14 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
     private lateinit var repFeedbackCard: MaterialCardView
     private lateinit var repFeedbackText: TextView
 
-    private val errorFirstSeen = mutableMapOf<String, Long>()
-    private val errorLastSeen = mutableMapOf<String, Long>()
+    private val errorFirstSeen = mutableMapOf<FormError, Long>()
+    private val errorLastSeen = mutableMapOf<FormError, Long>()
 
     private val ERROR_SHOW_DELAY = 250L
     private val ERROR_HIDE_DELAY = 900L
 
-    private var displayedErrors: List<String> = emptyList()
+    private var displayedErrors: List<FormError> = emptyList()
+    private var lastDisplayedErrors: List<String> = emptyList()
     private var score : Int = 0
 
     private var lastState: FormStates? = null
@@ -194,7 +197,9 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
                 putExtra("REPS", currentSession.formState.reps.total)
             }
 
-            startActivity(intent)
+            if(currentSession.formState.reps.total > 0) {
+                startActivity(intent)
+            }
             finish()
         }
 
@@ -251,8 +256,6 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
                 currentSession.formState.startRep()
             }
             FormStates.completed -> {
-                showReady("+1")
-
                 if (!currentSession.formState.wasWrong) {
                     flashGreen("#4CAF50")
                 } else {
@@ -260,7 +263,6 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
                 }
 
                 val isCorrect = !currentSession.formState.wasWrong
-
 
                 Log.d("HIWTF","HASDA")
                 currentSession.formState.endRep()
@@ -276,6 +278,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
 
         repFlashOverlay.alpha = 0.6f
         repFlashOverlay.setBackgroundColor(color.toColorInt())
+        repFeedbackCard.setBackgroundColor(color.toColorInt())
 
         repFlashOverlay.animate()
             .alpha(0f)
@@ -284,11 +287,18 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
     }
 
 
-    fun showErrors(errors: List<String>) {
+    fun showErrors(errors: List<FormError>) {
 
         errorContainer.removeAllViews()
 
-        for (error in errors) {
+        val sortedErrors = errors.sortedBy {
+            when (it.type) {
+                ErrorType.POSE -> 0
+                ErrorType.GENERIC -> 1
+            }
+        }
+
+        for (error in sortedErrors) {
 
             val view = layoutInflater.inflate(
                 R.layout.item_error,
@@ -297,13 +307,29 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
             )
 
             val label = view.findViewById<TextView>(R.id.errorLabel)
-            label.text = error
+            val card = view.findViewById<MaterialCardView>(R.id.errorBox)
+
+            label.text = error.message
+
+            when (error.type) {
+                ErrorType.POSE -> {
+                    card.setCardBackgroundColor("#942900".toColorInt())
+                    label.textSize = 24f
+                }
+
+                ErrorType.GENERIC -> {
+                    card.setCardBackgroundColor("#CC000000".toColorInt())
+                    label.textSize = 24f
+                }
+            }
+
+            val params = label.layoutParams as ViewGroup.MarginLayoutParams
+            params.topMargin = if (error.type == ErrorType.POSE) 12 else 4
+            label.layoutParams = params
 
             errorContainer.addView(view)
         }
     }
-
-
 
     private fun updateState(newAngles: AngleType?){
 
@@ -341,7 +367,7 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
 
         Log.d("HELLO", "After looking at current errors: " + newState.toString())
 
-        val visibleErrors = mutableListOf<String>()
+        val visibleErrors = mutableListOf<FormError>()
 
         for (error in errorFirstSeen.keys.toList()) {
 
@@ -368,27 +394,24 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
             score = ((currentSession.formState.reps.correct.toDouble()/currentSession.formState.reps.total.toDouble()) * 100).toInt()
         }
 
+        val newErrorMessages = displayedErrors.map { it.message }
+        val hasErrorChanged = newErrorMessages != lastDisplayedErrors
+        if (hasErrorChanged) {
+            lastDisplayedErrors = newErrorMessages
+        }
+
         runOnUiThread {
-            tvRepNumber.text = buildString {
-                append("Rep #")
-                append(currentSession.formState.reps.total)
-            }
+            tvRepNumber.text = "Rep #${currentSession.formState.reps.total}"
+            tvPercentWrong.text = "Score: $score%"
 
-            tvPercentWrong.text = buildString{
-                append("Score: ")
-                append(score)
-                append("%")
+            if (hasErrorChanged) {
+                showErrors(displayedErrors)
             }
-
-            showErrors(displayedErrors)
         }
         currentSession.formState.keyPoseErrors.clear()
         // currentSession.formState.currentErrors.clear()
         Log.d("JABSTATE", currentSession.formState.state.toString())
         // Log.d("ANGLES", angles.toString())
-        currentSession.formState.currentErrors.clear()
-
-
 
     }
 
@@ -456,7 +479,6 @@ class CameraActivity : AppCompatActivity(), PoseLandmarkerHelper.LandmarkerListe
             overlay.invalidate()
         }
     }
-
 
     private fun setUpCamera() {
         val cameraProvideFuture =

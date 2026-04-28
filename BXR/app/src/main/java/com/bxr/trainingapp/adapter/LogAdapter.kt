@@ -85,7 +85,9 @@ class LogAdapter(private val logs: MutableList<SessionLog>) :
                 if (rep.errors.isEmpty()) {
                     append("Perfect form\n")
                 } else {
-                    append(rep.errors.distinct().joinToString(", "))
+                    append(rep.errors
+                        .joinToString(", ") { it.message }
+                    )
                     append("\n")
                 }
             }

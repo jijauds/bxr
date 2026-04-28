@@ -65,7 +65,7 @@ class HandednessActivity : AppCompatActivity() {
         }
 
         btnBack.setOnClickListener {
-            finish()
+            goToLanding()
         }
     }
 
@@ -75,6 +75,11 @@ class HandednessActivity : AppCompatActivity() {
         prefs.edit().putString("NAME", name).apply()
     }
 
+    private fun goToLanding() {
+        val intent = Intent(this, LandingActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
     private fun goToHome() {
         val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)

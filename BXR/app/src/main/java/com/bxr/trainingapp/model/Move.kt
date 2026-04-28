@@ -43,3 +43,13 @@ object moveScore {
             }
     }
 }
+
+data class FormError(
+    val message: String,
+    val type: ErrorType
+)
+
+enum class ErrorType {
+    GENERIC,
+    POSE
+}

@@ -2,6 +2,8 @@ package com.bxr.trainingapp.forms
 
 import android.util.Log
 import com.bxr.trainingapp.data.AngleType
+import com.bxr.trainingapp.model.ErrorType
+import com.bxr.trainingapp.model.FormError
 import com.bxr.trainingapp.sessions.FormStates
 import com.bxr.trainingapp.sessions.FormTracker
 
@@ -24,8 +26,8 @@ private val checkError = GenericErrorChecker()
 
 fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
     val angles = angleType.angles
-
     val errorFrameCheck = 2
+    tracker.currentErrors.clear()
 
     when (tracker.state) {
         FormStates.notStarted -> {
@@ -67,9 +69,9 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
             if (checkError.guardHandCheck(angles)) {
                 tracker.errorCounter.guardHandGoesDown++
                 if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
-                    tracker.addErrors(listOf("Guard hand goes down"))
+                    tracker.addErrors(listOf(FormError("Guard hand goes down", ErrorType.POSE)))
                     tracker.errorCounter.guardHandGoesDown = 0
-                    tracker.currentErrors.add("Guard hand goes down")
+                    tracker.currentErrors.add(FormError("Guard hand goes down", ErrorType.POSE))
                     tracker.wasWrong = true
                     keypointColors["R_Hand"] = false
                 }
@@ -81,8 +83,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight >= 1) {
                     tracker.errorCounter.punchNotStraight = 0
-                    tracker.addErrors(listOf("Punch not straight"))
-                    tracker.currentErrors.add("Punch not straight")
+                    tracker.addErrors(listOf(FormError("Punch not straight", ErrorType.POSE)))
+                    tracker.currentErrors.add(FormError("Punch not straight", ErrorType.POSE))
                     keypointColors["L_Hand"] = false
                     tracker.wasWrong = true
                 }
@@ -96,8 +98,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.leaningForward++
                 if (tracker.errorCounter.leaningForward > errorFrameCheck) {
                     tracker.errorCounter.leaningForward = 0
-                    tracker.addErrors(listOf("Leaning forward"))
-                    tracker.currentErrors.add("Leaning forward")
+                    tracker.addErrors(listOf(FormError("Leaning forward", ErrorType.POSE)))
+                    tracker.currentErrors.add(FormError("Leaning forward", ErrorType.POSE))
                     keypointColors["L_Hip"] = false
                     keypointColors["R_Hip"] = false
                     tracker.wasWrong = true
@@ -109,8 +111,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.leaningBackwards++
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
                     tracker.errorCounter.leaningBackwards = 0
-                    tracker.addErrors(listOf("Leaning backwards"))
-                    tracker.currentErrors.add("Leaning backwards")
+                    tracker.addErrors(listOf(FormError("Leaning backwards", ErrorType.POSE)))
+                    tracker.currentErrors.add(FormError("Leaning backwards", ErrorType.POSE))
                     keypointColors["L_Hip"] = false
                     keypointColors["R_Hip"] = false
                     tracker.wasWrong = true
@@ -131,8 +133,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.punchNotFullCounter++
                     if (tracker.errorCounter.punchNotFullCounter > 0) {
                         if (tracker.errorCounter.punchNotFull) {
-                            tracker.addErrors(listOf("Punch not full"))
-                            tracker.currentErrors.add("Punch not full")
+                            tracker.addErrors(listOf(FormError("Punch not full", ErrorType.POSE)))
+                            tracker.currentErrors.add(FormError("Punch not full", ErrorType.POSE))
                             tracker.errorCounter.punchNotFull = true
                             keypointColors["L_Elbow"] = false
                             tracker.wasWrong = true
@@ -182,8 +184,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.guardHandGoesDown++
                 if (tracker.errorCounter.guardHandGoesDown > errorFrameCheck) {
                     tracker.errorCounter.guardHandGoesDown = 0
-                    tracker.addErrors(listOf("Guard hand goes down"))
-                    tracker.currentErrors.add("Guard hand goes down")
+                    tracker.addErrors(listOf(FormError("Guard hand goes down", ErrorType.POSE)))
+                    tracker.currentErrors.add(FormError("Guard hand goes down", ErrorType.POSE))
                     keypointColors["R_Hand"] = false
                     tracker.wasWrong = true
                 }
@@ -195,8 +197,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
                     tracker.errorCounter.punchNotStraight = 0
-                    tracker.addErrors(listOf("Punch not straight"))
-                    tracker.currentErrors.add("Punch not straight")
+                    tracker.addErrors(listOf(FormError("Punch not straight", ErrorType.POSE)))
+                    tracker.currentErrors.add(FormError("Punch not straight", ErrorType.POSE))
                     keypointColors["L_Hand"] = false
                     tracker.wasWrong = true
                 }
@@ -210,8 +212,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.leaningForward++
                 if (tracker.errorCounter.leaningForward > errorFrameCheck) {
                     tracker.errorCounter.leaningForward = 0
-                    tracker.addErrors(listOf("Leaning forward"))
-                    tracker.currentErrors.add("Leaning forward")
+                    tracker.addErrors(listOf(FormError("Leaning forward", ErrorType.POSE)))
+                    tracker.currentErrors.add(FormError("Leaning forward", ErrorType.POSE))
                     keypointColors["L_Hip"] = false
                     keypointColors["R_Hip"] = false
                     tracker.wasWrong = true
@@ -224,8 +226,8 @@ fun trackJab(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.leaningBackwards++
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
                     tracker.errorCounter.leaningBackwards = 0
-                    tracker.addErrors(listOf("Leaning backwards"))
-                    tracker.currentErrors.add("Leaning backwards")
+                    tracker.addErrors(listOf(FormError("Leaning backwards", ErrorType.POSE)))
+                    tracker.currentErrors.add(FormError("Leaning backwards", ErrorType.POSE))
                     keypointColors["L_Hip"] = false
                     keypointColors["R_Hip"] = false
                     tracker.wasWrong = true

@@ -1,12 +1,13 @@
 package com.bxr.trainingapp.forms
 
-import android.util.Log
 import com.bxr.trainingapp.data.Coords
+import com.bxr.trainingapp.model.ErrorType
+import com.bxr.trainingapp.model.FormError
 import kotlin.ranges.contains
 
 data class AngleResults(
     val keypoints: Map<String, Boolean>,
-    val errors: MutableList<String>
+    val errors: MutableList<FormError>
 )
 
 val errorMessages = mapOf(
@@ -31,13 +32,13 @@ fun getError(name: String, errorMessages: Map<String, String>): String {
 }
 
 fun checkAngle(angles: Map<String, Coords>, correctangles: Map<String, Pair<Double, Double>>, threshhold: Double): AngleResults{
-    val errors = mutableListOf<String>()
+    val errors = mutableListOf<FormError>()
     val keypoints = mutableMapOf<String, Boolean>()
 
     for ((name, angle) in correctangles) {
         if ((angles[name]!!.angle < angle.first || angles[name]!!.angle > angle.second)) {
             keypoints[name] = false
-            errors.add(getError(name, errorMessages))
+            errors.add(FormError(getError(name, errorMessages), ErrorType.GENERIC))
         } else {
             keypoints[name] = true
         }
@@ -45,7 +46,7 @@ fun checkAngle(angles: Map<String, Coords>, correctangles: Map<String, Pair<Doub
 
     if (angles["L_Knee"]?.x != null && angles["R_Knee"]?.x != null){
         if (angles["L_Knee"]!!.x < angles["R_Knee"]!!.x) {
-            errors.add("Wrong foot forward")
+            errors.add(FormError("Wrong foot forward", ErrorType.GENERIC))
             keypoints["L_Knee"] = false
             keypoints["R_Knee"] = false
         }
@@ -55,24 +56,25 @@ fun checkAngle(angles: Map<String, Coords>, correctangles: Map<String, Pair<Doub
     if (angles["R_Shoulder"]?.x != null && angles["L_Shoulder"]?.x != null) {
         if (angles["R_Hand"]!!.x < angles["R_Shoulder"]!!.x - 0.05){
             keypoints["R_Hand"] = false
-            errors.add(getError("R_Hand_Behind", errorMessages))
+            errors.add(FormError(getError("R_Hand_Behind", errorMessages), ErrorType.GENERIC))
         }
         if (angles["R_Hand"]!!.y > angles["R_Shoulder"]!!.y + 0.05){
             keypoints["R_Hand"] = false
-            errors.add(getError("R_Hand_Low", errorMessages))
+            errors.add(FormError(getError("R_Hand_Low", errorMessages), ErrorType.GENERIC))
         }
     }
     return AngleResults(keypoints, errors)
 }
 
+
 fun checkStraight(angles: Map<String, Coords>, correctangles: Map<String, Pair<Double, Double>>, threshhold: Double): AngleResults{
-    val errors = mutableListOf<String>()
+    val errors = mutableListOf<FormError>()
     val keypoints = mutableMapOf<String, Boolean>()
 
     for ((name, angle) in correctangles) {
         if ((angles[name]!!.angle < angle.first || angles[name]!!.angle > angle.second)) {
             keypoints[name] = false
-            errors.add(getError(name, errorMessages))
+            errors.add(FormError(getError(name, errorMessages), ErrorType.GENERIC))
         } else {
             keypoints[name] = true
         }
@@ -81,7 +83,7 @@ fun checkStraight(angles: Map<String, Coords>, correctangles: Map<String, Pair<D
     if (angles["L_Hip"]!!.x - angles["R_Hip"]!!.x !in -0.05..0.05) {
         keypoints["L_Hip"] = false
         keypoints["R_Hip"] = false
-        errors.add("Twist your hips more")
+        errors.add(FormError("Twist your hips more", ErrorType.GENERIC))
     } else {
         keypoints["L_Hip"] = true
         keypoints["R_Hip"] = true
@@ -90,13 +92,13 @@ fun checkStraight(angles: Map<String, Coords>, correctangles: Map<String, Pair<D
 }
 
 fun checkLeadHook(angles: Map<String, Coords>, correctangles: Map<String, Pair<Double, Double>>, threshhold: Double): AngleResults{
-    val errors = mutableListOf<String>()
+    val errors = mutableListOf<FormError>()
     val keypoints = mutableMapOf<String, Boolean>()
 
     for ((name, angle) in correctangles) {
         if ((angles[name]!!.angle < angle.first || angles[name]!!.angle > angle.second)) {
             keypoints[name] = false
-            errors.add(getError(name, errorMessages))
+            errors.add(FormError(getError(name, errorMessages), ErrorType.GENERIC))
         } else {
             keypoints[name] = true
         }
@@ -107,12 +109,12 @@ fun checkLeadHook(angles: Map<String, Coords>, correctangles: Map<String, Pair<D
         // Check Elbow too low
         if (angles["L_Elbow"]!!.y > angles["L_Shoulder"]!!.y + 0.05){
             keypoints["L_Elbow"] = false
-            errors.add(getError("L_Elbow_Low", errorMessages))
+            errors.add(FormError(getError("L_Elbow_Low", errorMessages), ErrorType.GENERIC))
         }
         // Check Elbow too high
         if (angles["L_Elbow"]!!.y < angles["L_Shoulder"]!!.y - 0.05){
             keypoints["L_Elbow"] = false
-            errors.add(getError("L_Elbow_High", errorMessages))
+            errors.add(FormError(getError("L_Elbow_High", errorMessages), ErrorType.GENERIC))
         }
     }
 
@@ -121,13 +123,13 @@ fun checkLeadHook(angles: Map<String, Coords>, correctangles: Map<String, Pair<D
         // Check hand is straight
         if (angles["L_Hand"]!!.y !in angles["L_Shoulder"]!!.y - 0.05..angles["L_Shoulder"]!!.y + 0.05){
             keypoints["L_Hand"] = false
-            errors.add("Keep Left Hand Straight")
+            errors.add(FormError("Keep Left Hand Straight", ErrorType.GENERIC))
         }
         // Check hand is close to elbow
         if (angles["L_Elbow"] != null){
             if (angles["L_Hand" ]!!.x > angles["L_Elbow"]!!.x + 0.2){
                 keypoints["L_Hand"] = false
-                errors.add("Hook your arm more")
+                errors.add(FormError("Hook your arm more", ErrorType.GENERIC))
             }
         }
     }
@@ -143,13 +145,13 @@ fun checkLeadHook(angles: Map<String, Coords>, correctangles: Map<String, Pair<D
 }
 
 fun checkRearHookAngle(angles: Map<String, Coords>, correctangles: Map<String, Pair<Double, Double>>, threshhold: Double): AngleResults{
-    val errors = mutableListOf<String>()
+    val errors = mutableListOf<FormError>()
     val keypoints = mutableMapOf<String, Boolean>()
 
     for ((name, angle) in correctangles) {
         if ((angles[name]!!.angle < angle.first || angles[name]!!.angle > angle.second)) {
             keypoints[name] = false
-            errors.add(getError(name, errorMessages))
+            errors.add(FormError(getError(name, errorMessages), ErrorType.GENERIC))
         } else {
             keypoints[name] = true
         }
@@ -160,12 +162,12 @@ fun checkRearHookAngle(angles: Map<String, Coords>, correctangles: Map<String, P
         // Check Elbow too low
         if (angles["R_Elbow"]!!.y > angles["R_Shoulder"]!!.y + 0.05){
             keypoints["R_Elbow"] = false
-            errors.add(getError("R_Elbow_Low", errorMessages))
+            errors.add(FormError(getError("R_Elbow_Low", errorMessages), ErrorType.GENERIC))
         }
         // Check Elbow too high
         if (angles["R_Elbow"]!!.y < angles["R_Shoulder"]!!.y - 0.05){
             keypoints["R_Elbow"] = false
-            errors.add(getError("R_Elbow_High", errorMessages))
+            errors.add(FormError(getError("R_Elbow_High", errorMessages), ErrorType.GENERIC))
         }
     }
     // Check Hand
@@ -173,19 +175,20 @@ fun checkRearHookAngle(angles: Map<String, Coords>, correctangles: Map<String, P
         // Check hand is straight
         if (angles["R_Hand"]!!.y !in angles["R_Shoulder"]!!.y - 0.05..angles["R_Shoulder"]!!.y + 0.05){
             keypoints["R_Hand"] = false
-            errors.add("Keep Right Hand Straight")
+            errors.add(FormError("Keep Right Hand Straight", ErrorType.GENERIC))
         }
         // Check hand is close to elbow
         if (angles["R_Elbow"]!= null){
             if (angles["R_Hand" ]!!.x > angles["R_Elbow"]!!.x + 0.2){
                 keypoints["R_Hand"] = false
-                errors.add("Hook your arm more")
+                errors.add(FormError("Hook your arm more", ErrorType.GENERIC))
             }
         }
     }
     return AngleResults(keypoints, errors)
 }
 
+/*
 fun checkLeadUpperCutAngle(angles: Map<String, Coords>, correctangles: Map<String, Double>, threshhold: Double): AngleResults{
     val errors = mutableListOf<String>()
     val keypoints = mutableMapOf<String, Boolean>()
@@ -234,3 +237,4 @@ fun checkRearUpperCut(angles: Map<String, Coords>, correctangles: Map<String, Do
     }
     return AngleResults(keypoints, errors)
 }
+*/

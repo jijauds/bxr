@@ -1,6 +1,8 @@
 package com.bxr.trainingapp.forms
 
 import com.bxr.trainingapp.data.AngleType
+import com.bxr.trainingapp.model.ErrorType
+import com.bxr.trainingapp.model.FormError
 import com.bxr.trainingapp.sessions.FormStates
 import com.bxr.trainingapp.sessions.FormTracker
 import com.bxr.trainingapp.sessions.Reps
@@ -23,8 +25,8 @@ private val checkError = GenericErrorChecker()
 
 fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
     val angles = angleType.angles
-
     val errorFrameCheck = 2
+    tracker.currentErrors.clear()
 
     when (tracker.state) {
         FormStates.notStarted -> {
@@ -69,8 +71,8 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight >= 1) {
                     tracker.errorCounter.punchNotStraight = 0
-                    tracker.addErrors(listOf("Punch not straight"))
-                    tracker.currentErrors.add("Punch not straight")
+                    tracker.addErrors(listOf(FormError("Punch not straight", ErrorType.POSE)))
+                    tracker.currentErrors.add(FormError("Punch not straight", ErrorType.POSE))
                     keypointColors["R_Hand"] = false
                     tracker.wasWrong = true
                 }
@@ -84,8 +86,8 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.leaningForward++
                 if (tracker.errorCounter.leaningForward > errorFrameCheck) {
                     tracker.errorCounter.leaningForward = 0
-                    tracker.addErrors(listOf("Leaning forward"))
-                    tracker.currentErrors.add("Leaning forward")
+                    tracker.addErrors(listOf(FormError("Leaning forward", ErrorType.POSE)))
+                    tracker.currentErrors.add(FormError("Leaning forward", ErrorType.POSE))
                     keypointColors["L_Hip"] = false
                     keypointColors["R_Hip"] = false
                     tracker.wasWrong = true
@@ -97,8 +99,8 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.leaningBackwards++
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
                     tracker.errorCounter.leaningBackwards = 0
-                    tracker.addErrors(listOf("Leaning backwards"))
-                    tracker.currentErrors.add("Leaning backwards")
+                    tracker.addErrors(listOf(FormError("Leaning backwards", ErrorType.POSE)))
+                    tracker.currentErrors.add(FormError("Leaning backwards", ErrorType.POSE))
                     keypointColors["L_Hip"] = false
                     keypointColors["R_Hip"] = false
                     tracker.wasWrong = true
@@ -119,8 +121,8 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                     tracker.errorCounter.punchNotFullCounter++
                     if (tracker.errorCounter.punchNotFullCounter > errorFrameCheck) {
                         if (tracker.errorCounter.punchNotFull) {
-                            tracker.addErrors(listOf("Punch not full"))
-                            tracker.currentErrors.add("Punch not full")
+                            tracker.addErrors(listOf(FormError("Punch not full", ErrorType.POSE)))
+                            tracker.currentErrors.add(FormError("Punch not full", ErrorType.POSE))
                             tracker.errorCounter.punchNotFull = true
                             keypointColors["R_Elbow"] = false
                             tracker.wasWrong = true
@@ -165,8 +167,8 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.punchNotStraight++
                 if (tracker.errorCounter.punchNotStraight > errorFrameCheck) {
                     tracker.errorCounter.punchNotStraight = 0
-                    tracker.addErrors(listOf("Punch not straight"))
-                    tracker.currentErrors.add("Punch not straight")
+                    tracker.addErrors(listOf(FormError("Punch not straight", ErrorType.POSE)))
+                    tracker.currentErrors.add(FormError("Punch not straight", ErrorType.POSE))
                     keypointColors["R_Hand"] = false
                     tracker.wasWrong = true
                 }
@@ -180,8 +182,8 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.leaningForward++
                 if (tracker.errorCounter.leaningForward > errorFrameCheck) {
                     tracker.errorCounter.leaningForward = 0
-                    tracker.addErrors(listOf("Leaning forward"))
-                    tracker.currentErrors.add("Leaning forward")
+                    tracker.addErrors(listOf(FormError("Leaning forward", ErrorType.POSE)))
+                    tracker.currentErrors.add(FormError("Leaning forward", ErrorType.POSE))
                     keypointColors["L_Hip"] = false
                     keypointColors["R_Hip"] = false
                     tracker.wasWrong = true
@@ -194,8 +196,8 @@ fun trackStraight(angleType: AngleType, tracker: FormTracker): FormTracker {
                 tracker.errorCounter.leaningBackwards++
                 if (tracker.errorCounter.leaningBackwards > errorFrameCheck) {
                     tracker.errorCounter.leaningBackwards = 0
-                    tracker.addErrors(listOf("Leaning backwards"))
-                    tracker.currentErrors.add("Leaning backwards")
+                    tracker.addErrors(listOf(FormError("Leaning backwards", ErrorType.POSE)))
+                    tracker.currentErrors.add(FormError("Leaning backwards", ErrorType.POSE))
                     keypointColors["L_Hip"] = false
                     keypointColors["R_Hip"] = false
                     tracker.wasWrong = true
