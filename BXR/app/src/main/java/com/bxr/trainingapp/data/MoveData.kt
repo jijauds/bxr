@@ -38,7 +38,7 @@ object MoveRepository {
         ),
 
         Move(
-            name = "Lead Hook",
+            name = "Front Hook",
             imageRes = R.drawable.move,
             description = "Curled punch with your non-dominant hand.",
             criticalPoints = listOf(
