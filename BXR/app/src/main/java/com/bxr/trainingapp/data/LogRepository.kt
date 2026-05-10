@@ -3,6 +3,8 @@ package com.bxr.trainingapp.data
 import android.content.Context
 import android.util.Log
 import com.bxr.trainingapp.data.SessionLog
+import com.bxr.trainingapp.model.FormError
+import com.bxr.trainingapp.sessions.RepResult
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
@@ -60,6 +62,19 @@ object LogRepository {
     fun deleteLog(context: Context, id: Int) {
         val writer = JsonWriter(context)
         writer.deleteLogById(id)
+    }
+
+    fun punchSummary(context: Context, moveName: String): List<FormError> {
+        val logs = loadLogs(context)
+
+        return logs
+            .filter{it.punchType == moveName}
+            .mapNotNull { log ->
+            val repResults = log.repResults
+            val errors = repResults.flatMap {it.errors}
+                errors
+
+        }.flatten().distinct()
     }
 
 }
