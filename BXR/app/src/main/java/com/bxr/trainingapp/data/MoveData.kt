@@ -37,20 +37,7 @@ object MoveRepository {
             animRes = R.drawable.straight_anim
         ),
 
-        Move(
-            name = "Front Hook",
-            imageRes = R.drawable.move,
-            description = "Curled punch with your non-dominant hand.",
-            criticalPoints = listOf(
-                "Keep your elbow level with your fist during the hook.",
-                "Rotate your lead foot and hips for power.",
-                "Swing in a tight arc—do not loop too wide.",
-                "Keep your rear hand up to guard your chin.",
-                "Maintain balance—avoid leaning forward."
-            ),
-            videoRes = R.raw.front_hook_preview,
-            animRes = R.drawable.leadhook_anim
-        ),
+
 
         Move(
             name = "Rear Hook",

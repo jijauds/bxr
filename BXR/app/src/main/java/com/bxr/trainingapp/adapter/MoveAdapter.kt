@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bxr.trainingapp.R
@@ -21,6 +22,7 @@ class MoveAdapter(
         val name: TextView = view.findViewById(R.id.tvMoveName)
         val accuracy: TextView = view.findViewById(R.id.tvAccuracy)
         val description: TextView = view.findViewById(R.id.tvDescription)
+        val image: ImageView = view.findViewById(R.id.imgMove)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoveViewHolder {
