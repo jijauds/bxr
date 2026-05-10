@@ -13,6 +13,7 @@ import com.bxr.trainingapp.R
 import com.bxr.trainingapp.adapter.LogAdapter
 import com.bxr.trainingapp.data.LogRepository
 import com.bxr.trainingapp.data.SessionLog
+import com.bxr.trainingapp.model.FormError
 
 class LogListActivity : AppCompatActivity() {
 
@@ -42,6 +43,28 @@ class LogListActivity : AppCompatActivity() {
         }
 
         tvMoveTitle.text = punchType
+
+        val tvSummaryTitle = findViewById<TextView>(R.id.tvSummaryTitle)
+        val tvSummaryErrors = findViewById<TextView>(R.id.tvSummaryErrors)
+        val layoutSummary = findViewById<View>(R.id.layoutSummary)
+
+        tvSummaryTitle.text = "Common mistakes for $punchType"
+
+        val summaryErrors = LogRepository.punchSummary(this, punchType)
+
+        if (summaryErrors.isEmpty()) {
+            layoutSummary.visibility = View.GONE
+        } else {
+            val groupedErrors = summaryErrors
+                .groupBy { it.message }
+            tvSummaryErrors.text = buildString {
+                groupedErrors
+                    .toList()
+                    .forEach { message ->
+                        append("• $message (1x)\n")
+                    }
+            }
+        }
 
         val allLogs = try {
             LogRepository.loadLogs(this)

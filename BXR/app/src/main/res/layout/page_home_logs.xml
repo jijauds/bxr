@@ -31,21 +31,50 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
         android:text="Jab"
-        android:textColor="#F2F2F2"
+        android:textColor="@color/white"
         android:textSize="48sp"
         android:textStyle="bold"
         android:fontFamily="@font/jersey"/>
 
+    <LinearLayout
+        android:id="@+id/layoutSummary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvMoveTitle"
+        android:layout_marginTop="24dp"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:background="@drawable/bg_card_glow">
+
+        <TextView
+            android:id="@+id/tvSummaryTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Common mistakes for Jab"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:fontFamily="@font/jersey"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tvSummaryErrors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:fontFamily="@font/jersey"
+            android:lineSpacingExtra="4dp"/>
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerMoves"
+        android:layout_marginTop="24dp"
         android:layout_width="259dp"
         android:layout_height="417dp"
-        android:layout_below="@id/tvMoveTitle"
+        android:layout_below="@id/layoutSummary"
         android:layout_centerInParent="true"
-        android:layout_marginTop="40dp"
-        android:clipToPadding="false"
-        android:paddingStart="0dp"
-        android:paddingEnd="0dp" />
+        android:clipToPadding="false" />
 
     <LinearLayout
         android:id="@+id/layoutDots"
