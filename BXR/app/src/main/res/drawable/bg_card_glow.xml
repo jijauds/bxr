@@ -11,7 +11,7 @@
 
     <item android:inset="2dp">
         <shape android:shape="rectangle">
-            <corners android:radius="22dp"/>
+            <corners android:radius="25dp"/>
 <!--            <stroke-->
 <!--                android:width="8dp"-->
 <!--                android:color="@color/accent"/>-->
@@ -19,6 +19,7 @@
                 android:type="linear"
                 android:angle="120"
                 android:startColor="@color/accent"
+                android:centerColor="@color/accent"
                 android:endColor="@color/black" />
         </shape>
     </item>
@@ -29,7 +30,7 @@
           android:top="5dp"
           android:bottom="5dp">
         <shape android:shape="rectangle">
-            <corners android:radius="24dp"/>
+            <corners android:radius="26dp"/>
             <solid android:color="@color/black"/>
         </shape>
     </item>

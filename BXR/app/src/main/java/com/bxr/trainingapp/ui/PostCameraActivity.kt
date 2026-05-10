@@ -79,10 +79,14 @@ class PostCameraActivity : AppCompatActivity() {
         tvErrors.text = when {
             repResults.isEmpty() -> "No data."
             allErrors.isEmpty() -> "Perfect form."
-            else -> "Errors:\n" + allErrors.entries.joinToString("\n")
-//            else -> allErrors.entries.joinToString("\n") { (message, count) ->
-//                "$message (${count}x)"
-//            }
+            else -> buildString {
+                append("Errors:\n\n")
+                allErrors.entries
+                    .sortedByDescending { it.value.size }
+                    .forEach { (message, errors) ->
+                        append("• $message (${errors.size}x)\n")
+                    }
+            }
         }
 
 //        findViewById<Button>(R.id.btnStart).setOnClickListener {

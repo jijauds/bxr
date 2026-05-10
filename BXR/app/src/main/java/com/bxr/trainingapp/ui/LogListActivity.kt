@@ -50,6 +50,7 @@ class LogListActivity : AppCompatActivity() {
         }
 
         val logs = allLogs.filter { it.punchType == punchType }
+            .sortedByDescending { it.date }
 
         if (logs.isEmpty()) {
             recyclerLogs.visibility = View.GONE

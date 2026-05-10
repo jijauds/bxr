@@ -3,20 +3,21 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/move_card"
     android:layout_width="match_parent"
-    android:layout_height="330dp"
+    android:layout_height="250dp"
     android:layout_marginStart="20dp"
     android:layout_marginEnd="20dp"
     android:layout_marginBottom="20dp"
-    android:background="@drawable/bg_card_glow"
-    android:padding="2dp">
+    android:padding="5dp"
+    android:background="@drawable/bg_card_glow">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardBackgroundColor="#1B1B1B"
+        app:cardBackgroundColor="@color/black"
         app:cardCornerRadius="24dp"
-        app:cardElevation="8dp">
+        app:cardElevation="0dp">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -33,10 +34,10 @@
                 android:src="@drawable/jab_frame3"
                 android:alpha="0.95"/>
 
-            <View
+            <!--View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#33000000"/>
+                android:background="@color/black_transparent"/-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -46,35 +47,48 @@
                 android:paddingEnd="18dp">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_move_label"
-                    android:paddingStart="16dp"
-                    android:paddingTop="8dp"
-                    android:paddingEnd="16dp"
-                    android:layout_marginEnd="120dp"
-                    android:paddingBottom="8dp"
-                    android:layout_weight="1">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-                    <TextView
-                        android:id="@+id/tvMoveName"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/jersey"
-                        android:text="Front Hook"
-                        android:textColor="@android:color/white"
-                        android:textSize="32sp"/>
+                        android:background="@drawable/bg_move_label"
+                        android:paddingStart="16dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="8dp">
+
+                        <TextView
+                            android:id="@+id/tvMoveName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/jersey"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:text="Front Hook"
+                            android:textColor="@android:color/white"
+                            android:textSize="32sp"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/tvAccuracy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Best: 91%"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
 
                 </LinearLayout>
-
-                <TextView
-                    android:id="@+id/tvAccuracy"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Best: 91.0%"
-                    android:textColor="#D0D0D0"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
 
             </LinearLayout>
 
