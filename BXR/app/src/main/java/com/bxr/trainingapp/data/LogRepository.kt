@@ -64,7 +64,7 @@ object LogRepository {
         writer.deleteLogById(id)
     }
 
-    fun punchSummary(context: Context, moveName: String): List<FormError> {
+    fun punchSummary(context: Context, moveName: String): Map<FormError, Int> {
         val logs = loadLogs(context)
 
         return logs
@@ -73,8 +73,7 @@ object LogRepository {
             val repResults = log.repResults
             val errors = repResults.flatMap {it.errors}
                 errors
-
-        }.flatten().distinct()
+        }.flatten().groupingBy { it }.eachCount()
     }
 
 }
