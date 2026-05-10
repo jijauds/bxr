@@ -1,10 +1,12 @@
 package com.bxr.trainingapp.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bxr.trainingapp.R
@@ -21,6 +23,8 @@ class MoveAdapter(
         val name: TextView = view.findViewById(R.id.tvMoveName)
         val accuracy: TextView = view.findViewById(R.id.tvAccuracy)
         val description: TextView = view.findViewById(R.id.tvDescription)
+        val image: ImageView = view.findViewById(R.id.imgMove)
+        val card: View = view.findViewById(R.id.move_card)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoveViewHolder {
@@ -31,12 +35,17 @@ class MoveAdapter(
 
     override fun getItemCount() = moves.size
 
+    private fun dpToPx(dp: Int, context: Context): Int {
+        return (dp * context.resources.displayMetrics.density).toInt()
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: MoveViewHolder, position: Int) {
         val move = moves[position]
 
         holder.name.text = move.name
         holder.description.text = move.description
+        holder.image.setImageResource(move.imageRes)
 
         val best = LogRepository.getBestScoreForMove(
             holder.itemView.context,
@@ -44,9 +53,22 @@ class MoveAdapter(
         )
 
         if (move.name == "Train" || move.name == "Learn" || move.name == "Logs") {
+
             holder.accuracy.visibility = View.GONE
+            holder.image.visibility = View.GONE
+
+            val params = holder.card.layoutParams
+            params.height = dpToPx(200, holder.itemView.context)
+            holder.card.layoutParams = params
+
         } else {
+
             holder.accuracy.visibility = View.VISIBLE
+            holder.image.visibility = View.VISIBLE
+
+            val params = holder.card.layoutParams
+            params.height = dpToPx(260, holder.itemView.context)
+            holder.card.layoutParams = params
             holder.accuracy.text = "Best: $best%"
         }
 

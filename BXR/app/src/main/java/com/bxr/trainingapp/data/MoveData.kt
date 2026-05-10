@@ -9,7 +9,7 @@ object MoveRepository {
 
         Move(
             name = "Jab",
-            imageRes = R.drawable.move,
+            imageRes = R.drawable.jab_frame3,
             description = "Straight punch to the front with your non-dominant hand.",
             criticalPoints = listOf(
                 "Extend your lead hand straight without telegraphing.",
@@ -24,7 +24,7 @@ object MoveRepository {
 
         Move(
             name = "Straight",
-            imageRes = R.drawable.move,
+            imageRes = R.drawable.straight_frame3,
             description = "Straight punch with your dominant hand.",
             criticalPoints = listOf(
                 "Rotate your hips and shoulders to generate power.",
@@ -39,7 +39,7 @@ object MoveRepository {
 
         Move(
             name = "Lead Hook",
-            imageRes = R.drawable.move,
+            imageRes = R.drawable.leadhook_frame3,
             description = "Curled punch with your non-dominant hand.",
             criticalPoints = listOf(
                 "Keep your elbow level with your fist during the hook.",
@@ -54,7 +54,7 @@ object MoveRepository {
 
         Move(
             name = "Rear Hook",
-            imageRes = R.drawable.move,
+            imageRes = R.drawable.rearhook_frame3,
             description = "Curled punch with your dominant hand.",
             criticalPoints = listOf(
                 "Pivot your rear foot and rotate your hips strongly.",
@@ -67,5 +67,5 @@ object MoveRepository {
             animRes = R.drawable.rearhook_anim
         ),
 
-    )
+        )
 }
