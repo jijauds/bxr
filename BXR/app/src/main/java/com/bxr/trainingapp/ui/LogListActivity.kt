@@ -13,7 +13,6 @@ import com.bxr.trainingapp.R
 import com.bxr.trainingapp.adapter.LogAdapter
 import com.bxr.trainingapp.data.LogRepository
 import com.bxr.trainingapp.data.SessionLog
-import com.bxr.trainingapp.model.FormError
 
 class LogListActivity : AppCompatActivity() {
 
@@ -51,17 +50,15 @@ class LogListActivity : AppCompatActivity() {
         tvSummaryTitle.text = "Common mistakes for $punchType"
 
         val summaryErrors = LogRepository.punchSummary(this, punchType)
-
         if (summaryErrors.isEmpty()) {
             layoutSummary.visibility = View.GONE
         } else {
-            val groupedErrors = summaryErrors
-                .groupBy { it.message }
             tvSummaryErrors.text = buildString {
-                groupedErrors
+                summaryErrors
                     .toList()
-                    .forEach { message ->
-                        append("• $message (1x)\n")
+                    .sortedByDescending { (_, count) -> count }
+                    .forEach { (error, count) ->
+                        append("• ${error.message} (${count}x)\n")
                     }
             }
         }
